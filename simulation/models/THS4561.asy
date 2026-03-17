@@ -1,0 +1,29 @@
+Version 4
+SymbolType BLOCK
+RECTANGLE Normal -64 -72 80 72
+WINDOW 0 8 -72 Bottom 2
+WINDOW 3 8 72 Top 2
+SYMATTR Prefix X
+SYMATTR Value THS4561
+SYMATTR ModelFile C:\Users\owend\Desktop\Projects\LCR\simulation\models\ths4561.txt
+PIN -64 -32 LEFT 8
+PINATTR PinName IN+
+PINATTR SpiceOrder 1
+PIN -64 32 LEFT 8
+PINATTR PinName IN-
+PINATTR SpiceOrder 2
+PIN -16 -64 VRIGHT 8
+PINATTR PinName VCC
+PINATTR SpiceOrder 3
+PIN -16 80 VLEFT 8
+PINATTR PinName VEE
+PINATTR SpiceOrder 4
+PIN 80 32 RIGHT 8
+PINATTR PinName OUT+
+PINATTR SpiceOrder 5
+PIN 80 -32 RIGHT 8
+PINATTR PinName OUT-
+PINATTR SpiceOrder 6
+PIN -64 0 LEFT 8
+PINATTR PinName VOCM
+PINATTR SpiceOrder 7

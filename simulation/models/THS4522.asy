@@ -1,0 +1,39 @@
+Version 4
+SymbolType BLOCK
+LINE Normal -80 80 -80 -80
+LINE Normal 80 0 -80 80
+LINE Normal -80 -80 80 0
+LINE Normal 16 -32 80 -32
+LINE Normal 16 32 80 32
+LINE Normal -32 -56 -32 -80
+LINE Normal -32 56 -32 80
+LINE Normal 0 40 0 80
+TEXT -54 -75 Left 2 +
+TEXT -44 65 Left 2 -
+TEXT 6 16 Left 2 +
+TEXT 11 -25 Left 2 -
+TEXT -22 33 Left 1 PD
+TEXT -70 -1 Left 1 VOCM
+WINDOW 0 30 -53 Bottom 2
+WINDOW 3 30 -101 Top 2
+SYMATTR Value THS4522
+SYMATTR Prefix X
+SYMATTR ModelFile C:\Users\owend\Desktop\Projects\LCR\simulation\models\THS4522.txt
+PIN 80 -32 LEFT 8
+PINATTR SpiceOrder 1
+PIN 80 32 LEFT 8
+PINATTR SpiceOrder 2
+PIN -80 0 LEFT 8
+PINATTR SpiceOrder 3
+PIN -80 32 LEFT 8
+PINATTR PinName -
+PINATTR SpiceOrder 4
+PIN -80 -32 LEFT 8
+PINATTR PinName +
+PINATTR SpiceOrder 5
+PIN -32 80 VRIGHT 8
+PINATTR SpiceOrder 6
+PIN -32 -80 VLEFT 8
+PINATTR SpiceOrder 7
+PIN 0 80 VLEFT 8
+PINATTR SpiceOrder 8

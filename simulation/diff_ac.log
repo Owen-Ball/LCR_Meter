@@ -1,0 +1,15 @@
+LTspice 24.1.10 for Windows
+Circuit: C:\Users\owend\Desktop\Projects\LCR\simulation\diff_ac.net
+Start Time: Mon Mar 16 22:21:52 2026
+solver = Normal
+Maximum thread count: 16
+tnom = 27
+temp = 27
+method = trap
+Direct Newton iteration for .op point succeeded.
+Total elapsed time: 0.052 seconds.
+
+Files loaded:
+C:\Users\owend\Desktop\Projects\LCR\simulation\diff_ac.net
+C:\Users\owend\Desktop\Projects\LCR\simulation\models\ths4561.txt
+
