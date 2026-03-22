@@ -1,0 +1,15 @@
+LTspice 26.0.1 for Windows
+Circuit: C:\Users\owend\OneDrive\Desktop\LCR_Meter\repo\LCR_Meter\simulation\Draft4.net
+Start Time: Fri Mar 20 21:48:59 2026
+solver = Normal
+Maximum thread count: 12
+tnom = 27
+temp = 27
+method = modified trap
+Direct Newton iteration succeeded in finding operating point.
+Total elapsed time: 20.253 seconds.
+
+Files loaded:
+C:\Users\owend\OneDrive\Desktop\LCR_Meter\repo\LCR_Meter\simulation\Draft4.net
+C:\Users\owend\OneDrive\Desktop\LCR_Meter\repo\LCR_Meter\simulation\models\tlv916x.txt
+

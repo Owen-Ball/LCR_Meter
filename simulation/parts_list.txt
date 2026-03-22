@@ -1,0 +1,13 @@
+THS4561 - diff amps for driving ADCs
+TLV354 - Signal buffer and TIA
+OPA365 - PGA
+
+
+To Do
+-resistor sizing for PGA
+-sim PGA
+-add second diff amp
+-stability at 100k?
+
+-protection circuit
+-power
