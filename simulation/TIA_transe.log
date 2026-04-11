@@ -1,0 +1,15 @@
+LTspice 24.1.10 for Windows
+Circuit: C:\Users\owend\Desktop\Projects\LCR\LCR_Meter\simulation\TIA_transe.net
+Start Time: Sun Mar 29 01:51:26 2026
+solver = Normal
+Maximum thread count: 16
+tnom = 27
+temp = 27
+method = trap
+Direct Newton iteration for .op point succeeded.
+Total elapsed time: 15.205 seconds.
+
+Files loaded:
+C:\Users\owend\Desktop\Projects\LCR\LCR_Meter\simulation\TIA_transe.net
+C:\Users\owend\Desktop\Projects\LCR\LCR_Meter\simulation\models\tlv916x.txt
+

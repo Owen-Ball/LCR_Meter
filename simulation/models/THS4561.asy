@@ -5,7 +5,11 @@ WINDOW 0 8 -72 Bottom 2
 WINDOW 3 8 72 Top 2
 SYMATTR Prefix X
 SYMATTR Value THS4561
+<<<<<<< Updated upstream
 SYMATTR ModelFile C:\Users\owend\OneDrive\Desktop\LCR_Meter\repo\LCR_Meter\simulation\models\ths4561.txt
+=======
+SYMATTR ModelFile C:\Users\owend\Desktop\Projects\LCR\LCR_Meter\simulation\models\ths4561.txt
+>>>>>>> Stashed changes
 PIN -64 -32 LEFT 8
 PINATTR PinName IN+
 PINATTR SpiceOrder 1
