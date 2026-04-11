@@ -2793,6 +2793,16 @@
 	)
 	(wire
 		(pts
+			(xy 40.64 106.68) (xy 50.8 106.68)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3a02bf3b-ead1-4f29-87af-09a77c3f83bf")
+	)
+	(wire
+		(pts
 			(xy 41.91 87.63) (xy 50.8 87.63)
 		)
 		(stroke
@@ -2890,16 +2900,6 @@
 			(type default)
 		)
 		(uuid "53254261-ebec-455f-8937-571efe58f0db")
-	)
-	(wire
-		(pts
-			(xy 40.64 106.68) (xy 50.8 106.68)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "53ed958b-1c6a-48d3-9360-eeeefe12d0d6")
 	)
 	(wire
 		(pts
@@ -5154,7 +5154,8 @@
 	)
 	(symbol
 		(lib_id "Connector:Screw_Terminal_01x02")
-		(at 35.56 106.68 180)
+		(at 35.56 104.14 0)
+		(mirror y)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -5162,10 +5163,9 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "749ce606-5699-496c-8091-f95f136f0681")
 		(property "Reference" "J6"
-			(at 35.56 97.79 0)
+			(at 35.56 113.03 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5175,7 +5175,7 @@
 			)
 		)
 		(property "Value" "Screw_Terminal_01x02"
-			(at 35.56 100.33 0)
+			(at 35.56 110.49 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5185,7 +5185,7 @@
 			)
 		)
 		(property "Footprint" "TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal"
-			(at 35.56 106.68 0)
+			(at 35.56 104.14 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5196,7 +5196,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 35.56 106.68 0)
+			(at 35.56 104.14 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5207,7 +5207,7 @@
 			)
 		)
 		(property "Description" "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 35.56 106.68 0)
+			(at 35.56 104.14 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5264,7 +5264,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
 			(at 62.23 87.63 0)
 			(hide yes)
 			(show_name no)
