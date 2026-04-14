@@ -4228,6 +4228,46 @@
 			(embedded_fonts no)
 		)
 	)
+	(text "HCUR"
+		(exclude_from_sim no)
+		(at 96.774 79.248 0)
+		(effects
+			(font
+				(size 2.54 2.54)
+			)
+		)
+		(uuid "2aaae5e9-418c-4d5e-92fd-40081864c584")
+	)
+	(text "LPOT"
+		(exclude_from_sim no)
+		(at 96.1692 177.038 0)
+		(effects
+			(font
+				(size 2.54 2.54)
+			)
+		)
+		(uuid "32d3e5c3-58f8-471b-9e54-93d8a11d1388")
+	)
+	(text "HPOT"
+		(exclude_from_sim no)
+		(at 96.4716 131.318 0)
+		(effects
+			(font
+				(size 2.54 2.54)
+			)
+		)
+		(uuid "87d8022a-2f45-423f-a9eb-ca3a606b1e4b")
+	)
+	(text "LCUR"
+		(exclude_from_sim no)
+		(at 96.4716 232.156 0)
+		(effects
+			(font
+				(size 2.54 2.54)
+			)
+		)
+		(uuid "dbfc0eb1-2cd3-4e07-a7af-72736cdedd27")
+	)
 	(junction
 		(at 421.64 284.48)
 		(diameter 0)
@@ -4515,6 +4555,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "8869fcae-7df4-43b5-a2c2-9de1baa157af")
+	)
+	(junction
+		(at 243.84 267.97)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "8a23831e-f893-4ff4-8e4a-8e1f7b7fbe90")
 	)
 	(junction
 		(at 306.07 279.4)
@@ -6748,6 +6794,16 @@
 	)
 	(wire
 		(pts
+			(xy 243.84 267.97) (xy 248.92 267.97)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8b58b426-052e-47c0-82ae-b48597ddd92b")
+	)
+	(wire
+		(pts
 			(xy 384.81 288.29) (xy 384.81 271.78)
 		)
 		(stroke
@@ -8408,7 +8464,7 @@
 	)
 	(wire
 		(pts
-			(xy 238.76 267.97) (xy 248.92 267.97)
+			(xy 238.76 267.97) (xy 243.84 267.97)
 		)
 		(stroke
 			(width 0)
@@ -13415,7 +13471,7 @@
 				)
 			)
 		)
-		(property "Footprint" "BNC_Amphenol_B6252HB-NPP3G-50_Horizontal"
+		(property "Footprint" "Connector_Coaxial:BNC_Amphenol_B6252HB-NPP3G-50_Horizontal"
 			(at 114.3 128.27 0)
 			(hide yes)
 			(show_name no)
@@ -13714,6 +13770,85 @@
 			(project "lcr"
 				(path "/37326a55-d49a-46f0-b0ef-9b9ba0d9ea8b"
 					(reference "R36")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 243.84 267.97 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "41f07bc0-b22e-47e9-a348-fc21fa5a7015")
+		(property "Reference" "TP16"
+			(at 242.316 262.636 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 246.38 265.9379 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Others:testpoint_0805"
+			(at 248.92 267.97 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 248.92 267.97 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 243.84 267.97 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "27ca4b47-38a8-45d7-81e5-61940aceb01f")
+		)
+		(instances
+			(project "lcr"
+				(path "/37326a55-d49a-46f0-b0ef-9b9ba0d9ea8b"
+					(reference "TP16")
 					(unit 1)
 				)
 			)
@@ -15107,7 +15242,7 @@
 				)
 			)
 		)
-		(property "Footprint" "BNC_Amphenol_B6252HB-NPP3G-50_Horizontal"
+		(property "Footprint" "Connector_Coaxial:BNC_Amphenol_B6252HB-NPP3G-50_Horizontal"
 			(at 114.3 173.99 0)
 			(hide yes)
 			(show_name no)
@@ -18325,7 +18460,7 @@
 				)
 			)
 		)
-		(property "Footprint" "BNC_Amphenol_B6252HB-NPP3G-50_Horizontal"
+		(property "Footprint" "Connector_Coaxial:BNC_Amphenol_B6252HB-NPP3G-50_Horizontal"
 			(at 114.3 76.2 0)
 			(hide yes)
 			(show_name no)
@@ -19227,7 +19362,7 @@
 				)
 			)
 		)
-		(property "Footprint" "BNC_Amphenol_B6252HB-NPP3G-50_Horizontal"
+		(property "Footprint" "Connector_Coaxial:BNC_Amphenol_B6252HB-NPP3G-50_Horizontal"
 			(at 115.57 228.6 0)
 			(hide yes)
 			(show_name no)
