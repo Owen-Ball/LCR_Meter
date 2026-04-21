@@ -4371,16 +4371,6 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "LED?"
-		(exclude_from_sim no)
-		(at 65.786 78.232 0)
-		(effects
-			(font
-				(size 5.08 5.08)
-			)
-		)
-		(uuid "015c1626-94b1-4274-bc0b-7aaa3a251ec7")
-	)
 	(text "Display"
 		(exclude_from_sim no)
 		(at 263.652 29.464 0)
@@ -8165,7 +8155,7 @@
 		)
 	)
 	(image
-		(at 165.1 203.2)
+		(at 118.11 190.5)
 		(uuid "c3cdbd11-4486-42bf-aa6d-f50a72cb1af2")
 		(data "iVBORw0KGgoAAAANSUhEUgAABX8AAALBCAYAAAAAtdJ9AAAABHNCSVQICAgIfAhkiAAAIABJREFU"
 			"eJzs3Xd4jecfx/H3OSeDWBlmFLF3qL1nae29qSJqd6KqVKnRVtufXVRtNWuvUnvvNkaIEVHUSCQh"
@@ -13922,7 +13912,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1k"
+		(property "Value" "100"
 			(at 196.85 140.97 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -15006,7 +14996,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "TestPoint"
+		(property "Value" "SDA"
 			(at 223.52 61.4679 0)
 			(hide yes)
 			(show_name no)
@@ -15255,7 +15245,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "TestPoint"
+		(property "Value" "SCL"
 			(at 220.98 61.4679 0)
 			(hide yes)
 			(show_name no)
@@ -16567,7 +16557,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1k"
+		(property "Value" "100"
 			(at 144.78 140.97 0)
 			(show_name no)
 			(do_not_autoplace no)

@@ -4993,7 +4993,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "TestPoint"
+		(property "Value" "SIG"
 			(at 255.27 84.3279 0)
 			(hide yes)
 			(show_name no)
@@ -5491,7 +5491,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "120p"
+		(property "Value" "100p"
 			(at 240.284 74.93 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6429,8 +6429,8 @@
 				(justify right)
 			)
 		)
-		(property "Value" "1u"
-			(at 215.646 89.408 0)
+		(property "Value" "220p"
+			(at 216.916 89.408 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6631,7 +6631,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "120p"
+		(property "Value" "100p"
 			(at 234.696 102.362 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6723,9 +6723,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "TestPoint"
-			(at 194.31 91.9479 0)
-			(hide yes)
+		(property "Value" "DAC-"
+			(at 189.992 86.868 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7224,9 +7223,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "TestPoint"
-			(at 194.31 81.7879 0)
-			(hide yes)
+		(property "Value" "DAC+"
+			(at 189.738 76.454 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
