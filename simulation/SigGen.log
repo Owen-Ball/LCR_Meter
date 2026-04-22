@@ -1,15 +1,15 @@
-LTspice 24.1.10 for Windows
-Circuit: C:\Users\owend\Desktop\Projects\LCR\LCR_Meter\simulation\SigGen.net
-Start Time: Thu Apr  2 22:03:44 2026
+LTspice 26.0.1 for Windows
+Circuit: C:\Users\owend\OneDrive\Desktop\LCR_Meter\repo\LCR_Meter\simulation\SigGen.net
+Start Time: Mon Apr 13 22:05:09 2026
 solver = Normal
-Maximum thread count: 16
+Maximum thread count: 12
 tnom = 27
 temp = 27
-method = trap
-Direct Newton iteration for .op point succeeded.
-Total elapsed time: 0.074 seconds.
+method = modified trap
+Direct Newton iteration succeeded in finding operating point.
+Total elapsed time: 0.142 seconds.
 
 Files loaded:
-C:\Users\owend\Desktop\Projects\LCR\LCR_Meter\simulation\SigGen.net
-C:\Users\owend\Desktop\Projects\LCR\LCR_Meter\simulation\models\tlv916x.txt
+C:\Users\owend\OneDrive\Desktop\LCR_Meter\repo\LCR_Meter\simulation\SigGen.net
+C:\Users\owend\OneDrive\Desktop\LCR_Meter\repo\LCR_Meter\simulation\models\tlv916x.txt
 
