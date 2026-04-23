@@ -32,14 +32,15 @@ void Buzzer::runBuzzer(long t){
   if (tempvar) {
     digitalWriteFast(this->pin, HIGH);
 
-    //disable the buzzer if the number of pulses set has been reached
-    if (this->pulse == this->total_pulses && this->total_pulses != 0) {
-      this->active = false;
-      digitalWriteFast(this->pin, LOW);
-    }
+    
     if (this->pulse != 255) this->pulse++;
 
   } else {
+
+    //disable the buzzer if the number of pulses set has been reached
+    if (this->pulse == this->total_pulses && this->total_pulses != 0) {
+      this->active = false;
+    }
     digitalWriteFast(this->pin, LOW);
   }
 }
