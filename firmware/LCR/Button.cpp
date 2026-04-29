@@ -4,7 +4,7 @@
 	MIT licensed.
 */
 
-#include "Button.h"
+#include "button.h"
 #include <Arduino.h>
 
 Button::Button(uint8_t pin, uint16_t debounce_ms, uint16_t avg_count)

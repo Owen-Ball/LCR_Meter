@@ -4,7 +4,7 @@
 #include <Audio.h>
 
 
-typedef struct ad_readings_struct {
+typedef struct codec_readings_struct {
   float v_rms;
   float i_rms;
   float v_mean;
@@ -19,7 +19,7 @@ typedef struct ad_readings_struct {
   float mean4;
   float a1;
   float a2;
-} ad_readings_t;
+} codec_readings_t;
 
 extern bool adDataAvailable;
 extern ad_readings_t adReadings;

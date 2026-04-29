@@ -10557,7 +10557,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "100n"
+		(property "Value" "10u"
 			(at 193.548 280.162 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -11170,7 +11170,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
+		(property "Value" "1p"
 			(at 297.434 146.05 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -11715,7 +11715,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
+		(property "Value" "1p"
 			(at 297.18 297.18 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -12302,7 +12302,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
+		(property "Value" "1p"
 			(at 297.18 157.48 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -13334,7 +13334,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(uuid "30c01a7f-6fd7-436e-b867-261440b487d1")
 		(property "Reference" "C17"
 			(at 195.072 233.68 90)
@@ -13347,7 +13347,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
+		(property "Value" "1p"
 			(at 200.66 233.68 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -13429,7 +13429,7 @@
 		(dnp no)
 		(uuid "31b3ec46-867a-4c70-b468-193dd9f1c66b")
 		(property "Reference" "R40"
-			(at 261.112 176.276 90)
+			(at 263.144 176.53 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -13439,8 +13439,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "R_US"
-			(at 265.938 176.276 90)
+		(property "Value" "0"
+			(at 267.97 176.53 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -14652,7 +14652,7 @@
 		(dnp no)
 		(uuid "4c7d5726-3629-4818-8779-5e3b01f414d0")
 		(property "Reference" "R39"
-			(at 261.112 130.556 90)
+			(at 262.89 130.81 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -14662,8 +14662,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "R_US"
-			(at 265.938 130.556 90)
+		(property "Value" "0"
+			(at 267.97 130.81 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -16143,7 +16143,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "R_US"
+		(property "Value" "10k"
 			(at 185.928 272.796 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -16678,7 +16678,7 @@
 		(dnp no)
 		(uuid "6f469ff2-f0da-45b3-97c0-a881934f509c")
 		(property "Reference" "R33"
-			(at 261.112 315.976 90)
+			(at 263.398 316.23 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -16688,8 +16688,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "R_US"
-			(at 265.938 315.976 90)
+		(property "Value" "0"
+			(at 268.224 316.23 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -17304,7 +17304,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
+		(property "Value" "1p"
 			(at 297.434 285.75 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -22113,7 +22113,7 @@
 		(dnp no)
 		(uuid "e0711a36-efcb-409b-bedb-bbf60a91a7ba")
 		(property "Reference" "R32"
-			(at 261.112 270.256 90)
+			(at 263.398 270.51 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -22123,8 +22123,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "R_US"
-			(at 265.938 270.256 90)
+		(property "Value" "0"
+			(at 268.224 270.51 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -22887,7 +22887,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
+		(property "Value" "1p"
 			(at 208.28 252.73 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -24012,7 +24012,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
+		(property "Value" "1p"
 			(at 200.66 243.84 90)
 			(show_name no)
 			(do_not_autoplace no)

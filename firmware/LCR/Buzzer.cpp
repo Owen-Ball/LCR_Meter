@@ -1,65 +1,62 @@
-#include "Buzzer.h"
+#include "buzzer.h"
 
 Buzzer::Buzzer(uint8_t pin){
   this->pin = pin;
-  this->active = false;
-  this->high_time = 0;
-  this->low_time = 0;
-  this->pulse = 0;
-  this->total_pulses = 0; 
+  active = false;
+  high_time = 0;
+  low_time = 0;
+  pulse = 0;
+  total_pulses = 0; 
 }
 
 
 void Buzzer::setBuzzer(uint8_t total_pulses, long high_time, long low_time){
-  if (this->active) return;
-  this->total_pulses = total_pulses;
-  this->active = true;
-  this->high_time = high_time*1000;
-  this->low_time = low_time*1000;
-  this->pulse = 0;
-  this->start_time = micros();
-  this->buzzer_state = false;
+  if (active) return;
+  total_pulses = total_pulses;
+  active = true;
+  high_time = high_time*1000;
+  low_time = low_time*1000;
+  pulse = 0;
+  start_time = micros();
+  buzzer_state = false;
 }
 
 
 void Buzzer::runBuzzer(long t){
-  bool tempvar = (t - this->start_time) % (this->low_time + this->high_time) < this->high_time;
+  bool tempvar = (t - start_time) % (low_time + high_time) < high_time;
 
   //only run the following code if the buzzer state has changed
-  if (tempvar == this->buzzer_state  || !this->active) return;
+  if (tempvar == buzzer_state  || !this->active) return;
 
-  this->buzzer_state = tempvar;
+  buzzer_state = tempvar;
   if (tempvar) {
-    digitalWriteFast(this->pin, HIGH);
-
-    
-    if (this->pulse != 255) this->pulse++;
+    digitalWriteFast(pin, HIGH);    
+    if (pulse != 255) pulse++;
 
   } else {
-
     //disable the buzzer if the number of pulses set has been reached
-    if (this->pulse == this->total_pulses && this->total_pulses != 0) {
-      this->active = false;
+    if (pulse == total_pulses && total_pulses != 0) {
+      active = false;
     }
-    digitalWriteFast(this->pin, LOW);
+    digitalWriteFast(pin, LOW);
   }
 }
 
 
 void Buzzer::stopBuzzer(){
-  digitalWriteFast(this->pin, LOW);
-  this->active = false;
-  this->buzzer_state = false;
+  digitalWriteFast(pin, LOW);
+  active = false;
+  buzzer_state = false;
 }
 
 
 void Buzzer::runBuzzerBlocking(uint8_t total_pulses, long high_time, long low_time){
   //force number of pulses to at least 1, since otherwise this would never return
-  this->setBuzzer(max(1,total_pulses), high_time, low_time);
+  setBuzzer(max(1,total_pulses), high_time, low_time);
 
   //Run buzzer until state is off
-  while (this->active){
+  while (active){
     long t = micros();
-    this->runBuzzer(t);
+    runBuzzer(t);
   }
 }

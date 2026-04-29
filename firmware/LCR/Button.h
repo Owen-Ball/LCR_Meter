@@ -5,8 +5,8 @@
 // Copyright (C) 2016 Michael D K Adams.
 // Released under the MIT license.
 
-#ifndef Button_h
-#define Button_h
+#ifndef _BUTTON_
+#define _BUTTON_
 #include "Arduino.h"
 
 class Button
@@ -31,5 +31,6 @@ class Button
 		bool     _has_changed;
 		uint16_t _avg_count;
 };
+
 
 #endif

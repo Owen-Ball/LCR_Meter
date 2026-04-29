@@ -4187,7 +4187,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "100k"
+		(property "Value" "10k"
 			(at 87.63 101.6 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4695,7 +4695,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
+		(property "Value" "1u"
 			(at 162.56 125.7299 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5434,7 +5434,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
+		(property "Value" "1u"
 			(at 132.08 82.5499 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5769,7 +5769,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
+		(property "Value" "1u"
 			(at 162.56 82.5499 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7087,7 +7087,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
+		(property "Value" "1u"
 			(at 132.08 125.7299 0)
 			(show_name no)
 			(do_not_autoplace no)
