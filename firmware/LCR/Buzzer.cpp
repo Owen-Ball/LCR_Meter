@@ -12,21 +12,22 @@ Buzzer::Buzzer(uint8_t pin){
 
 void Buzzer::setBuzzer(uint8_t total_pulses, long high_time, long low_time){
   if (active) return;
-  total_pulses = total_pulses;
+  this->total_pulses = total_pulses;
   active = true;
-  high_time = high_time*1000;
-  low_time = low_time*1000;
+  this->high_time = high_time*1000;
+  this->low_time = low_time*1000;
   pulse = 0;
   start_time = micros();
   buzzer_state = false;
 }
 
 
-void Buzzer::runBuzzer(long t){
+void Buzzer::runBuzzer(long t) {
+  
   bool tempvar = (t - start_time) % (low_time + high_time) < high_time;
 
   //only run the following code if the buzzer state has changed
-  if (tempvar == buzzer_state  || !this->active) return;
+  if (tempvar == buzzer_state  || !active) return;
 
   buzzer_state = tempvar;
   if (tempvar) {

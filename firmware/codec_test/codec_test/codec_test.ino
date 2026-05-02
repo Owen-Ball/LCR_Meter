@@ -28,7 +28,7 @@ void setup() {
   delay(500);
   AudioMemory(20);
   CS4272.enable();
-  sine1.frequency(50000);
+  sine1.frequency(30000);
   sine1.amplitude(1);
   Serial.begin(115200);
 
@@ -48,7 +48,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   //sine1.frequency(50000*(1+.8*cos(.005*millis())));
-  sine1.amplitude(.5*(1+.5*cos(.005*millis())));
+  sine1.amplitude(.5*(1+.5*cos(.002*millis())));
   if (rms1.available()) {
     rmsAccum += rms1.read();
     count++;

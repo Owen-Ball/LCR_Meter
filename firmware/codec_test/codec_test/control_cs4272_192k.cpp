@@ -59,7 +59,7 @@
 #define CS4272_CHIP_ID_REV(x)			(uint8_t)(((x) & 0x0F) << 0)
 
 
-#define CS4272_RESET_PIN 2
+#define CS4272_RESET_PIN 22
 
 bool AudioControlCS4272_192k::enable(void)
 {
