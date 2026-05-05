@@ -9,7 +9,7 @@
 
 #define CAL_FILE "cal.bin"
 
-//Number of frequencies calibrated at
+//Max number of calibration points that can be read in from a file
 #define MAX_CAL_POINTS    20
 
 static const int CHIP_SELECT = BUILTIN_SDCARD;
@@ -21,13 +21,10 @@ static const uint32_t CAL_MAGIC = 0xFCA1FCA1;
 //if this does not match
 static const uint8_t CAL_VERSION =  1;
 
-static const uint8_t CORR_FREQ_COUNT = 38;
+static const uint8_t CAL_FREQ_COUNT = 4;
 
-static const float corr_frequencies[CORR_FREQ_COUNT] = {
-  10, 20, 30, 40, 50, 60, 80,
-  100, 120, 150, 200, 250, 300, 400, 500, 600, 800,
-  1000, 1200, 1500, 2000, 2500, 3000, 4000, 5000, 6000, 8000,
-  10000, 12000, 15000, 20000, 25000, 30000, 40000, 50000, 60000, 80000, 90000
+static const float cal_frequencies[CAL_FREQ_COUNT] = {
+  100, 1000, 10000, 75000
 };
 
 struct CalibrationPoint {
@@ -35,14 +32,18 @@ struct CalibrationPoint {
     
     Complex v_pga_gain[PGA_GAIN_NUM];
     Complex i_pga_gain[PGA_GAIN_NUM];
-    
-    Complex tia_gain;
+    Complex tia_gain[LCR_RANGE_NUM];
 };
 
-extern CalibrationPoint cal_array[MAX_CAL_POINTS];
-extern uint8_t cal_points;
+//Upon setting a frequency, this will be loaded with the calibration data corresponding to that frequency
+extern CalibrationPoint calibration_data;
 
-bool saveCalibration(const CalibrationPoint* cal_array, uint8_t count);
+bool loadCalibrationPoint();
+bool saveCalibration();
 uint8_t loadCalibration(CalibrationPoint* cal_array);
+
+void calibrateIPGA();
+
+void calibrateAll();
 
 #endif

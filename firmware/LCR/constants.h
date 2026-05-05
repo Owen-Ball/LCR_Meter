@@ -1,0 +1,14 @@
+#ifndef _CONSTANTS_
+#define _CONSTANTS_
+
+#define LCR_MIN_FREQUENCY 100
+#define MAX_DAC_AMPLITUDE 1.0
+
+
+#define CODEC_CLIPPING_LEVEL 0.8
+#define CODEC_SETTING_CHANGE_DELAY 200
+
+#define I_PGA_GBWP 40e6
+#define V_PGA_GBWP 40e6
+
+#endif // _CONSTANTS_

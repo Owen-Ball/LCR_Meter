@@ -29,6 +29,6 @@ float AudioAnalyzeMean::read(void)
 	uint32_t num = count;
 	count = 0;
 	__enable_irq();
-	float mean = sum / (num * AUDIO_BLOCK_SAMPLES);
+	float mean = (float)sum / (float)(num * AUDIO_BLOCK_SAMPLES);
 	return mean / 32767.0;
 }
