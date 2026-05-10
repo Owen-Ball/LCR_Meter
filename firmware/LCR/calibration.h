@@ -33,16 +33,21 @@ struct CalibrationPoint {
     Complex v_pga_gain[PGA_GAIN_NUM];
     Complex i_pga_gain[PGA_GAIN_NUM];
     Complex tia_gain[LCR_RANGE_NUM];
+    Complex probe_Zs;
+    Complex probe_Zp;
 };
 
 //Upon setting a frequency, this will be loaded with the calibration data corresponding to that frequency
 extern CalibrationPoint calibration_data;
 
-bool loadCalibrationPoint();
+void printCalibrationPoint(CalibrationPoint& cal_data);
+void loadCalibrationPoint(float freq);
 bool saveCalibration();
-uint8_t loadCalibration(CalibrationPoint* cal_array);
+uint8_t loadCalibration();
+
 
 void calibrateIPGA();
+void calibrateVPGA();
 
 void calibrateAll();
 

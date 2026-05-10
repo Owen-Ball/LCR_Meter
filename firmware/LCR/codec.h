@@ -2,6 +2,7 @@
 #define _CODEC_
 
 #include <Audio.h>
+#include <CComplex.h>
 
 
 typedef struct codec_readings_struct {
@@ -21,6 +22,8 @@ typedef struct codec_readings_struct {
   float v_Q_mean;
   float i_angle;
   float v_angle;
+  Complex gain;
+  
 } codec_readings_t;
 
 extern bool codecDataAvailable;

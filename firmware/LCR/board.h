@@ -3,41 +3,8 @@
 
 #include <Arduino.h>
 #include <MCP9800.h>
+#include "constants.h"
 #include "buzzer.h"
-
-#define PGA_V_0_PIN       35
-#define PGA_V_1_PIN       36
-#define PGA_I_0_PIN       37
-#define PGA_I_1_PIN       38
-#define RANGE_SEL_0_PIN   34
-#define RANGE_SEL_1_PIN   33
-
-#define BUZZER_PIN        14
-#define FAN_PIN           15
-
-#define ENTER_PIN
-#define BACK_PIN
-#define UP_PIN
-#define DOWN_PIN
-
-#define BUTTON1_PIN
-#define BUTTON2_PIN
-#define BUTTON3_PIN
-#define BUTTON4_PIN
-
-#define LCR_RANGE_100     0
-#define LCR_RANGE_1K      1
-#define LCR_RANGE_10K     2
-#define LCR_RANGE_100K    3
-#define LCR_RANGE_NUM     4
-
-#define PGA_GAIN_1        0
-#define PGA_GAIN_5        1
-#define PGA_GAIN_25       2
-#define PGA_GAIN_100      3
-#define PGA_GAIN_NUM      4
-
-
 
 class Board {
   public:

@@ -97,7 +97,7 @@ void codecSetOutputFrequency(float frequency) {
   squarewave_90.frequency(frequency);
   codecResetPhase();
   _frequency = frequency;
-  codecSetBlocksToAnalyze(100);
+  codecSetBlocksToAnalyze(10);
   codecResetReadings();
 }
 
@@ -121,7 +121,6 @@ float codecADCFreqResponse(float f) {
   return pow(10, gain/20);
 }
 
-
 // Determine if the codec input is clipping given peak signal
 bool codecIsClipping(float peaklevel) {
   return peaklevel > CODEC_CLIPPING_LEVEL;
@@ -132,6 +131,14 @@ void codecResetReadings() {
   codecDiscardResults = true;
   codecDataAvailable = false;
 }
+
+float wrapAngle(float angle) {
+    angle = fmod(angle, 2 * M_PI);
+    if (angle > M_PI)  angle -= 2 * M_PI;
+    if (angle < -M_PI) angle += 2 * M_PI;
+    return angle;
+}
+
 
 // Process codec audio blocks and store data to struct
 void codecAverageReadings() {
@@ -180,23 +187,11 @@ void codecAverageReadings() {
   codecReadings.v_I_mean = meanV_I.read();
   codecReadings.v_Q_mean = meanV_Q.read();
   codecReadings.v_angle = atan2(codecReadings.v_Q_mean, codecReadings.v_I_mean) - calibration_data.v_pga_gain[board.getPGAGainV()].phase();
-  codecReadings.i_angle = atan2(codecReadings.i_Q_mean, codecReadings.i_I_mean) - calibration_data.i_pga_gain[board.getPGAGainI()].phase();
-  codecReadings.phase = codecReadings.v_angle - codecReadings.i_angle;
-  // apply phase correction
-  //codecReadings.phase -= (calPhaseInputA[board.getPGAGainV()] + calPhaseInputB[board.getPGAGainI()]) * _frequency;
+  codecReadings.i_angle = M_PI + atan2(codecReadings.i_Q_mean, codecReadings.i_I_mean) - calibration_data.i_pga_gain[board.getPGAGainI()].phase();
+  codecReadings.phase = wrapAngle(codecReadings.v_angle - codecReadings.i_angle);
+  codecReadings.gain.polar(codecReadings.v_rms / codecReadings.i_rms, codecReadings.phase);
 
   codecDataAvailable = true;
-  //Serial.println(String(1000*codecReadings.i_rms) + " " + String(1000*codecReadings.i_I_mean));
-  //Serial.print(1000.0*sqrt(pow(codecReadings.v_I_mean,2) + pow(codecReadings.v_Q_mean,2))/sqrt(pow(codecReadings.i_I_mean,2) + pow(codecReadings.i_Q_mean,2)));
-  //Serial.print(" ");
-  //Serial.print(String(codecADCFreqResponse(75000), 4));
-  //Serial.print(" ");
-  
-  //Serial.print(codecReadings.v_rms / codecReadings.i_rms);
-  //Serial.print(" ");
-  //Serial.println(String(codecReadings.phase, 4));
-  
-  //Serial.println((codecBlocksToAnalyze * AUDIO_BLOCK_SAMPLES) / (AUDIO_SAMPLE_RATE_EXACT / _frequency));
   codecResetPhase();
 }
 

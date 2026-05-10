@@ -2,12 +2,15 @@
 #include "board.h"
 #include "codec.h"
 #include "calibration.h"
+#include "autorange.h"
+#include "lcr_func.h"
 
 #include <Audio.h>
 #include <Wire.h>
 #include <SPI.h>
 #include <SD.h>
 #include <SerialFlash.h>
+
 
 
 void setup() {
@@ -28,25 +31,52 @@ void setup() {
   //board.increaseIGain();
   //board.increaseIGain();
   //board.increaseIGain();
-  board.setLCRRange(LCR_RANGE_100);
+  board.setLCRRange(LCR_RANGE_10K);
 
-  loadCalibrationPoint();
 
   Serial.begin(115200);
 
   delay(500);
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
-  calibrateAll();
+  //calibrateAll();
+  //saveCalibration();
+  loadCalibration();
+  loadCalibrationPoint(1000);
+  printCalibrationPoint(calibration_data);
+  delay(2000);
+  board.setLCRRange(LCR_RANGE_100);
+  codecSetOutputFrequency(1000);
+  codecSetOutputAmplitude(.8);
   
 }
 
 void loop() {
 
-  //codecAverageReadings();
-  codecBlockingMeasure();
+  //calibrateIPGA();
+  //blockingAutorangeMeasure();
+  codecAverageReadings();
+  if (codecDataAvailable) {
+    Serial.print(codecReadings.i_rms);
+    Serial.print(" ");
+    Serial.print(codecReadings.v_rms);
+    Serial.print(" ");
+    Serial.print(board.getPGAGainI());
+    Serial.print(" ");
+    Serial.print(board.getPGAGainV());
+    Serial.print(" ");
+    Serial.print(codecReadings.v_rms / codecReadings.i_rms * 100000.0);
+    Serial.print(" ");
+    Serial.print(codecReadings.phase * 57.3);
+    Serial.print(" ");
+    Serial.println(calculateZ());
+    gainAutorange(false);
+    codecResetReadings();
+  }
+
+  //codecBlockingMeasure();
   //Serial.println(board.getTemperature());
-  Serial.println(String(100*codecReadings.i_rms, 5));
+  //Serial.println(String(100*codecReadings.i_rms, 5));
 
   //calibrateIPGA_Full(calibration_data);
   
