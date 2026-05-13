@@ -43,28 +43,52 @@ void Board::setPGAGainI(uint8_t gain) {
   digitalWrite(PGA_I_1_PIN, (board_gain_i >> 1) & 0x01);
 }
 
-void Board::increaseVGain() {
-  if (board_gain_v < 3) {
+bool Board::increaseVGain() {
+  if (board_gain_v < PGA_GAIN_NUM-1) {
     setPGAGainV(board_gain_v + 1);
+    return true;
   }
+  return false;
 }
 
-void Board::decreaseVGain() {
+bool Board::decreaseVGain() {
   if (board_gain_v > 0) {
     setPGAGainV(board_gain_v - 1);
+    return true;
   }
+  return false;
 }
 
-void Board::increaseIGain() {
-  if (board_gain_i < 3) {
+bool Board::increaseIGain() {
+  if (board_gain_i < PGA_GAIN_NUM-1) {
     setPGAGainI(board_gain_i + 1);
+    return true;
   }
+  return false;
 }
 
-void Board::decreaseIGain() {
+bool Board::decreaseIGain() {
   if (board_gain_i > 0) {
     setPGAGainI(board_gain_i - 1);
+    return true;
   }
+  return false;
+}
+
+bool Board::increaseLCRRange() {
+  if (board_range < LCR_RANGE_NUM-1) {
+    setLCRRange(board_range + 1);
+    return true;
+  }
+  return false;
+}
+
+bool Board::decreaseLCRRange() {
+  if (board_range > 0) {
+    setLCRRange(board_range - 1);
+    return true;
+  }
+  return false;
 }
 
 float Board::getTemperature() {

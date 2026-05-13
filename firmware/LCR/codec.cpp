@@ -59,6 +59,7 @@ bool codecDataAvailable = false;
 float _frequency;
 uint32_t codecBlocksToAnalyze = 150;
 bool codecDiscardResults = false;
+uint8_t codecReadingsUntilValid = 0;
 
 
 // Set the phase of the square wave signals and sine signal
@@ -132,6 +133,10 @@ void codecResetReadings() {
   codecDataAvailable = false;
 }
 
+void codecSetReadingsUntilValid(uint8_t num) {
+  codecReadingsUntilValid = num;
+}
+
 float wrapAngle(float angle) {
     angle = fmod(angle, 2 * M_PI);
     if (angle > M_PI)  angle -= 2 * M_PI;
@@ -143,14 +148,16 @@ float wrapAngle(float angle) {
 // Process codec audio blocks and store data to struct
 void codecAverageReadings() {
   uint32_t analyzedBlocks = meanI_I.available();
-  if (analyzedBlocks > codecBlocksToAnalyze)
-  {
-    // Collected more data than expected. Discard all.
+  if (analyzedBlocks > codecBlocksToAnalyze) {
     codecDiscardResults = true;
   }
 
-  if (codecDiscardResults)
-  {
+  if (analyzedBlocks == codecBlocksToAnalyze && codecReadingsUntilValid > 0) {
+    codecReadingsUntilValid -= 1;
+    codecDiscardResults = true;
+  }
+
+  if (codecDiscardResults) {
     // All collected data needs to be discarded.
     peakV.read();
     peakI.read();
@@ -167,12 +174,10 @@ void codecAverageReadings() {
     return;
   }
 
-  if (analyzedBlocks < codecBlocksToAnalyze)
-  {
-    // Not enough data available yet. Collect some more to average readings.
+  if (analyzedBlocks < codecBlocksToAnalyze) {
     return;
   }
-
+  
   // Enough analyzed data is avaliable. Get readings...
   codecReadings.v_peak = peakV.read() / codecADCFreqResponse(_frequency);
   codecReadings.i_peak = peakI.read() / codecADCFreqResponse(_frequency);

@@ -66,6 +66,7 @@ CalibrationPoint averageCalibrationPoints(CalibrationPoint& cal_low, Calibration
 
 void loadCalibrationPoint(float freq) {
   uint8_t lower_i;
+  
   for (uint8_t i=0; i<num_cal_points; i++) {
     float point_freq = cal_array[i].frequency;
 
@@ -80,6 +81,10 @@ void loadCalibrationPoint(float freq) {
     }   
   }
 
+  if (lower_i == 0 && freq < cal_array[0].frequency) {
+    calibration_data = cal_array[0];
+    return;
+  }
 
   if (lower_i == num_cal_points - 1) {
     calibration_data = cal_array[num_cal_points - 1];
@@ -506,4 +511,21 @@ void calibrateAll() {
 
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
+}
+
+
+void calibrateProbeQuick() {
+  Serial.println("Short probes");
+  while (!Serial.available()) {}
+  while (Serial.available()) {Serial.read();}
+  calibrateShort_Point(calibration_data);
+  
+  board.buzzer.runBuzzerBlocking(4, 10, 50);
+
+  Serial.println("Open probes");
+  while (!Serial.available()) {}
+  while (Serial.available()) {Serial.read();}
+  calibrateOpen_Point(calibration_data);
+
+  board.buzzer.runBuzzerBlocking(4, 10, 50);
 }

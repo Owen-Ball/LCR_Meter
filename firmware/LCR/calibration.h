@@ -50,5 +50,6 @@ void calibrateIPGA();
 void calibrateVPGA();
 
 void calibrateAll();
+void calibrateProbeQuick();
 
 #endif

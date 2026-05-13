@@ -2,6 +2,7 @@
 #define _AUTORANGE_
 
 bool gainAutorange(bool force_range);
+bool rangeAutorange(bool force_range);
 void blockingAutorangeMeasure();
 
 

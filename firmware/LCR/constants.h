@@ -10,6 +10,7 @@
 #define RANGE_SEL_0_PIN   34
 #define RANGE_SEL_1_PIN   33
 
+
 #define BUZZER_PIN        14
 #define FAN_PIN           15
 
@@ -51,14 +52,17 @@
 
 //Time between autoranges. Removes chance of system not settling at new setting instantly
 //and switching to another range
-#define GAIN_AUTORANGE_DELAY        200
-#define RANGE_AUTORANGE_DELAY       200
+#define GAIN_AUTORANGE_DELAY        150
+#define RANGE_AUTORANGE_DELAY       150
 
 
 //Above this input peak value the board will attempt to drop the PGA gain if possible
 #define AUTORANGE_LEVEL_HIGH        0.8
 //Below this input peak value the board will attempt to raise the PGA gain. Must be >5x lower than high level
 #define AUTORANGE_LEVEL_LOW         0.125
+
+#define AUTORANGE_Z_LOW             0.177   //10^-0.75
+#define AUTORANGE_Z_HIGH            5.62    //10^ 0.75
 
 //Unused currently, replaced by more detailed calibration procedure
 #define I_PGA_GBWP    40e6
@@ -68,9 +72,17 @@
 //Didn't use 100 and 100k for the lower and upper ranges to avoid impact of probe parasitics
 const float RANGE_CAL_RESISTOR[LCR_RANGE_NUM] = {1000, 1000, 10000, 10000};
 
+const float RANGE_RESISTOR[LCR_RANGE_NUM] = {100, 1000, 10000, 100000};
+
+
 #define V_CAL_RESISTOR    1000.0
 #define I_CAL_RESISTOR    10000.0
 
+
+#define R_OVERFLOW        20e6
+#define C_OVERFLOW        20e-3
+
+#define L_OVERFLOW        10
 
 
 #endif // _CONSTANTS_

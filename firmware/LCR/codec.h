@@ -35,6 +35,7 @@ void codecSetOutputFrequency(float frequency);
 void codecSetOutputAmplitude(float amplitude);
 bool codecIsClipping(float peaklevel);
 void codecResetReadings();
+void codecSetReadingsUntilValid(uint8_t num);
 void codecAverageReadings();
 float codecGetFrequency();
 void codecSetBlocksToAnalyze(uint16_t avg = 10);

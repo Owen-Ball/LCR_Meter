@@ -24,7 +24,7 @@ void setup() {
   codecInit();
   codecSetOutputFrequency(100);
   codecSetOutputAmplitude(.8);
-  
+
   //board.increaseVGain();
   //board.increaseVGain();
   //board.increaseVGain();
@@ -44,8 +44,13 @@ void setup() {
   loadCalibration();
   loadCalibrationPoint(1000);
   printCalibrationPoint(calibration_data);
+  //calibrateProbeQuick();
+
+  board.setPGAGainV(PGA_GAIN_1);
+  board.setPGAGainI(PGA_GAIN_1);
+  
   delay(2000);
-  board.setLCRRange(LCR_RANGE_100);
+  board.setLCRRange(LCR_RANGE_10K);
   codecSetOutputFrequency(1000);
   codecSetOutputAmplitude(.8);
   
@@ -57,20 +62,26 @@ void loop() {
   //blockingAutorangeMeasure();
   codecAverageReadings();
   if (codecDataAvailable) {
-    Serial.print(codecReadings.i_rms);
-    Serial.print(" ");
-    Serial.print(codecReadings.v_rms);
-    Serial.print(" ");
+    //Serial.print(codecReadings.i_rms);
+    //Serial.print(" ");
+    //Serial.print(codecReadings.v_rms);
+    //Serial.print(" ");
     Serial.print(board.getPGAGainI());
     Serial.print(" ");
     Serial.print(board.getPGAGainV());
     Serial.print(" ");
-    Serial.print(codecReadings.v_rms / codecReadings.i_rms * 100000.0);
+    //Serial.print(codecReadings.v_rms / codecReadings.i_rms * 100000.0);
+    //Serial.print(" ");
+    //Serial.print(codecReadings.phase * 57.3);
+    Serial.print(board.getLCRRange());
+    //Serial.print(RANGE_RESISTOR[board.getLCRRange()]);
     Serial.print(" ");
-    Serial.print(codecReadings.phase * 57.3);
-    Serial.print(" ");
-    Serial.println(calculateZ());
-    gainAutorange(false);
+    Serial.print(calculateZ());
+    Serial.println(" ");
+    //Serial.println(getCs(calculateZ(), 75000.0) * 1e12);
+    bool gain_ranged = gainAutorange(false);
+    if (!gain_ranged) rangeAutorange(false);
+    rangeAutorange(false);
     codecResetReadings();
   }
 

@@ -17,10 +17,12 @@ class Board {
     uint8_t getPGAGainV() {return board_gain_v; }
     uint8_t getPGAGainI() {return board_gain_i; }
 
-    void    increaseVGain();
-    void    decreaseVGain();
-    void    increaseIGain();
-    void    decreaseIGain();
+    bool    increaseVGain();
+    bool    decreaseVGain();
+    bool    increaseIGain();
+    bool    decreaseIGain();
+    bool    increaseLCRRange();
+    bool    decreaseLCRRange();
 
     float   getTemperature();
 
