@@ -7,7 +7,6 @@ Complex calculateZ() {
   return calibration_data.probe_Zp*Z_meas / (calibration_data.probe_Zp - Z_meas) - calibration_data.probe_Zs;
 }
 
-
 float getQ(Complex Z, float freq) {
   return abs(Z.imag() / Z.real());
 }

@@ -70,7 +70,7 @@ bool rangeAutorange(bool force_range) {
   if (range_changed) {
     prev_range_time = millis();
     codecResetReadings();
-    codecSetReadingsUntilValid(1);
+    codecSetReadingsUntilValid(0);
   }
   
   return range_changed;
