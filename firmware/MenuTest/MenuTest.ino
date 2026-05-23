@@ -1,4 +1,6 @@
 #include "menubar.h"
+#include "LCR_Fonts/FreeMono9pt7b.h"
+#include "LCR_Fonts/FreeMonoBold12pt7b.h"
 
 MenuBar menu;
 
@@ -24,7 +26,9 @@ void testFunc(){
   Serial.println("executed");
 }
 
-
+void freqFunc(){
+  Serial.println(freqVal);
+}
 
 
 void setup() {
@@ -37,29 +41,31 @@ void setup() {
   tft.setFrameBuffer(framebuffer);
   tft.useFrameBuffer(true);
   tft.updateChangedAreasOnly(true);
+  //tft.setFont(&FreeMono9pt7b);
   
-  menu.init(320, 240, 40);
+  menu.init(320, 240, 40, 35);
 
-  menu.addCategory("Freq");
-  menu.addItem({"100Hz", &freqVal, 100.0f, nullptr, false});
-  menu.addItem({"1kHz", &freqVal, 1000.0f, nullptr, false});
-  menu.addItem({"10kHz", &freqVal, 10000.0f, nullptr, false});
+  menu.addCategory("Freq", &freqFunc);
+  menu.addItem("100Hz", 100.0f, &freqVal);
+  menu.addItem("1kHz", 1000.0f, &freqVal);
+  menu.addItem("10kHz", 10000.0f, &freqVal);
+  menu.addItem("75kHz", 75000.0f, &freqVal);
+  menu.addItem("Custom", 100000.0f, &freqVal);
+  menu.executeItem(menu.getCategoriesCount()-1, 1);
   
   menu.addCategory("Ampl");
-  menu.addItem({"0.1", &ampVal, 0.1f, nullptr, false});
-  menu.addItem({"0.5", &ampVal, 0.5f, nullptr, false});
-  menu.addItem({"1.0", &ampVal, 1.0f, nullptr, false});
+  menu.addItem("0.1V", 0.1f, &ampVal);
+  menu.addItem("0.5V", 0.5f, &ampVal);
+  menu.addItem("1.0V", 1.0f, &ampVal);
+  menu.executeItem(menu.getCategoriesCount()-1, 2);
   
   menu.addCategory("Mode");
-  menu.addItem({"0.1", &ampVal, 0.1f, nullptr, false});
-  menu.addItem({"0.5", &ampVal, 0.5f, nullptr, false});
-  menu.addItem({"1.0", &ampVal, 1.0f, nullptr, false});
+  menu.addItem("0.1", 0.1f, &ampVal);
+  menu.addItem("0.5", 0.5f, &ampVal);
+  menu.addItem("1.0", &testFunc);
+  menu.executeItem(menu.getCategoriesCount()-1, 2);
   
-  menu.addCategory("Cal");
-  menu.addItem({"0.1", &ampVal, 0.1f, nullptr, false});
-  menu.addItem({"0.5", &ampVal, 0.5f, nullptr, false});
-  menu.addItem({"1.0", &ampVal, 1.0f, nullptr, false});
-  menu.addItem({"2.0", nullptr, 0.0f, &testFunc, true});
+  menu.addCategory("Cal", &testFunc, false);
   
   menu.toggleCategory(2);
 
@@ -112,11 +118,13 @@ void loop() {
   */
   tft.fillScreen(ILI9341_BLACK);
   tft.setTextColor(ILI9341_RED);   // set color
+    //tft.setFont(&FreeMonoBold12pt7b);
     tft.setTextSize(2);  
     tft.setCursor(100, 100);
     tft.print(String(.99*sin(millis()/1000.0), 4));
     tft.setTextColor(ILI9341_WHITE);   // set color
-    tft.setTextSize(1);
+    //tft.setFont(&FreeMono9pt7b);
+    tft.setTextSize(2);
   boolean istouched = ts.touched();
   if (istouched && !prev_touch) {
     TS_Point p = ts.getPoint();
@@ -128,5 +136,5 @@ void loop() {
   menu.drawMenu(tft);
     tft.updateScreen();
   delay(10);
-  Serial.println(freqVal);
+  //Serial.println(freqVal);
 }
