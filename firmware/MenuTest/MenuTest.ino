@@ -22,12 +22,16 @@ ILI9341_t3n tft = ILI9341_t3n(TFT_CS, TFT_DC, TFT_RST);
 DMAMEM uint16_t framebuffer[320 * 240];
 
 
-void testFunc(){
+void testFunc(float f){
   Serial.println("executed");
 }
 
-void freqFunc(){
-  Serial.println(freqVal);
+void testFunc2(){
+  Serial.println("executed");
+}
+
+void freqFunc(float f){
+  Serial.println(f);
 }
 
 
@@ -45,27 +49,27 @@ void setup() {
   
   menu.init(320, 240, 40, 35);
 
-  menu.addCategory("Freq", &freqFunc);
-  menu.addItem("100Hz", 100.0f, &freqVal);
-  menu.addItem("1kHz", 1000.0f, &freqVal);
-  menu.addItem("10kHz", 10000.0f, &freqVal);
-  menu.addItem("75kHz", 75000.0f, &freqVal);
-  menu.addItem("Custom", 100000.0f, &freqVal);
+  menu.addCategory("Freq");
+  menu.addItem("100Hz", &freqFunc, 100.0f);
+  menu.addItem("1kHz", &freqFunc, 1000.0f);
+  menu.addItem("10kHz", &freqFunc, 10000.0f);
+  menu.addItem("75kHz", &freqFunc, 75000.0f);
+  menu.addItem("Custom", &freqFunc);
   menu.executeItem(menu.getCategoriesCount()-1, 1);
   
   menu.addCategory("Ampl");
-  menu.addItem("0.1V", 0.1f, &ampVal);
-  menu.addItem("0.5V", 0.5f, &ampVal);
-  menu.addItem("1.0V", 1.0f, &ampVal);
+  menu.addItem("0.1V", &testFunc, 0.1f);
+  menu.addItem("0.5V", &testFunc, 0.5f);
+  menu.addItem("1.0V", &testFunc, 1.0f);
   menu.executeItem(menu.getCategoriesCount()-1, 2);
   
   menu.addCategory("Mode");
-  menu.addItem("0.1", 0.1f, &ampVal);
-  menu.addItem("0.5", 0.5f, &ampVal);
-  menu.addItem("1.0", &testFunc);
+  menu.addItem("0.1V", &testFunc, 0.1f);
+  menu.addItem("0.5V", &testFunc, 0.5f);
+  menu.addItem("1.0V", &testFunc, 1.0f);
   menu.executeItem(menu.getCategoriesCount()-1, 2);
   
-  menu.addCategory("Cal", &testFunc, false);
+  menu.addCategory("Cal", &testFunc2, false);
   
   menu.toggleCategory(2);
 
@@ -116,25 +120,27 @@ void loop() {
     delay(10);
   }
   */
+ 
   tft.fillScreen(ILI9341_BLACK);
   tft.setTextColor(ILI9341_RED);   // set color
-    //tft.setFont(&FreeMonoBold12pt7b);
+    tft.setFont(&FreeMonoBold12pt7b);
     tft.setTextSize(2);  
     tft.setCursor(100, 100);
     tft.print(String(.99*sin(millis()/1000.0), 4));
-    tft.setTextColor(ILI9341_WHITE);   // set color
-    //tft.setFont(&FreeMono9pt7b);
-    tft.setTextSize(2);
+  
   boolean istouched = ts.touched();
   if (istouched && !prev_touch) {
+    Serial.println("touched");
     TS_Point p = ts.getPoint();
-    uint16_t x = map(p.x, 370, 3850, 0, 320);
-    uint16_t y = map(p.y, 300, 3800, 0, 240);
+    uint16_t x = map(p.x, 400, 3900, 0, 320);
+    uint16_t y = map(p.y, 250, 3750, 0, 240);
     menu.processTouch(x, y);
   }
+  
   prev_touch = istouched;
   menu.drawMenu(tft);
     tft.updateScreen();
-  delay(10);
+
+  delay(1);
   //Serial.println(freqVal);
 }

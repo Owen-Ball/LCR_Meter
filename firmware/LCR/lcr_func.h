@@ -3,6 +3,8 @@
 #include <Arduino.h>
 #include <CComplex.h>
 
+void setLCRFrequency(float f);
+
 Complex calculateZ();
 
 float getPhasorAngle(Complex Z, float freq);

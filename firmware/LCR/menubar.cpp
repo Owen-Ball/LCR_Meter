@@ -98,10 +98,9 @@ void MenuBar::executeItem(uint8_t item_index) {
   if (item_counts[category_selected] != 0) {
     menu_item_t item = items[category_selected][item_index];
     item_selected[category_selected] = item_index;
-    strncpy(selected_text[category_selected], item.display_text, 15);
-    selected_text[category_selected][15] = '\0';
+    memcpy(selected_text[category_selected], item.display_text, sizeof(selected_text[category_selected]));
 
-    item.func(item.value);
+    if (item.func != nullptr) item.func(item.value);
   } 
 
   

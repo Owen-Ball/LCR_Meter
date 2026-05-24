@@ -8,7 +8,6 @@ void FloatDisplay::init(uint xpos, uint ypos, bool hysteresis) {
   this->hysteresis = hysteresis;
   exponent = 0;
   forced_exponent = false;
-  Serial.println("hiii");
 }
 
 void FloatDisplay::init(uint xpos, uint ypos, int exponent) {

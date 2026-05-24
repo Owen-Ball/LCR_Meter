@@ -2,6 +2,8 @@
 #include <MCP9800.h>
 
 
+DMAMEM uint16_t framebuffer[SCREEN_WIDTH * SCREEN_HEIGHT];
+
 Board board;
 
 void Board::init() {
@@ -21,6 +23,18 @@ void Board::init() {
 
   temp_sensor.begin();
   temp_sensor.writeConfig(MCP9800::ADC_RES_12BITS);
+
+  tft.begin(16000000);
+  tft.setRotation(3);
+  tft.setFrameBuffer(framebuffer);
+  tft.useFrameBuffer(true);
+  tft.updateChangedAreasOnly(true);
+
+  ts.begin();
+  ts.setRotation(1);
+
+  ts_ignoreuntil = 0;
+  ts_state = false;
   
 }
 
@@ -93,4 +107,32 @@ bool Board::decreaseLCRRange() {
 
 float Board::getTemperature() {
   return temp_sensor.readTempC16(MCP9800::AMBIENT) / 16.0;
+}
+
+uint16_t boundedMap(uint16_t x, uint16_t a1, uint16_t a2, uint16_t b1, uint16_t b2) {
+  if (x < a1) return b1;
+  if (x > a2) return b2;
+  return map(x, a1, a2, b1, b2); 
+}
+
+bool Board::tsPressed(long unsigned int debounce_ms) {
+  if (tft.asyncUpdateActive()) return false;
+  if (millis() < ts_ignoreuntil) return false;
+
+  bool curr_state = ts.touched();
+
+  if (curr_state == ts_state) return false;
+  
+  ts_ignoreuntil = millis() + debounce_ms;
+  ts_state = curr_state;
+  
+  if (curr_state) {
+    TS_Point p = ts.getPoint();
+    ts_x = boundedMap(p.x, TS_X_MIN, TS_X_MAX, 0, SCREEN_WIDTH);
+    ts_y = boundedMap(p.y, TS_Y_MIN, TS_Y_MAX, 0, SCREEN_HEIGHT);
+    return true;
+  } else {
+    return false;
+  }
+
 }

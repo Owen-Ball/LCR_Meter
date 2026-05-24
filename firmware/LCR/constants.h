@@ -14,6 +14,12 @@
 #define BUZZER_PIN        14
 #define FAN_PIN           15
 
+#define TFT_CS            10
+#define TFT_DC            9 
+#define TFT_RST           5
+#define TS_CS             4
+#define TS_IRQ            3
+
 #define ENTER_PIN
 #define BACK_PIN
 #define UP_PIN
@@ -92,8 +98,23 @@ const float RANGE_RESISTOR[LCR_RANGE_NUM] = {100, 1000, 10000, 100000};
 
 //DISPLAY CONSTANTS
 
+#define DISP_REFRESH_TIME       100
+
+#define SCREEN_WIDTH            320
+#define SCREEN_HEIGHT           240
+
 #define DISP_FLOAT_RANGE_UP     1.1
 #define DISP_FLOAT_RANGE_DOWN   0.9
+
+#define MENU_CATEGORY_HEIGHT    40
+#define MENU_ITEM_HEIGHT        35
+
+//TOUCHSCREEN
+
+#define TS_X_MIN                400
+#define TS_X_MAX                3900
+#define TS_Y_MIN                250
+#define TS_Y_MAX                3750
 
 
 #endif // _CONSTANTS_

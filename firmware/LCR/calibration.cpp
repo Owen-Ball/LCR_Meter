@@ -65,7 +65,7 @@ CalibrationPoint averageCalibrationPoints(CalibrationPoint& cal_low, Calibration
 }
 
 void loadCalibrationPoint(float freq) {
-  uint8_t lower_i;
+  uint8_t lower_i = 0;
   
   for (uint8_t i=0; i<num_cal_points; i++) {
     float point_freq = cal_array[i].frequency;

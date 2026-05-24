@@ -1,3 +1,9 @@
+#include <Audio.h>
+#include <Wire.h>
+#include <SPI.h>
+#include <SD.h>
+#include <SerialFlash.h>
+
 #include "buzzer.h"
 #include "board.h"
 #include "codec.h"
@@ -5,20 +11,21 @@
 #include "autorange.h"
 #include "lcr_func.h"
 #include "display.h"
+#include "fsm.h"
 
-#include <Audio.h>
-#include <Wire.h>
-#include <SPI.h>
-#include <SD.h>
-#include <SerialFlash.h>
 
 
 
 FloatDisplay disp;
+long unsigned int loop_time = 0;
+long unsigned int prev_time = 0;
+
 void setup() {
 
 
   delay(500);
+
+  Serial.begin(115200);
   
   board.init();
   
@@ -28,27 +35,10 @@ void setup() {
   codecInit();
   codecSetOutputFrequency(10000);
   codecSetOutputAmplitude(.8);
-
   board.setLCRRange(LCR_RANGE_10K);
 
+  initSystem();
 
-  Serial.begin(115200);
-
-  disp.updateValue(.000312);
-  disp.updateValue(.000912);
-  disp.updateValue(.001050);
-  disp.updateValue(.001150);
-  disp.updateValue(.85);
-  disp.updateValue(.95);
-  disp.updateValue(1.05);
-  disp.updateValue(1.15);
-  disp.updateValue(2);
-  disp.updateValue(1.15);
-  disp.updateValue(1.05);
-  disp.updateValue(.95);
-  disp.updateValue(.85);
-
-  //delay(1000000);
   delay(500);
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
@@ -57,12 +47,12 @@ void setup() {
   loadCalibration();
   loadCalibrationPoint(5000);
   printCalibrationPoint(calibration_data);
-  calibrateProbeQuick();
+ // calibrateProbeQuick();
 
   board.setPGAGainV(PGA_GAIN_1);
   board.setPGAGainI(PGA_GAIN_1);
   
-  delay(2000);
+  delay(100);
   board.setLCRRange(LCR_RANGE_10K);
   codecSetOutputFrequency(5000);
   codecSetOutputAmplitude(.8);
@@ -74,7 +64,7 @@ void loop() {
   //calibrateIPGA();
   //blockingAutorangeMeasure();
   codecAverageReadings();
-  if (codecDataAvailable) {
+  if (codecDataAvailable && 0) {
     
     Serial.print(board.getPGAGainI());
     Serial.print(" ");
@@ -93,6 +83,12 @@ void loop() {
     rangeAutorange(false);
     codecResetReadings();
   }
+
+  runSystem();
+  
+  loop_time = micros() - prev_time;
+  prev_time = micros();
+  //Serial.println(loop_time);
 
   //codecBlockingMeasure();
   //Serial.println(board.getTemperature());

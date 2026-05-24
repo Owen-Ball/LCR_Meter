@@ -3,6 +3,9 @@
 
 #include <Arduino.h>
 #include <MCP9800.h>
+#include "SPI.h"
+#include "ILI9341_t3n.h"
+#include <XPT2046_Touchscreen.h>
 #include "constants.h"
 #include "buzzer.h"
 
@@ -26,15 +29,25 @@ class Board {
 
     float   getTemperature();
 
-    Buzzer buzzer{BUZZER_PIN};
+    bool    tsPressed(long unsigned int debounce_ms = 50);
 
+    Buzzer buzzer{BUZZER_PIN};
+    ILI9341_t3n tft{TFT_CS, TFT_DC, TFT_RST};
+    XPT2046_Touchscreen ts{TS_CS, TS_IRQ};
+
+    uint16_t ts_x;
+    uint16_t ts_y;
 
     
   private:
+  
     uint8_t board_gain_v = PGA_GAIN_1;
     uint8_t board_gain_i = PGA_GAIN_1;
     uint8_t board_range = LCR_RANGE_100;
     MCP9800 temp_sensor;
+
+    bool ts_state;
+    long unsigned int ts_ignoreuntil;
 };
 
 
