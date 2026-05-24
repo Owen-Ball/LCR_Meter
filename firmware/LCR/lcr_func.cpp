@@ -2,10 +2,29 @@
 #include "calibration.h"
 #include "codec.h"
 
-void setLCRFrequency(float f) {
-  loadCalibrationPoint(f);
-  codecSetOutputFrequency(f);
+float _curr_frequency;
+float _curr_amplitude;
+
+void setLCRFrequency(float freq) {
+  loadCalibrationPoint(freq);
+  codecSetOutputFrequency(freq);
   printCalibrationPoint(calibration_data);
+  _curr_frequency = freq;
+}
+
+void setLCRAmplitude(float amp) {
+  float scaled_amp = amp / DAC_OUTPUT_VPP;
+  scaled_amp = min(MAX_DAC_AMPLITUDE, scaled_amp); 
+  codecSetOutputAmplitude(scaled_amp);
+  _curr_amplitude = amp;
+}
+
+float getLCRFrequency() {
+  return _curr_frequency;
+}
+
+float getLCRAmplitude() {
+  return _curr_amplitude;
 }
 
 Complex calculateZ() {

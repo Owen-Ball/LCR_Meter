@@ -3,7 +3,10 @@
 #include <Arduino.h>
 #include <CComplex.h>
 
-void setLCRFrequency(float f);
+void setLCRFrequency(float freq);
+void setLCRAmplitude(float amp);
+float getLCRFrequency();
+float getLCRAmplitude();
 
 Complex calculateZ();
 

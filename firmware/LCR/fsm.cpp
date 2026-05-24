@@ -3,6 +3,7 @@
 #include "constants.h"
 #include "calibration.h"
 #include "board.h"
+#include "codec.h"
 #include "lcr_func.h"
 
 
@@ -14,6 +15,18 @@ MenuBar *current_menu;
 
 long unsigned int prev_refresh_time = 0;
 
+system_settings_t stored_settings;
+
+
+void storeSettings() {
+  stored_settings.freq = getLCRFrequency();
+  stored_settings.amp = getLCRAmplitude();
+}
+
+void loadSettings() {
+  setLCRFrequency(stored_settings.freq);
+  setLCRAmplitude(stored_settings.amp);
+}
 
 void switchMainMenuPage() {
   if (current_menu == &main_menu_1) current_menu = &main_menu_2;
@@ -22,10 +35,12 @@ void switchMainMenuPage() {
 
 void switchToCalMenu() {
   current_menu = &calibration_menu;
+  storeSettings();
 }
 
 void switchToMainMenu() {
   current_menu = &main_menu_1;
+  loadSettings();
 }
 
 void initCalMenu() {
@@ -67,7 +82,7 @@ void initMainMenu1() {
 
   main_menu_1.addCategory("Cal", &switchToCalMenu, false);
 
-  main_menu_1.addCategory("Page", &switchMainMenuPage, false);
+  main_menu_1.addCategory("Page 2", &switchMainMenuPage, false);
 }
 
 void initMainMenu2() {
@@ -81,10 +96,10 @@ void initMainMenu2() {
   main_menu_2.executeItem(main_menu_2.getCategoriesCount()-1, 0);
 
   main_menu_2.addCategory("Ampl");
-  main_menu_2.addItem("0.1V", nullptr, 0.1f);
-  main_menu_2.addItem("0.5V", nullptr, 0.5f);
-  main_menu_2.addItem("1.0V", nullptr, 1.0f);
-  main_menu_2.addItem("2.0V", nullptr, 2.0f);
+  main_menu_2.addItem("0.5V", &setLCRAmplitude, 0.5f);
+  main_menu_2.addItem("1.0V", &setLCRAmplitude, 1.0f);
+  main_menu_2.addItem("2.0V", &setLCRAmplitude, 2.0f);
+  main_menu_2.addItem("3.5V", &setLCRAmplitude, 3.5f);
   main_menu_2.executeItem(main_menu_2.getCategoriesCount()-1, 3);
 
   main_menu_2.addCategory("Other");
@@ -94,7 +109,7 @@ void initMainMenu2() {
   main_menu_2.addItem("2.0V", nullptr, 2.0f);
   main_menu_2.executeItem(main_menu_2.getCategoriesCount()-1, 3);
 
-  main_menu_2.addCategory("Page", &switchMainMenuPage, false);
+  main_menu_2.addCategory("Page 1", &switchMainMenuPage, false);
 }
 
 

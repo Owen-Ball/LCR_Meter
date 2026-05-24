@@ -180,7 +180,7 @@ void MenuBar::drawMenu(ILI9341_t3n &tft) {
     }
 }
 
-void MenuBar::processTouch(uint16_t x, uint16_t y) {
+bool MenuBar::processTouch(uint16_t x, uint16_t y) {
   bool missed_menu = false;
   uint16_t tab_width = screen_width / num_categories;
   uint8_t category = x / tab_width;
@@ -209,6 +209,7 @@ void MenuBar::processTouch(uint16_t x, uint16_t y) {
       //touches can sometimes miss by a bit, so this ensures you need to double tap to select item
       } else {
         executeItem(item);
+        return true;
       }
     }
   //Missed menu entirely
@@ -219,5 +220,7 @@ void MenuBar::processTouch(uint16_t x, uint16_t y) {
   if (missed_menu && category_selected != -1) {
     toggleCategory(category_selected);
   }
+
+  return false;
   
 }

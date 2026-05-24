@@ -57,6 +57,7 @@ AudioControlCS4272_192k  CS4272;         //xy=592,180
 codec_readings_t codecReadings;
 bool codecDataAvailable = false;
 float _frequency;
+float _amplitude;
 uint32_t codecBlocksToAnalyze = 150;
 bool codecDiscardResults = false;
 uint8_t codecReadingsUntilValid = 0;
@@ -105,10 +106,10 @@ void codecSetOutputFrequency(float frequency) {
 
 // Set the sine wave amplitude in Vpp
 void codecSetOutputAmplitude(float amplitude) {
-  float amplitude_a = amplitude;
-  sine_DAC.amplitude(amplitude_a);
+  sine_DAC.amplitude(amplitude);
   codecResetReadings();
   codecResetPhase();
+  _amplitude = amplitude;
 }
 
 //A rough fit of the CS4272 ADC rolloff for quad mode
@@ -204,6 +205,11 @@ void codecAverageReadings() {
 // Returns the currently used output frequency
 float codecGetFrequency() {
   return _frequency;
+}
+
+// Returns the currently used output amplitude
+float codecGetAmplitude() {
+  return _amplitude;
 }
 
 

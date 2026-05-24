@@ -49,8 +49,9 @@
 
 
 #define LCR_MIN_FREQUENCY   100
-#define MAX_DAC_AMPLITUDE   0.9
+#define MAX_DAC_AMPLITUDE   0.95
 #define PGA_CAL_AMPLITUDE   0.8
+#define DAC_OUTPUT_VPP      4.0
 
 
 #define CODEC_CLIPPING_LEVEL        0.9

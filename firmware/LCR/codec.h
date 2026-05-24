@@ -38,6 +38,7 @@ void codecResetReadings();
 void codecSetReadingsUntilValid(uint8_t num);
 void codecAverageReadings();
 float codecGetFrequency();
+float codecGetAmplitude();
 void codecSetBlocksToAnalyze(uint16_t avg = 10);
 void codecBlockingMeasure();
 

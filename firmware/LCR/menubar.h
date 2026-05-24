@@ -54,7 +54,7 @@ class MenuBar {
 
     void drawMenu(ILI9341_t3n &tft);
 
-    void processTouch(uint16_t x, uint16_t y);
+    bool processTouch(uint16_t x, uint16_t y);
 
     
   private:
