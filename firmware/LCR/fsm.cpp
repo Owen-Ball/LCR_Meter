@@ -15,19 +15,6 @@ MenuBar *current_menu;
 
 long unsigned int prev_refresh_time = 0;
 
-system_settings_t stored_settings;
-
-
-void storeSettings() {
-  stored_settings.freq = getLCRFrequency();
-  stored_settings.amp = getLCRAmplitude();
-}
-
-void loadSettings() {
-  setLCRFrequency(stored_settings.freq);
-  setLCRAmplitude(stored_settings.amp);
-}
-
 void switchMainMenuPage() {
   if (current_menu == &main_menu_1) current_menu = &main_menu_2;
   else current_menu = &main_menu_1;
@@ -35,22 +22,24 @@ void switchMainMenuPage() {
 
 void switchToCalMenu() {
   current_menu = &calibration_menu;
-  storeSettings();
 }
 
 void switchToMainMenu() {
   current_menu = &main_menu_1;
-  loadSettings();
+}
+
+void calibrateProbesQuick() {
+  
 }
 
 void initCalMenu() {
   calibration_menu.init(SCREEN_WIDTH, SCREEN_HEIGHT, MENU_CATEGORY_HEIGHT, MENU_ITEM_HEIGHT);
   
-  calibration_menu.addCategory("Probe", nullptr, false);
-  calibration_menu.addItem("Quick", nullptr, 0.0f);
-  calibration_menu.addItem("Full", nullptr, 0.0f);
+  calibration_menu.addCategory("Probe", nullptr, false, false);
+  calibration_menu.addItem("Quick", &calibrateProbes_Point, 0.0f);
+  calibration_menu.addItem("Full", &calibrateProbes, 0.0f);
 
-  calibration_menu.addCategory("All", nullptr, false);
+  calibration_menu.addCategory("All", nullptr, false, false);
   calibration_menu.addItem("Quick", nullptr, 0.0f);
   calibration_menu.addItem("Full", nullptr, 0.0f);
   
@@ -78,7 +67,7 @@ void initMainMenu1() {
   main_menu_1.addItem("Ls+Rs", nullptr, 0.0f);
   main_menu_1.addItem("Cp+Rp", nullptr, 0.0f);
   main_menu_1.addItem("Lp+Rp", nullptr, 0.0f);
-  main_menu_1.executeItem(main_menu_1.getCategoriesCount()-1, 1);
+  main_menu_1.executeItem(main_menu_1.getCategoriesCount()-1, 0);
 
   main_menu_1.addCategory("Cal", &switchToCalMenu, false);
 
@@ -127,8 +116,16 @@ void initSystem() {
 
 
 void runMenuInterface() {
+  uint8_t res;
+  
   if (board.tsPressed()) {
-    current_menu->processTouch(board.ts_x, board.ts_y);
+    res = current_menu->processTouch(board.ts_x, board.ts_y);
+  }
+
+  if (res == 1) {
+    board.buzzer.setBuzzer(1, 10, 1);
+  } else if (res == 2) {
+    board.buzzer.setBuzzer(3, 15, 55);
   }
 }
 
@@ -143,7 +140,7 @@ void drawAll(bool force_update = false) {
   
   board.tft.updateScreenAsync();
 
-  Serial.println(millis() - prev_refresh_time);
+  //Serial.println(millis() - prev_refresh_time);
 
   prev_refresh_time = millis();
 }
@@ -155,4 +152,5 @@ void runSystem() {
   if (update_finished) {
     drawAll();
   }
+  board.buzzer.runBuzzer(micros());
 }

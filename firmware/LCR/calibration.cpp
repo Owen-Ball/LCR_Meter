@@ -5,6 +5,8 @@
 
 CalibrationPoint calibration_data;
 uint8_t num_cal_points = 10;
+
+CalibrationPoint cal_array_raw[MAX_CAL_POINTS];
 CalibrationPoint cal_array[MAX_CAL_POINTS];
 Complex i_pga_dc[PGA_GAIN_NUM];
 Complex v_pga_dc[PGA_GAIN_NUM];
@@ -155,17 +157,21 @@ uint8_t loadCalibration() {
   if (version != CAL_VERSION) { file.close(); Serial.println("Incorrect cal version"); return 0; }
   if (count > MAX_CAL_POINTS) { file.close(); Serial.println("Too many cal points"); return 0; }
 
-  size_t bytes_read = file.read((uint8_t*)cal_array, sizeof(CalibrationPoint) * count);
+  size_t bytes_read = file.read((uint8_t*)cal_array_raw, sizeof(CalibrationPoint) * count);
   file.close();
 
   if (bytes_read != sizeof(CalibrationPoint) * (size_t)count) return 0;
 
   num_cal_points = count;
 
-  calibration_data = cal_array[0];
-
-  Serial.print(num_cal_points);
-  Serial.println(" calibration points read in");
+  //So there is a vtable pointed inside the Complex class and the direct read I do to load the cal array copies these pointers
+  //But they need to be updated because following them will crash the program. Easiest way I found was to just copy into a new array, which does not copy these pointers...
+  //I could also have just written my own print function for Complex though
+  //TBH I don't really understand the issue, I just know this fixes it and I have plenty of RAM
+  for (uint8_t i=0; i<num_cal_points; i++) {
+    cal_array[i] = cal_array_raw[i];
+  }
+  
   return count;
 }
 
@@ -463,8 +469,58 @@ void correctTIAGain() {
   }
 }
 
+void calibrateProbes(float f) {
+
+  float amp = codecGetAmplitude();
+  float freq = codecGetAmplitude();
+  
+  Serial.println("Short probes");
+  while (!Serial.available()) {}
+  while (Serial.available()) {Serial.read();}
+  calibrateShort();
+  
+  board.buzzer.runBuzzerBlocking(4, 10, 50);
+
+  Serial.println("Open probes");
+  while (!Serial.available()) {}
+  while (Serial.available()) {Serial.read();}
+  calibrateOpen();
+
+  codecSetOutputAmplitude(amp);
+  codecSetOutputFrequency(freq);
+  loadCalibrationPoint(freq);
+}
+
+
+void calibrateProbes_Point(float f) {
+  
+  float amp = codecGetAmplitude();
+  
+  Serial.println("Short probes");
+  while (!Serial.available()) {}
+  while (Serial.available()) {Serial.read();}
+  calibrateShort_Point(calibration_data);
+
+  Serial.print(calibration_data.frequency);
+  Serial.print("Hz: ");
+  Serial.println(calibration_data.probe_Zs);
+
+    
+  board.buzzer.runBuzzerBlocking(4, 10, 50);
+
+  Serial.println("Open probes");
+  while (!Serial.available()) {}
+  while (Serial.available()) {Serial.read();}
+  calibrateOpen_Point(calibration_data);
+
+  board.buzzer.runBuzzerBlocking(4, 10, 50);
+
+  codecSetOutputAmplitude(amp);
+}
+
+
 //Calibrate all systems using the defined freqeuncy list
-void calibrateAll() {
+void calibrateAll(float f) {
 
   //Initialize calibration array with the list of calibration frequencies
   num_cal_points = CAL_FREQ_COUNT;
@@ -495,37 +551,10 @@ void calibrateAll() {
   calibrateLCRRange(LCR_RANGE_100K, RANGE_CAL_RESISTOR[LCR_RANGE_100K]);
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
-  Serial.println("Short probes");
-  while (!Serial.available()) {}
-  while (Serial.available()) {Serial.read();}
-  calibrateShort();
-  
-  board.buzzer.runBuzzerBlocking(4, 10, 50);
-
-  Serial.println("Open probes");
-  while (!Serial.available()) {}
-  while (Serial.available()) {Serial.read();}
-  calibrateOpen();
+  calibrateProbes();
 
   correctTIAGain();
 
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
-}
-
-
-void calibrateProbeQuick() {
-  Serial.println("Short probes");
-  while (!Serial.available()) {}
-  while (Serial.available()) {Serial.read();}
-  calibrateShort_Point(calibration_data);
-  
-  board.buzzer.runBuzzerBlocking(4, 10, 50);
-
-  Serial.println("Open probes");
-  while (!Serial.available()) {}
-  while (Serial.available()) {Serial.read();}
-  calibrateOpen_Point(calibration_data);
-
-  board.buzzer.runBuzzerBlocking(4, 10, 50);
 }

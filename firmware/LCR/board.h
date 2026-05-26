@@ -8,6 +8,7 @@
 #include <XPT2046_Touchscreen.h>
 #include "constants.h"
 #include "buzzer.h"
+#include "Button.h"
 
 class Board {
   public:
@@ -29,11 +30,22 @@ class Board {
 
     float   getTemperature();
 
+    //returns true on the loop that the touchscreen was pressed. This should be called at most once per loop
+    //Also will set ts_x and ts_y
     bool    tsPressed(long unsigned int debounce_ms = 50);
 
     Buzzer buzzer{BUZZER_PIN};
     ILI9341_t3n tft{TFT_CS, TFT_DC, TFT_RST};
     XPT2046_Touchscreen ts{TS_CS, TS_IRQ};
+    
+    Button enter_button{ENTER_PIN, DEBOUNCE_TIME_MS, BUTTON_AVG_COUNT};
+    Button up_button{UP_PIN, DEBOUNCE_TIME_MS, BUTTON_AVG_COUNT};
+    Button down_button{DOWN_PIN, DEBOUNCE_TIME_MS, BUTTON_AVG_COUNT};
+
+    Button select_button_1{BUTTON1_PIN, DEBOUNCE_TIME_MS, BUTTON_AVG_COUNT};
+    Button select_button_2{BUTTON2_PIN, DEBOUNCE_TIME_MS, BUTTON_AVG_COUNT};
+    Button select_button_3{BUTTON3_PIN, DEBOUNCE_TIME_MS, BUTTON_AVG_COUNT};
+    Button select_button_4{BUTTON4_PIN, DEBOUNCE_TIME_MS, BUTTON_AVG_COUNT};
 
     uint16_t ts_x;
     uint16_t ts_y;

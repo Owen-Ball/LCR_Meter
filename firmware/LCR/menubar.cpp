@@ -11,6 +11,8 @@ void MenuBar::init(uint16_t screen_width, uint16_t screen_height, uint16_t categ
     memset(item_counts, 0, sizeof(item_counts));
     memset(item_hovered, 0, sizeof(item_hovered));
     memset(item_selected, 0, sizeof(item_selected));
+    memset(show_selections, 0, sizeof(show_selections));
+    memset(initial_hovers, 0, sizeof(initial_hovers));
 
     text_color = ILI9341_WHITE;
     category_color = ILI9341_DARKGREY;
@@ -27,12 +29,13 @@ void MenuBar::configColors(uint16_t text_color, uint16_t category_color, uint16_
     this->border_color = border_color;
 }
 
-void MenuBar::addCategory(const char *text, void (*func)(), bool show_selection) {
+void MenuBar::addCategory(const char *text, void (*func)(), bool show_selection, bool initial_hover) {
     if (num_categories >= MAX_CATEGORIES) return;
     //Store the display text
     strncpy(categories[num_categories], text, 15);
     category_funcs[num_categories] = func;
     show_selections[num_categories] = show_selection;
+    initial_hovers[num_categories] = initial_hover;
     num_categories++;
 }
 
@@ -61,14 +64,26 @@ void MenuBar::addItem(const char *text, void (*func)(float f), float val) {
     addItem(item);
 }
 
-void MenuBar::toggleCategory(uint8_t category_index) {
-  if (category_index >= num_categories) return;
+uint8_t MenuBar::toggleCategory(uint8_t category_index) {
+  if (category_index >= num_categories) return 0;
   if (category_selected == category_index) {
     category_selected = -1;
+    return 1;
   } else {
     category_selected = category_index;
-    if (item_counts[category_selected] == 0) executeItem(0);
-    else item_hovered[category_selected] = item_selected[category_selected];
+    
+    if (item_counts[category_selected] == 0) {
+      executeItem(0);
+      return 2;
+    }
+    else if (!initial_hovers[category_selected]) {
+      item_hovered[category_selected] = item_counts[category_selected];
+      return 1;
+    }
+    else {
+      item_hovered[category_selected] = item_selected[category_selected];
+      return 1;
+    }
   }
 }
 
@@ -180,7 +195,7 @@ void MenuBar::drawMenu(ILI9341_t3n &tft) {
     }
 }
 
-bool MenuBar::processTouch(uint16_t x, uint16_t y) {
+uint8_t MenuBar::processTouch(uint16_t x, uint16_t y) {
   bool missed_menu = false;
   uint16_t tab_width = screen_width / num_categories;
   uint8_t category = x / tab_width;
@@ -188,39 +203,35 @@ bool MenuBar::processTouch(uint16_t x, uint16_t y) {
 
   //Selected bottom menu. Toggle selected category
   if (y > screen_height - category_height) {
-    toggleCategory(category);
+    uint8_t res = toggleCategory(category);
+    return res;
 
   //Clicked above bottom menu in the selected category
   } else if (category == category_selected) {
     uint8_t item = (screen_height - y - category_height)/item_height;
 
     //Check if touch was above top item
-    if (item_counts[category] == 0 || item > item_counts[category] - 1){
-      missed_menu = true;
-
-    //Process touch on item
-    } else {
+    if (item_counts[category] != 0 && item < item_counts[category]) {
 
       //item touched was not currently selected
       if (item_hovered[category_selected] != item) {
         item_hovered[category_selected] = item;
+        return 1;
 
       //item touched was selected. Execute it
       //touches can sometimes miss by a bit, so this ensures you need to double tap to select item
       } else {
         executeItem(item);
-        return true;
+        return 2;
       }
     }
   //Missed menu entirely
-  } else {
-    missed_menu = true;
   }
 
-  if (missed_menu && category_selected != -1) {
+  if (category_selected != -1) {
     toggleCategory(category_selected);
   }
 
-  return false;
+  return 0;
   
 }

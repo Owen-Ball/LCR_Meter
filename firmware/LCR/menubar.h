@@ -28,7 +28,7 @@ class MenuBar {
     void configColors(uint16_t text_color, uint16_t category_color, uint16_t item_color, uint16_t item_selected_color, uint16_t border_color);
     
     //Add caterogy. Up to 8
-    void addCategory(const char *text, void (*func)() = nullptr, bool show_selection = true);
+    void addCategory(const char *text, void (*func)() = nullptr, bool show_selection = true, bool initial_hover = true);
 
     uint8_t getCategoriesCount();
     
@@ -38,7 +38,7 @@ class MenuBar {
 
     //Either open or close the category
     //If a category if empty, attempting to toggle it will immediately attempt to execute the callback function for the category
-    void toggleCategory(uint8_t category_index);
+    uint8_t toggleCategory(uint8_t category_index);
 
     void moveUp();
 
@@ -54,7 +54,7 @@ class MenuBar {
 
     void drawMenu(ILI9341_t3n &tft);
 
-    bool processTouch(uint16_t x, uint16_t y);
+    uint8_t processTouch(uint16_t x, uint16_t y);
 
     
   private:
@@ -82,6 +82,7 @@ class MenuBar {
 
     void (*category_funcs[MAX_CATEGORIES])();
     bool show_selections[MAX_CATEGORIES];
+    bool initial_hovers[MAX_CATEGORIES];
 
     uint16_t text_color;
     uint16_t category_color;

@@ -1,3 +1,4 @@
+
 #include <Audio.h>
 #include <Wire.h>
 #include <SPI.h>
@@ -37,26 +38,25 @@ void setup() {
   codecSetOutputAmplitude(.8);
   board.setLCRRange(LCR_RANGE_10K);
 
-  initSystem();
 
   delay(500);
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
   //calibrateAll();
   //saveCalibration();
+
+  
   loadCalibration();
-  loadCalibrationPoint(5000);
-  printCalibrationPoint(calibration_data);
- // calibrateProbeQuick();
+  //printCalibrationPoint(calibration_data);
+
+  initSystem();
+  //calibrateProbes();
+  //calibrateProbes_Point();
 
   board.setPGAGainV(PGA_GAIN_1);
   board.setPGAGainI(PGA_GAIN_1);
   
-  delay(100);
-  board.setLCRRange(LCR_RANGE_10K);
-  codecSetOutputFrequency(5000);
-  codecSetOutputAmplitude(.8);
-  
+  delay(100); 
 }
 
 void loop() {
@@ -77,7 +77,7 @@ void loop() {
     //Serial.println(" ");
     //Serial.println(getCs(calculateZ(), 75000.0) * 1e12);
     Serial.println(getRs(calculateZ(), 100.0));
-    disp.updateValue(getCs(calculateZ(), 5000.0));
+    disp.updateValue(getCs(calculateZ(), getLCRFrequency()));
     bool gain_ranged = gainAutorange(false);
     if (!gain_ranged) rangeAutorange(false);
     rangeAutorange(false);
@@ -85,9 +85,11 @@ void loop() {
   }
 
   runSystem();
-  
+
+  Serial.println(board.down_button.pressed());
   loop_time = micros() - prev_time;
   prev_time = micros();
+  delay(10);
   //Serial.println(loop_time);
 
   //codecBlockingMeasure();

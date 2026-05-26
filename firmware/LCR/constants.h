@@ -20,16 +20,20 @@
 #define TS_CS             4
 #define TS_IRQ            3
 
-#define ENTER_PIN
-#define BACK_PIN
-#define UP_PIN
-#define DOWN_PIN
+#define ENTER_PIN         30       
+#define UP_PIN            31
+#define DOWN_PIN          29
 
-#define BUTTON1_PIN
-#define BUTTON2_PIN
-#define BUTTON3_PIN
-#define BUTTON4_PIN
+#define BUTTON1_PIN       25
+#define BUTTON2_PIN       26
+#define BUTTON3_PIN       27
+#define BUTTON4_PIN       28
 
+//debounce time for all I/O buttons
+#define DEBOUNCE_TIME_MS      50
+//Takes N digital readings of each button, all must agree for output state to toggle
+//Just some protection against noisy readings. Copied from my E-load code, don't know if it is needed here
+#define BUTTON_AVG_COUNT      10
 
 //RANGES
 #define LCR_RANGE_100     0

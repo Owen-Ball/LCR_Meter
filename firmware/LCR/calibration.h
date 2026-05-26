@@ -49,7 +49,8 @@ uint8_t loadCalibration();
 void calibrateIPGA();
 void calibrateVPGA();
 
-void calibrateAll();
-void calibrateProbeQuick();
+void calibrateProbes_Point(float f = 0);
+void calibrateProbes(float f = 0);
+void calibrateAll(float f = 0);
 
 #endif

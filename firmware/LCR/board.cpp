@@ -1,5 +1,4 @@
 #include "board.h"
-#include <MCP9800.h>
 
 
 DMAMEM uint16_t framebuffer[SCREEN_WIDTH * SCREEN_HEIGHT];
@@ -16,6 +15,14 @@ void Board::init() {
 
   pinMode(BUZZER_PIN, OUTPUT);
   pinMode(FAN_PIN, OUTPUT);
+
+  enter_button.begin();
+  up_button.begin();
+  down_button.begin();
+  select_button_1.begin();
+  select_button_2.begin();
+  select_button_3.begin();
+  select_button_4.begin();
 
   setLCRRange(LCR_RANGE_100);
   setPGAGainV(PGA_GAIN_1);
