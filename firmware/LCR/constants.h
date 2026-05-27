@@ -24,10 +24,10 @@
 #define UP_PIN            31
 #define DOWN_PIN          29
 
-#define BUTTON1_PIN       25
-#define BUTTON2_PIN       26
-#define BUTTON3_PIN       27
-#define BUTTON4_PIN       28
+#define BUTTON0_PIN       25
+#define BUTTON1_PIN       26
+#define BUTTON2_PIN       27
+#define BUTTON3_PIN       28
 
 //debounce time for all I/O buttons
 #define DEBOUNCE_TIME_MS      50

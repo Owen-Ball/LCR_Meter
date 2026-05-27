@@ -45,6 +45,7 @@ void setup() {
   //calibrateAll();
   //saveCalibration();
 
+  digitalWrite(FAN_PIN, HIGH);
   
   loadCalibration();
   //printCalibrationPoint(calibration_data);
@@ -64,12 +65,12 @@ void loop() {
   //calibrateIPGA();
   //blockingAutorangeMeasure();
   codecAverageReadings();
-  if (codecDataAvailable && 0) {
+  if (codecDataAvailable) {
     
-    Serial.print(board.getPGAGainI());
-    Serial.print(" ");
-    Serial.print(board.getPGAGainV());
-    Serial.println(" ");
+    //Serial.print(board.getPGAGainI());
+    //Serial.print(" ");
+    //Serial.print(board.getPGAGainV());
+    //Serial.println(" ");
     //Serial.print(board.getLCRRange());
     //Serial.print(RANGE_RESISTOR[board.getLCRRange()]);
     //Serial.print(" ");
@@ -77,6 +78,7 @@ void loop() {
     //Serial.println(" ");
     //Serial.println(getCs(calculateZ(), 75000.0) * 1e12);
     Serial.println(getRs(calculateZ(), 100.0));
+    Serial.println(board.getTemperature());
     disp.updateValue(getCs(calculateZ(), getLCRFrequency()));
     bool gain_ranged = gainAutorange(false);
     if (!gain_ranged) rangeAutorange(false);
@@ -86,10 +88,10 @@ void loop() {
 
   runSystem();
 
-  Serial.println(board.down_button.pressed());
+ 
   loop_time = micros() - prev_time;
   prev_time = micros();
-  delay(10);
+  delay(1);
   //Serial.println(loop_time);
 
   //codecBlockingMeasure();

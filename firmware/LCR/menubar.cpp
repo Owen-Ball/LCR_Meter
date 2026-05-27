@@ -87,16 +87,34 @@ uint8_t MenuBar::toggleCategory(uint8_t category_index) {
   }
 }
 
-void MenuBar::moveUp() {
+uint8_t MenuBar::moveUp() {
   if ((category_selected != -1) && (item_hovered[category_selected] < item_counts[category_selected] - 1)) {
     item_hovered[category_selected] += 1;
+    return 1;
+  } else if ((category_selected != -1) && (item_hovered[category_selected] == item_counts[category_selected])) {
+    item_hovered[category_selected] = 0;
+    return 1;
   }
+
+  return 0;
 }
 
-void MenuBar::moveDown() {
+uint8_t MenuBar::moveDown() {
   if ((category_selected != -1) && (item_hovered[category_selected] > 0)) {
     item_hovered[category_selected] -= 1;
+    return 1;
   }
+
+  return 0;
+}
+
+uint8_t MenuBar::enter() {
+  if (category_selected == -1 || item_hovered[category_selected] >= item_counts[category_selected]) {
+    return 0;
+  }
+
+  executeItem(item_hovered[category_selected]);
+  return 2;
 }
 
 void MenuBar::executeItem(uint8_t cat_index, uint8_t item_index) {
@@ -106,11 +124,11 @@ void MenuBar::executeItem(uint8_t cat_index, uint8_t item_index) {
   executeItem(item_index);
 }
 
+
 void MenuBar::executeItem(uint8_t item_index) {
   if (category_selected == -1) return;
   
-
-  if (item_counts[category_selected] != 0) {
+  if (item_counts[category_selected] != 0 && item_index < item_counts[category_selected]) {
     menu_item_t item = items[category_selected][item_index];
     item_selected[category_selected] = item_index;
     memcpy(selected_text[category_selected], item.display_text, sizeof(selected_text[category_selected]));
@@ -196,7 +214,7 @@ void MenuBar::drawMenu(ILI9341_t3n &tft) {
 }
 
 uint8_t MenuBar::processTouch(uint16_t x, uint16_t y) {
-  bool missed_menu = false;
+  
   uint16_t tab_width = screen_width / num_categories;
   uint8_t category = x / tab_width;
   if (category >= num_categories) category = num_categories - 1;

@@ -116,12 +116,32 @@ void initSystem() {
 
 
 void runMenuInterface() {
+  uint8_t res1 = 0;
+  uint8_t res2 = 0;
   uint8_t res;
   
   if (board.tsPressed()) {
-    res = current_menu->processTouch(board.ts_x, board.ts_y);
+    res1 = current_menu->processTouch(board.ts_x, board.ts_y);
+  } 
+
+  if (board.up_button.pressed()) {
+    res2 = current_menu->moveUp();
+  } else if (board.down_button.pressed()) {
+    res2 = current_menu->moveDown();
+  } else if (board.enter_button.pressed()) {
+    res2 = current_menu->enter();
+  } else if (board.select_button_0.pressed()) {
+    res2 = current_menu->toggleCategory(0);
+  } else if (board.select_button_1.pressed()) {
+    res2 = current_menu->toggleCategory(1);
+  } else if (board.select_button_2.pressed()) {
+    res2 = current_menu->toggleCategory(2);
+  } else if (board.select_button_3.pressed()) {
+    res2 = current_menu->toggleCategory(3);
   }
 
+  res = max(res1, res2);
+  
   if (res == 1) {
     board.buzzer.setBuzzer(1, 10, 1);
   } else if (res == 2) {

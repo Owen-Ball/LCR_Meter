@@ -40,9 +40,9 @@ class MenuBar {
     //If a category if empty, attempting to toggle it will immediately attempt to execute the callback function for the category
     uint8_t toggleCategory(uint8_t category_index);
 
-    void moveUp();
-
-    void moveDown();
+    uint8_t moveUp();
+    uint8_t moveDown();
+    uint8_t enter();
 
     //Select an item from the currently open category
     void executeItem(uint8_t cat_index, uint8_t item_index);

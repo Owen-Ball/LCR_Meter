@@ -42,10 +42,10 @@ class Board {
     Button up_button{UP_PIN, DEBOUNCE_TIME_MS, BUTTON_AVG_COUNT};
     Button down_button{DOWN_PIN, DEBOUNCE_TIME_MS, BUTTON_AVG_COUNT};
 
+    Button select_button_0{BUTTON0_PIN, DEBOUNCE_TIME_MS, BUTTON_AVG_COUNT};
     Button select_button_1{BUTTON1_PIN, DEBOUNCE_TIME_MS, BUTTON_AVG_COUNT};
     Button select_button_2{BUTTON2_PIN, DEBOUNCE_TIME_MS, BUTTON_AVG_COUNT};
     Button select_button_3{BUTTON3_PIN, DEBOUNCE_TIME_MS, BUTTON_AVG_COUNT};
-    Button select_button_4{BUTTON4_PIN, DEBOUNCE_TIME_MS, BUTTON_AVG_COUNT};
 
     uint16_t ts_x;
     uint16_t ts_y;

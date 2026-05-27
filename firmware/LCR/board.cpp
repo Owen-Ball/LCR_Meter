@@ -19,10 +19,10 @@ void Board::init() {
   enter_button.begin();
   up_button.begin();
   down_button.begin();
+  select_button_0.begin();
   select_button_1.begin();
   select_button_2.begin();
   select_button_3.begin();
-  select_button_4.begin();
 
   setLCRRange(LCR_RANGE_100);
   setPGAGainV(PGA_GAIN_1);
