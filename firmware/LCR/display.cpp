@@ -1,6 +1,10 @@
 #include "display.h"
 #include "constants.h"
+#include "fsm.h"
+#include "board.h"
 
+
+long unsigned int prev_refresh_time = 0;
 
 void FloatDisplay::init(uint xpos, uint ypos, bool hysteresis) {
   this->xpos = xpos;
@@ -87,4 +91,40 @@ void FloatDisplay::updateValue(float value) {
   text = String(coeff, decimal_digits) + " " + prefix + unit;
   
   Serial.println(text);
+}
+
+
+
+
+
+void drawAll(bool force_update) {
+  
+  if (millis() - prev_refresh_time < DISP_REFRESH_TIME && !force_update) return;
+
+  //This display function should only ever be called after checking this first, but just in case;
+  if (board.tft.asyncUpdateActive()) return;
+  
+  board.tft.fillScreen(ILI9341_BLACK);
+
+  switch(current_state) {
+    
+    case RUNNING:
+      current_menu->drawMenu(board.tft);
+      //print lcr data
+      break;
+
+    case CALIBRATION:
+      current_menu->drawMenu(board.tft);
+      //print cal data
+      break;
+      
+    default:
+      break;
+    
+  }
+ 
+  
+  board.tft.updateScreenAsync();
+
+  prev_refresh_time = millis();
 }

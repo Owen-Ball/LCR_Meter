@@ -34,6 +34,8 @@ class Board {
     //Also will set ts_x and ts_y
     bool    tsPressed(long unsigned int debounce_ms = 50);
 
+    void    waitForInput();
+
     Buzzer buzzer{BUZZER_PIN};
     ILI9341_t3n tft{TFT_CS, TFT_DC, TFT_RST};
     XPT2046_Touchscreen ts{TS_CS, TS_IRQ};

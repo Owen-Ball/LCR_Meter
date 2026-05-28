@@ -143,3 +143,9 @@ bool Board::tsPressed(long unsigned int debounce_ms) {
   }
 
 }
+
+void Board::waitForInput() {
+  while (!enter_button.pressed() && !tsPressed()) {
+    yield();
+  }
+}

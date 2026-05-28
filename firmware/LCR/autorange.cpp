@@ -81,6 +81,9 @@ bool rangeAutorange(bool force_range) {
 void blockingAutorangeMeasure() {
 
   uint8_t count = 0;
+
+  board.setPGAGainV(PGA_GAIN_1);
+  board.setPGAGainI(PGA_GAIN_1);
   
   delay(CODEC_SETTING_CHANGE_DELAY);
 

@@ -28,4 +28,6 @@ class FloatDisplay {
             
 };
 
+void drawAll(bool force_update = false);
+
 #endif

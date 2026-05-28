@@ -4,7 +4,7 @@
 #include "autorange.h"
 
 CalibrationPoint calibration_data;
-uint8_t num_cal_points = 10;
+uint8_t num_cal_points = 0;
 
 CalibrationPoint cal_array_raw[MAX_CAL_POINTS];
 CalibrationPoint cal_array[MAX_CAL_POINTS];
@@ -138,7 +138,7 @@ uint8_t loadCalibration() {
   
   Serial.println("Starting calibration data load");
   
-  if (!SD.begin(CHIP_SELECT)) {Serial.println("SD.begin failed"); return false; }
+  if (!SD.begin(CHIP_SELECT)) {Serial.println("SD.begin failed"); return 0; }
   Serial.println("SD.begin ok");
   
   File file = SD.open(CAL_FILE, FILE_READ);
@@ -495,6 +495,8 @@ void calibrateProbes(float f) {
 void calibrateProbes_Point(float f) {
   
   float amp = codecGetAmplitude();
+  uint8_t vgain = board.getPGAGainV();
+  uint8_t igain = board.getPGAGainI();
   
   Serial.println("Short probes");
   while (!Serial.available()) {}
@@ -515,12 +517,18 @@ void calibrateProbes_Point(float f) {
 
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
+  board.setPGAGainV(vgain);
+  board.setPGAGainI(igain);
   codecSetOutputAmplitude(amp);
 }
 
 
 //Calibrate all systems using the defined freqeuncy list
 void calibrateAll(float f) {
+
+  float amp = codecGetAmplitude();
+  uint8_t vgain = board.getPGAGainV();
+  uint8_t igain = board.getPGAGainI();
 
   //Initialize calibration array with the list of calibration frequencies
   num_cal_points = CAL_FREQ_COUNT;
@@ -554,6 +562,10 @@ void calibrateAll(float f) {
   calibrateProbes();
 
   correctTIAGain();
+
+  board.setPGAGainV(vgain);
+  board.setPGAGainI(igain);
+  codecSetOutputAmplitude(amp);
 
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 

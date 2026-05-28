@@ -1,5 +1,4 @@
 #include "fsm.h"
-#include "menubar.h"
 #include "constants.h"
 #include "calibration.h"
 #include "board.h"
@@ -13,7 +12,8 @@ MenuBar main_menu_2;
 
 MenuBar *current_menu;
 
-long unsigned int prev_refresh_time = 0;
+SYSTEM_STATE current_state;
+
 
 void switchMainMenuPage() {
   if (current_menu == &main_menu_1) current_menu = &main_menu_2;
@@ -25,6 +25,9 @@ void switchToCalMenu() {
 }
 
 void switchToMainMenu() {
+  //Do not go to main LCR page if cal data is not loaded
+  if (num_cal_points == 0) return;
+  
   current_menu = &main_menu_1;
 }
 
@@ -112,8 +115,14 @@ void initSystem() {
 
   board.tft.fillScreen(ILI9341_BLACK);
   board.tft.updateScreenAsync();
-}
 
+  if (points_loaded == 0) {
+    current_state = RUNNING;
+  } else {
+    current_state = CALIBRATION;
+  }
+  
+}
 
 void runMenuInterface() {
   uint8_t res1 = 0;
@@ -149,28 +158,23 @@ void runMenuInterface() {
   }
 }
 
-void drawAll(bool force_update = false) {
-  
-  if (millis() - prev_refresh_time < DISP_REFRESH_TIME && !force_update) return;
-
-  board.tft.waitUpdateAsyncComplete();
-  
-  board.tft.fillScreen(ILI9341_BLACK);
-  current_menu->drawMenu(board.tft);
-  
-  board.tft.updateScreenAsync();
-
-  //Serial.println(millis() - prev_refresh_time);
-
-  prev_refresh_time = millis();
-}
 
 void runSystem() {
 
-  bool update_finished = !board.tft.asyncUpdateActive();
-  runMenuInterface();
-  if (update_finished) {
-    drawAll();
+  switch(current_state) {
+    
+    case RUNNING:
+      runMenuInterface();
+      break;
+
+    case CALIBRATION:
+      runMenuInterface();
+      break;
+      
+    default:
+      break;
+    
   }
+  
   board.buzzer.runBuzzer(micros());
 }

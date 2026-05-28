@@ -34,12 +34,7 @@ void setup() {
   disp.configSettings(6, -12, 1e6, "F");
   
   codecInit();
-  codecSetOutputFrequency(10000);
-  codecSetOutputAmplitude(.8);
-  board.setLCRRange(LCR_RANGE_10K);
 
-
-  delay(500);
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
   //calibrateAll();
@@ -48,14 +43,11 @@ void setup() {
   digitalWrite(FAN_PIN, HIGH);
   
   loadCalibration();
-  //printCalibrationPoint(calibration_data);
-
+  
   initSystem();
   //calibrateProbes();
   //calibrateProbes_Point();
 
-  board.setPGAGainV(PGA_GAIN_1);
-  board.setPGAGainI(PGA_GAIN_1);
   
   delay(100); 
 }
@@ -86,7 +78,11 @@ void loop() {
     codecResetReadings();
   }
 
+  bool update_finished = !board.tft.asyncUpdateActive();
   runSystem();
+  if (update_finished) {
+    drawAll();
+  }
 
  
   loop_time = micros() - prev_time;
