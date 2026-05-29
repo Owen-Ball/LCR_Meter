@@ -116,12 +116,13 @@ void initSystem() {
   board.tft.fillScreen(ILI9341_BLACK);
   board.tft.updateScreenAsync();
 
+  uint8_t points_loaded = loadCalibration();
   if (points_loaded == 0) {
     current_state = RUNNING;
   } else {
     current_state = CALIBRATION;
   }
-  
+
 }
 
 void runMenuInterface() {

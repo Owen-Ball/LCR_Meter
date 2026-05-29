@@ -39,6 +39,7 @@ struct CalibrationPoint {
 
 //Upon setting a frequency, this will be loaded with the calibration data corresponding to that frequency
 extern CalibrationPoint calibration_data;
+extern uint8_t num_cal_points;
 
 void printCalibrationPoint(CalibrationPoint& cal_data);
 void loadCalibrationPoint(float freq);
