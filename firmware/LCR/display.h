@@ -1,6 +1,7 @@
 #ifndef _DISPLAY_
 #define _DISPLAY_
 #include <Arduino.h>
+#include "lcr_func.h"
 
 class FloatDisplay {
   public:
@@ -8,7 +9,8 @@ class FloatDisplay {
     void init(uint xpos, uint ypos, bool hysteresis);
     //Set up float with a constant exponent
     void init(uint xpos, uint ypos, int exponent);
-    void configSettings(uint digits, int min_exp, float max_value, String unit);
+    void configSettings(uint digits, int min_exp, float max_value, const char *unit);
+    void configSettings(lcr_param_t &params);
     void updateValue(float value);
               
   private:
@@ -20,7 +22,7 @@ class FloatDisplay {
     bool forced_exponent;
     int min_exp;
     float max_value;
-    String unit;
+    const char *unit;
     String prefix;
     String text;
     bool hysteresis;
@@ -28,6 +30,8 @@ class FloatDisplay {
             
 };
 
+void initDraw();
+void drawLCRReadings();
 void drawAll(bool force_update = false);
 
 #endif

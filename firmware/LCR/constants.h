@@ -80,6 +80,10 @@
 #define V_PGA_GBWP    40e6
 
 
+
+#define LCR_FUNC_NUM  10
+
+
 //set the resistor used to calibrate each range
 //Didn't use 100 and 100k for the lower and upper ranges to avoid impact of probe parasitics
 const float RANGE_CAL_RESISTOR[LCR_RANGE_NUM] = {1000, 1000, 10000, 10000};
@@ -110,6 +114,8 @@ const float RANGE_RESISTOR[LCR_RANGE_NUM] = {100, 1000, 10000, 100000};
 
 #define DISP_FLOAT_RANGE_UP     1.1
 #define DISP_FLOAT_RANGE_DOWN   0.9
+
+#define DISP_DIGITS             6
 
 #define MENU_CATEGORY_HEIGHT    40
 #define MENU_ITEM_HEIGHT        35

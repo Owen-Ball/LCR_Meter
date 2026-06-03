@@ -2,9 +2,13 @@
 #include "constants.h"
 #include "fsm.h"
 #include "board.h"
+#include "lcr_func.h"
 
 
 long unsigned int prev_refresh_time = 0;
+
+FloatDisplay lcr_primary;
+FloatDisplay lcr_secondary;
 
 void FloatDisplay::init(uint xpos, uint ypos, bool hysteresis) {
   this->xpos = xpos;
@@ -23,13 +27,19 @@ void FloatDisplay::init(uint xpos, uint ypos, int exponent) {
   exponent = 0;
 }
 
-void FloatDisplay::configSettings(uint digits, int min_exp, float max_value, String unit) {
+void FloatDisplay::configSettings(uint digits, int min_exp, float max_value, const char *unit) {
   this->digits = digits;
   this->min_exp = min_exp;
   this->max_value = max_value;
   this->unit = unit;
 }
 
+void FloatDisplay::configSettings(lcr_param_t &params) {
+  this->digits = DISP_DIGITS;
+  this->min_exp = params.resolution;
+  this->max_value = 10e6;
+  this->unit = params.unit;
+}
 
 void FloatDisplay::updateValue(float value) {
   int exponent;
@@ -57,34 +67,16 @@ void FloatDisplay::updateValue(float value) {
   this->exponent = exponent;
 
   switch (exponent) {
-    case -12:
-      prefix = 'p';
-      break;
-    case -9:
-      prefix = 'n';
-      break;
-    case -6:
-      prefix = 'u';
-      break;
-    case -3:
-      prefix = 'm';
-      break;
-    case 0:
-      prefix = ' ';
-      break;
-    case 3:
-      prefix = 'k';
-      break;
-    case 6:
-      prefix = 'M';
-      break;
-    case 9:
-      prefix = 'G';
-      break;
-    default:
-      overflow = true;
-      break;
-    }
+    case -12: prefix = 'p'; break;
+    case -9:  prefix = 'n'; break;
+    case -6:  prefix = 'u'; break;
+    case -3:  prefix = 'm'; break;
+    case 0:   prefix = ' '; break;
+    case 3:   prefix = 'k'; break;
+    case 6:   prefix = 'M'; break;
+    case 9:   prefix = 'G'; break;
+    default:  overflow = true; break;
+  }
 
   int leading_digits = max(floor(log10(coeff)) + 1, 1);
   int decimal_digits = digits - leading_digits - 1;
@@ -94,7 +86,15 @@ void FloatDisplay::updateValue(float value) {
 }
 
 
+void initDraw() {
+  lcr_primary.init(0, 0, true);
+}
 
+
+void drawLCRReadings() {
+  lcr_primary.configSettings(primary_lcr_param);
+  lcr_primary.updateValue(primary_lcr_value);  
+}
 
 
 void drawAll(bool force_update) {
@@ -110,7 +110,7 @@ void drawAll(bool force_update) {
     
     case RUNNING:
       current_menu->drawMenu(board.tft);
-      //print lcr data
+      drawLCRReadings();
       break;
 
     case CALIBRATION:
@@ -122,7 +122,6 @@ void drawAll(bool force_update) {
       break;
     
   }
- 
   
   board.tft.updateScreenAsync();
 

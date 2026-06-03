@@ -47,6 +47,7 @@ void setup() {
   initSystem();
   //calibrateProbes();
   //calibrateProbes_Point();
+  initDraw();
 
   
   delay(100); 
@@ -56,6 +57,7 @@ void loop() {
 
   //calibrateIPGA();
   //blockingAutorangeMeasure();
+  /*
   codecAverageReadings();
   if (codecDataAvailable) {
     
@@ -74,9 +76,12 @@ void loop() {
     disp.updateValue(getCs(calculateZ(), getLCRFrequency()));
     bool gain_ranged = gainAutorange(false);
     if (!gain_ranged) rangeAutorange(false);
-    rangeAutorange(false);
+    //rangeAutorange(false);
     codecResetReadings();
   }
+  */
+
+  runLCR();
 
   bool update_finished = !board.tft.asyncUpdateActive();
   runSystem();
