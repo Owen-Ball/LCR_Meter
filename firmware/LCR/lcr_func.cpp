@@ -55,15 +55,12 @@ void runLCR() {
     secondary_lcr_value = secondary_lcr_param.value(calculateZ(), _curr_frequency);
     bool gain_ranged = gainAutorange(false);
     if (!gain_ranged) rangeAutorange(false);
+    //rangeAutorange(false);
+    codecResetReadings();
   }
 }
 
-void setLCRParams(float f) {
-  setLCRParams((int)round(f));
-}
-
 void setLCRParams(int index) {
-  
   switch(index) {
     
     case 1:
@@ -82,6 +79,11 @@ void setLCRParams(int index) {
       break;
     
   }
+}
+
+void setLCRParams(float f) {
+  int i = (int)round(f);
+  setLCRParams(i);
 }
 
 Complex calculateZ() {
@@ -162,21 +164,21 @@ lcr_param_t lcrParamLp {
 
 lcr_param_t lcrParamRs {
   .label = "Rs",
-  .unit = "Ohm",
+  .unit = "O",
   .resolution = -3,
   .value = &getRs,
 };
 
 lcr_param_t lcrParamRp {
   .label = "Rp",
-  .unit = "Ohm",
+  .unit = "O",
   .resolution = -3,
   .value = &getRp,
 };
 
 lcr_param_t lcrParamZMag {
   .label = "|Z|",
-  .unit = "Ohm",
+  .unit = "O",
   .resolution = -3,
   .value = &getPhasorMag,
 };

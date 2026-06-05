@@ -23,6 +23,8 @@ float getLCRFrequency();
 float getLCRAmplitude();
 
 void runLCR();
+void setLCRParams(int index);
+void setLCRParams(float f);
 
 Complex calculateZ();
 

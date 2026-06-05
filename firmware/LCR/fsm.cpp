@@ -65,12 +65,12 @@ void initMainMenu1() {
   main_menu_1.executeItem(main_menu_1.getCategoriesCount()-1, 1);
 
   main_menu_1.addCategory("Mode");
-  main_menu_1.addItem("Auto", nullptr, 0.0f);
-  main_menu_1.addItem("Cs+Rs", nullptr, 0.0f);
-  main_menu_1.addItem("Ls+Rs", nullptr, 0.0f);
-  main_menu_1.addItem("Cp+Rp", nullptr, 0.0f);
-  main_menu_1.addItem("Lp+Rp", nullptr, 0.0f);
-  main_menu_1.executeItem(main_menu_1.getCategoriesCount()-1, 0);
+  main_menu_1.addItem("Auto", &setLCRParams, 0.0f);
+  main_menu_1.addItem("Cs+Rs", &setLCRParams, 1.0f);
+  main_menu_1.addItem("Ls+Rs", &setLCRParams, 2.0f);
+  main_menu_1.addItem("Cp+Rp", &setLCRParams, 3.0f);
+  main_menu_1.addItem("Lp+Rp", &setLCRParams, 4.0f);
+  main_menu_1.executeItem(main_menu_1.getCategoriesCount()-1, 1);
 
   main_menu_1.addCategory("Cal", &switchToCalMenu, false);
 
@@ -118,9 +118,9 @@ void initSystem() {
 
   uint8_t points_loaded = loadCalibration();
   if (points_loaded == 0) {
-    current_state = RUNNING;
-  } else {
     current_state = CALIBRATION;
+  } else {
+    current_state = RUNNING;
   }
 
 }

@@ -2,6 +2,7 @@
 #define _DISPLAY_
 #include <Arduino.h>
 #include "lcr_func.h"
+#include "ILI9341_t3n.h"
 
 class FloatDisplay {
   public:
@@ -12,6 +13,8 @@ class FloatDisplay {
     void configSettings(uint digits, int min_exp, float max_value, const char *unit);
     void configSettings(lcr_param_t &params);
     void updateValue(float value);
+
+    void draw(ILI9341_t3n &tft);
               
   private:
     uint xpos;
@@ -31,6 +34,7 @@ class FloatDisplay {
 };
 
 void initDraw();
+void drawCurrentRanges();
 void drawLCRReadings();
 void drawAll(bool force_update = false);
 

@@ -3,6 +3,8 @@
 #include "fsm.h"
 #include "board.h"
 #include "lcr_func.h"
+#include "LCR_Fonts/FreeMonoBold18pt7b.h"
+#include "LCR_Fonts/FreeMono9pt7b.h"
 
 
 long unsigned int prev_refresh_time = 0;
@@ -67,6 +69,7 @@ void FloatDisplay::updateValue(float value) {
   this->exponent = exponent;
 
   switch (exponent) {
+    case -15: prefix = 'a'; break;
     case -12: prefix = 'p'; break;
     case -9:  prefix = 'n'; break;
     case -6:  prefix = 'u'; break;
@@ -85,17 +88,81 @@ void FloatDisplay::updateValue(float value) {
   Serial.println(text);
 }
 
+void FloatDisplay::draw(ILI9341_t3n &tft) {
+  tft.setTextColor(ILI9341_RED);   // set color
+  tft.setFont(&FreeMonoBold18pt7b);
+  tft.setTextSize(1);
+
+  tft.setCursor(xpos, ypos);
+  tft.print(text);
+
+}
 
 void initDraw() {
-  lcr_primary.init(0, 0, true);
+  lcr_primary.init(50, 100, true);
+  lcr_secondary.init(50, 140, true);
 }
 
 
 void drawLCRReadings() {
   lcr_primary.configSettings(primary_lcr_param);
   lcr_primary.updateValue(primary_lcr_value);  
+  lcr_secondary.configSettings(secondary_lcr_param);
+  lcr_secondary.updateValue(secondary_lcr_value);
+
+  //Serial.print(codecReadings.v_peak);
+  //Serial.print(" ");
+  //Serial.println(codecReadings.i_peak);
+
+  lcr_primary.draw(board.tft);
+  lcr_secondary.draw(board.tft);
 }
 
+void drawCurrentRanges() {
+  uint8_t v_pga = board.getPGAGainV();
+  uint8_t i_pga = board.getPGAGainI();
+  uint8_t range = board.getLCRRange();
+
+  String v_pga_text = "V PGA: ";
+  String i_pga_text = "I PGA: ";
+  String range_text = "Range: ";
+  
+  switch(v_pga) {
+    case PGA_GAIN_1:    v_pga_text += "1x";   break;
+    case PGA_GAIN_5:    v_pga_text += "5x";   break;
+    case PGA_GAIN_25:   v_pga_text += "25x";  break;
+    case PGA_GAIN_100:  v_pga_text += "100x"; break;
+    default:            v_pga_text += "err";  break;
+  }
+
+  switch(i_pga) {
+    case PGA_GAIN_1:    i_pga_text += "1x";   break;
+    case PGA_GAIN_5:    i_pga_text += "5x";   break;
+    case PGA_GAIN_25:   i_pga_text += "25x";  break;
+    case PGA_GAIN_100:  i_pga_text += "100x"; break;
+    default:            i_pga_text += "err";  break;
+  }
+
+  switch(range) {
+    case LCR_RANGE_100:   range_text += "100O";  break;
+    case LCR_RANGE_1K:    range_text += "1kO";   break;
+    case LCR_RANGE_10K:   range_text += "10kO";  break;
+    case LCR_RANGE_100K:  range_text += "100kO"; break;
+    default:              range_text += "err";   break;
+  }
+
+  board.tft.setTextColor(ILI9341_WHITE);
+  board.tft.setFont(&FreeMono9pt7b);
+  board.tft.setTextSize(1);
+  
+  board.tft.setCursor(10, 10);
+  board.tft.print(v_pga_text);
+  board.tft.setCursor(10, 30);
+  board.tft.print(i_pga_text);
+  board.tft.setCursor(10, 50);
+  board.tft.print(range_text);
+  
+}
 
 void drawAll(bool force_update) {
   
@@ -109,8 +176,9 @@ void drawAll(bool force_update) {
   switch(current_state) {
     
     case RUNNING:
-      current_menu->drawMenu(board.tft);
       drawLCRReadings();
+      drawCurrentRanges();
+      current_menu->drawMenu(board.tft);
       break;
 
     case CALIBRATION:

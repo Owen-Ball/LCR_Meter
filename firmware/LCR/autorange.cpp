@@ -11,6 +11,11 @@ long unsigned int prev_range_time = 0;
 bool gainAutorange(bool force_range) {
   float vpeak = codecReadings.v_peak;
   float ipeak = codecReadings.i_peak;
+
+  //Serial.print(vpeak*1.0);
+  //Serial.print(" ");
+  //Serial.println(ipeak*1.0);
+  
   bool range_changed = false;
 
   //If ranging is not forced, check if it has been long enough since last range
@@ -20,16 +25,22 @@ bool gainAutorange(bool force_range) {
 
   if (vpeak > AUTORANGE_LEVEL_HIGH && board.getPGAGainV() != PGA_GAIN_1) {
     board.decreaseVGain();
+    Serial.println("V Gain down");
     range_changed = true;
   } else if (vpeak < AUTORANGE_LEVEL_LOW && board.getPGAGainV() != PGA_GAIN_100) {
     board.increaseVGain();
+    Serial.println("V Gain up");
     range_changed = true;
   }
 
   if (ipeak > AUTORANGE_LEVEL_HIGH && board.getPGAGainI() != PGA_GAIN_1) {
-    if (board.decreaseIGain()) range_changed = true;
+    board.decreaseIGain(); 
+    Serial.println("I Gain down");
+    range_changed = true;
   } else if (ipeak < AUTORANGE_LEVEL_LOW && board.getPGAGainI() != PGA_GAIN_100) {
-    if (board.increaseIGain()) range_changed = true;
+    board.increaseIGain();
+    Serial.println("I Gain up");
+    range_changed = true;
   }
 
   if (range_changed) {
@@ -53,16 +64,18 @@ bool rangeAutorange(bool force_range) {
   
   if (z_mag < AUTORANGE_Z_LOW * RANGE_RESISTOR[board.getLCRRange()]) {
     if (board.decreaseLCRRange()) {
-      board.increaseIGain();
+      //board.increaseIGain();
       board.decreaseVGain();
       board.decreaseVGain();
+      Serial.println("Range down");
       range_changed = true;
     }
   } else if (z_mag > AUTORANGE_Z_HIGH * RANGE_RESISTOR[board.getLCRRange()]) {
     if (board.increaseLCRRange()) {
       board.decreaseIGain();
       board.decreaseIGain();
-      board.increaseVGain();
+      Serial.println("Range up");
+      //board.increaseVGain();
       range_changed = true;
     }
   }

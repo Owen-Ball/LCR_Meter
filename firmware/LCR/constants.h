@@ -72,8 +72,8 @@
 //Below this input peak value the board will attempt to raise the PGA gain. Must be >5x lower than high level
 #define AUTORANGE_LEVEL_LOW         0.125
 
-#define AUTORANGE_Z_LOW             0.177   //10^-0.75
-#define AUTORANGE_Z_HIGH            5.62    //10^ 0.75
+#define AUTORANGE_Z_LOW             0.25
+#define AUTORANGE_Z_HIGH            4.00
 
 //Unused currently, replaced by more detailed calibration procedure
 #define I_PGA_GBWP    40e6
