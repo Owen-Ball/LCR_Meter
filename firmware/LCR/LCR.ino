@@ -15,9 +15,6 @@
 #include "fsm.h"
 
 
-
-
-FloatDisplay disp;
 long unsigned int loop_time = 0;
 long unsigned int prev_time = 0;
 
@@ -29,9 +26,7 @@ void setup() {
   Serial.begin(115200);
   
   board.init();
-  
-  disp.init(0, 0, true);
-  disp.configSettings(6, -12, 1e6, "F");
+
   
   codecInit();
 
@@ -41,8 +36,6 @@ void setup() {
   //saveCalibration();
 
   digitalWrite(FAN_PIN, HIGH);
-  
-  loadCalibration();
   
   initSystem();
   //calibrateProbes();
@@ -81,8 +74,6 @@ void loop() {
   }
   */
 
-  runLCR();
-
   bool update_finished = !board.tft.asyncUpdateActive();
   runSystem();
   if (update_finished) {
@@ -92,7 +83,6 @@ void loop() {
  
   loop_time = micros() - prev_time;
   prev_time = micros();
-  delay(1);
   //Serial.println(loop_time);
 
   //codecBlockingMeasure();

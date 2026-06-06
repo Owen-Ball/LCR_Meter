@@ -15,6 +15,8 @@ extern lcr_param_t secondary_lcr_param;
 
 extern float primary_lcr_value;
 extern float secondary_lcr_value;
+extern float resistance_lcr_value;
+extern float reactance_lcr_value;
 
 
 void setLCRFrequency(float freq);
@@ -27,6 +29,10 @@ void setLCRParams(int index);
 void setLCRParams(float f);
 
 Complex calculateZ();
+
+float getQ(Complex Z, float freq);
+
+float getD(Complex Z, float freq);
 
 float getPhasorAngle(Complex Z, float freq);
 
@@ -43,6 +49,10 @@ float getRp(Complex Z, float freq);
 float getCp(Complex Z, float freq);
 
 float getLp(Complex Z, float freq);
+
+float getXs(Complex Z, float freq);
+
+float getRs_signed(Complex Z, float freq);
 
 extern lcr_param_t lcrParamCs;
 extern lcr_param_t lcrParamCp;

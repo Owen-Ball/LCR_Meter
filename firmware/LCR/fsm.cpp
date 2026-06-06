@@ -22,6 +22,7 @@ void switchMainMenuPage() {
 
 void switchToCalMenu() {
   current_menu = &calibration_menu;
+  current_state = CALIBRATION;
 }
 
 void switchToMainMenu() {
@@ -29,6 +30,7 @@ void switchToMainMenu() {
   if (num_cal_points == 0) return;
   
   current_menu = &main_menu_1;
+  current_state = RUNNING;
 }
 
 void calibrateProbesQuick() {
@@ -70,7 +72,7 @@ void initMainMenu1() {
   main_menu_1.addItem("Ls+Rs", &setLCRParams, 2.0f);
   main_menu_1.addItem("Cp+Rp", &setLCRParams, 3.0f);
   main_menu_1.addItem("Lp+Rp", &setLCRParams, 4.0f);
-  main_menu_1.executeItem(main_menu_1.getCategoriesCount()-1, 1);
+  main_menu_1.executeItem(main_menu_1.getCategoriesCount()-1, 0);
 
   main_menu_1.addCategory("Cal", &switchToCalMenu, false);
 
@@ -107,21 +109,21 @@ void initMainMenu2() {
 
 void initSystem() {
 
-  initCalMenu();
-  initMainMenu1();
-  initMainMenu2();
-
-  current_menu = &main_menu_1;
-
   board.tft.fillScreen(ILI9341_BLACK);
   board.tft.updateScreenAsync();
 
   uint8_t points_loaded = loadCalibration();
   if (points_loaded == 0) {
     current_state = CALIBRATION;
+    current_menu = &calibration_menu;
   } else {
     current_state = RUNNING;
+    current_menu = &main_menu_1;
   }
+
+  initCalMenu();
+  initMainMenu1();
+  initMainMenu2();
 
 }
 
@@ -165,6 +167,7 @@ void runSystem() {
   switch(current_state) {
     
     case RUNNING:
+      runLCR();
       runMenuInterface();
       break;
 

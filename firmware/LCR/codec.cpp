@@ -151,6 +151,7 @@ void codecAverageReadings() {
   uint32_t analyzedBlocks = meanI_I.available();
   if (analyzedBlocks > codecBlocksToAnalyze) {
     codecDiscardResults = true;
+    Serial.println("discarded");
   }
 
   if (analyzedBlocks == codecBlocksToAnalyze && codecReadingsUntilValid > 0) {

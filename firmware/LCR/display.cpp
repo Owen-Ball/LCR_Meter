@@ -18,6 +18,7 @@ void FloatDisplay::init(uint xpos, uint ypos, bool hysteresis) {
   this->hysteresis = hysteresis;
   exponent = 0;
   forced_exponent = false;
+  prev_leading_digits = -1;
 }
 
 void FloatDisplay::init(uint xpos, uint ypos, int exponent) {
@@ -27,13 +28,15 @@ void FloatDisplay::init(uint xpos, uint ypos, int exponent) {
   this->exponent = exponent;
   forced_exponent = true;
   exponent = 0;
+  prev_leading_digits = -1;
 }
 
-void FloatDisplay::configSettings(uint digits, int min_exp, float max_value, const char *unit) {
+void FloatDisplay::configSettings(uint digits, int min_exp, float max_value, const char *unit, const char *label) {
   this->digits = digits;
   this->min_exp = min_exp;
   this->max_value = max_value;
   this->unit = unit;
+  this->label = label;
 }
 
 void FloatDisplay::configSettings(lcr_param_t &params) {
@@ -41,6 +44,7 @@ void FloatDisplay::configSettings(lcr_param_t &params) {
   this->min_exp = params.resolution;
   this->max_value = 10e6;
   this->unit = params.unit;
+  this->label = params.label;
 }
 
 void FloatDisplay::updateValue(float value) {
@@ -51,11 +55,12 @@ void FloatDisplay::updateValue(float value) {
   } else {
     exponent = 3*floor(log10(value)/3);
   }
+
   exponent = max(min_exp, exponent);
   float coeff = value * pow(10, -1*exponent);
 
   if (hysteresis && exponent != this->exponent) {
-    if (exponent > this->exponent && coeff < DISP_FLOAT_RANGE_UP) {
+    if (exponent > this->exponent && coeff < DISP_FLOAT_RANGE_UP && exponent != min_exp) {
       exponent -= 3;
       coeff *= 1000.0;
     }
@@ -82,8 +87,22 @@ void FloatDisplay::updateValue(float value) {
   }
 
   int leading_digits = max(floor(log10(coeff)) + 1, 1);
-  int decimal_digits = digits - leading_digits - 1;
-  text = String(coeff, decimal_digits) + " " + prefix + unit;
+
+  if (DISP_FLOAT_DECIMAL_HYST && prev_leading_digits == leading_digits + 1 && value / pow(10, floor(log10(value))+1) > DISP_FLOAT_RANGE_DOWN) {
+    leading_digits += 1;
+    int decimal_digits = digits - leading_digits - 1;
+    text = String(coeff, decimal_digits);
+    if (text.length() != digits) {
+      text = "0" + text;
+    }
+  } else {
+    int decimal_digits = digits - leading_digits - 1;
+    text = String(coeff, decimal_digits);
+    text = text.substring(0, digits);
+  }
+  prev_leading_digits = leading_digits;
+  
+  text = String(label) + ": " + text + " " + prefix + unit;
   
   Serial.println(text);
 }
@@ -99,8 +118,8 @@ void FloatDisplay::draw(ILI9341_t3n &tft) {
 }
 
 void initDraw() {
-  lcr_primary.init(50, 100, true);
-  lcr_secondary.init(50, 140, true);
+  lcr_primary.init(20, 100, true);
+  lcr_secondary.init(20, 140, true);
 }
 
 
@@ -161,7 +180,55 @@ void drawCurrentRanges() {
   board.tft.print(i_pga_text);
   board.tft.setCursor(10, 50);
   board.tft.print(range_text);
+}
+
+String floatToExp(float val) {
+  if (val == 0) return "0e0";
+  bool neg = val < 0;
+  val = abs(val);
+
+  if (val < 1e-3) return "0e0";
+  if (val > R_OVERFLOW) return "ovf";
   
+  int val_exp = floor(log10(val));
+  int coeff = round(val / pow(10, val_exp));
+  if (coeff == 10) {
+    coeff = 1;
+    val_exp += 1;
+  }
+
+  return String(coeff) + "e" + String(val_exp);
+  
+  /*
+  if (neg) {
+    return "-" + String(coeff) + "e" + String(val_exp);
+  } else {
+    return "+" + String(coeff) + "e" + String(val_exp);
+  }
+  */
+}
+
+void drawImpedance() {
+  float Rs = resistance_lcr_value;
+  float Xs = reactance_lcr_value;
+
+  String text = "Z=";
+  
+  if (Rs < 0) text += "-";
+
+  text += floatToExp(Rs);
+  if (Xs < 0) text += "-j";
+  else text += "+j";
+  
+  text += floatToExp(Xs);
+  text += " Ohm";
+  
+  board.tft.setTextColor(ILI9341_WHITE);
+  board.tft.setFont(&FreeMono9pt7b);
+  board.tft.setTextSize(1);
+  
+  board.tft.setCursor(10, 70);
+  board.tft.print(text);
 }
 
 void drawAll(bool force_update) {
@@ -178,6 +245,7 @@ void drawAll(bool force_update) {
     case RUNNING:
       drawLCRReadings();
       drawCurrentRanges();
+      drawImpedance();
       current_menu->drawMenu(board.tft);
       break;
 

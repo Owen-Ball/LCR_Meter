@@ -472,7 +472,7 @@ void correctTIAGain() {
 void calibrateProbes(float f) {
 
   float amp = codecGetAmplitude();
-  float freq = codecGetAmplitude();
+  float freq = codecGetFrequency();
   
   Serial.println("Short probes");
   while (!Serial.available()) {}
@@ -486,6 +486,8 @@ void calibrateProbes(float f) {
   while (Serial.available()) {Serial.read();}
   calibrateOpen();
 
+  board.setPGAGainV(PGA_GAIN_1);
+  board.setPGAGainI(PGA_GAIN_1);
   codecSetOutputAmplitude(amp);
   codecSetOutputFrequency(freq);
   loadCalibrationPoint(freq);
@@ -495,8 +497,6 @@ void calibrateProbes(float f) {
 void calibrateProbes_Point(float f) {
   
   float amp = codecGetAmplitude();
-  uint8_t vgain = board.getPGAGainV();
-  uint8_t igain = board.getPGAGainI();
   
   Serial.println("Short probes");
   while (!Serial.available()) {}
@@ -517,8 +517,8 @@ void calibrateProbes_Point(float f) {
 
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
-  board.setPGAGainV(vgain);
-  board.setPGAGainI(igain);
+  board.setPGAGainV(PGA_GAIN_1);
+  board.setPGAGainI(PGA_GAIN_1);
   codecSetOutputAmplitude(amp);
 }
 
@@ -527,8 +527,7 @@ void calibrateProbes_Point(float f) {
 void calibrateAll(float f) {
 
   float amp = codecGetAmplitude();
-  uint8_t vgain = board.getPGAGainV();
-  uint8_t igain = board.getPGAGainI();
+  float freq = codecGetFrequency();
 
   //Initialize calibration array with the list of calibration frequencies
   num_cal_points = CAL_FREQ_COUNT;
@@ -563,9 +562,11 @@ void calibrateAll(float f) {
 
   correctTIAGain();
 
-  board.setPGAGainV(vgain);
-  board.setPGAGainI(igain);
+  board.setPGAGainV(PGA_GAIN_1);
+  board.setPGAGainI(PGA_GAIN_1);
   codecSetOutputAmplitude(amp);
+  codecSetOutputFrequency(freq);
+  loadCalibrationPoint(freq);
 
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
