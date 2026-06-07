@@ -3,9 +3,13 @@
 #include "fsm.h"
 #include "board.h"
 #include "lcr_func.h"
-#include "LCR_Fonts/FreeMonoBold18pt7b.h"
+#include "calibration.h"
+#include "LCR_Fonts/Consolas_Bold20pt7b.h"
 #include "LCR_Fonts/FreeMono9pt7b.h"
+#include "LCR_Fonts/Font5x7FixedMono.h"
 
+
+LogPrint logger;
 
 long unsigned int prev_refresh_time = 0;
 
@@ -49,15 +53,15 @@ void FloatDisplay::configSettings(lcr_param_t &params) {
 
 void FloatDisplay::updateValue(float value) {
   int exponent;
-  
+
   if (forced_exponent) {
     exponent = this->exponent;
   } else {
-    exponent = 3*floor(log10(value)/3);
+    exponent = 3 * floor(log10(value) / 3);
   }
 
   exponent = max(min_exp, exponent);
-  float coeff = value * pow(10, -1*exponent);
+  float coeff = value * pow(10, -1 * exponent);
 
   if (hysteresis && exponent != this->exponent) {
     if (exponent > this->exponent && coeff < DISP_FLOAT_RANGE_UP && exponent != min_exp) {
@@ -79,7 +83,7 @@ void FloatDisplay::updateValue(float value) {
     case -9:  prefix = 'n'; break;
     case -6:  prefix = 'u'; break;
     case -3:  prefix = 'm'; break;
-    case 0:   prefix = ' '; break;
+    case 0:   prefix = ""; break;
     case 3:   prefix = 'k'; break;
     case 6:   prefix = 'M'; break;
     case 9:   prefix = 'G'; break;
@@ -88,7 +92,7 @@ void FloatDisplay::updateValue(float value) {
 
   int leading_digits = max(floor(log10(coeff)) + 1, 1);
 
-  if (DISP_FLOAT_DECIMAL_HYST && prev_leading_digits == leading_digits + 1 && value / pow(10, floor(log10(value))+1) > DISP_FLOAT_RANGE_DOWN) {
+  if (DISP_FLOAT_DECIMAL_HYST && prev_leading_digits == leading_digits + 1 && value / pow(10, floor(log10(value)) + 1) > DISP_FLOAT_RANGE_DOWN) {
     leading_digits += 1;
     int decimal_digits = digits - leading_digits - 1;
     text = String(coeff, decimal_digits);
@@ -101,15 +105,15 @@ void FloatDisplay::updateValue(float value) {
     text = text.substring(0, digits);
   }
   prev_leading_digits = leading_digits;
-  
+
   text = String(label) + ": " + text + " " + prefix + unit;
-  
+
   Serial.println(text);
 }
 
 void FloatDisplay::draw(ILI9341_t3n &tft) {
-  tft.setTextColor(ILI9341_RED);   // set color
-  tft.setFont(&FreeMonoBold18pt7b);
+  tft.setTextColor(ILI9341_RED);
+  tft.setFont(&Consolas_Bold20pt7b);
   tft.setTextSize(1);
 
   tft.setCursor(xpos, ypos);
@@ -117,15 +121,69 @@ void FloatDisplay::draw(ILI9341_t3n &tft) {
 
 }
 
+void LogPrint::init(ILI9341_t3n &tft, bool serial_logging, const GFXfont *font) {
+  this->tft = &tft;
+  this->serial_logging = serial_logging;
+  this->font = font;
+}
+
+void LogPrint::setCursor(uint16_t x, uint16_t y, uint16_t line_advance) {
+  this->x = x;
+  this->y = y;
+  this->line_advance = line_advance;
+
+  tft->setTextSize(1);
+  tft->setTextColor(ILI9341_WHITE);
+  tft->setFont(font);
+  tft->setCursor(x, y);
+}
+
+void LogPrint::print(float f) {
+  print(String(f, 3));
+}
+
+void LogPrint::print(Complex c) {
+  tft->print(c);
+  if (serial_logging) Serial.print(c);
+}
+
+void LogPrint::print(String s) {
+  tft->print(s);
+  if (serial_logging) Serial.print(s);
+}
+
+void LogPrint::println(float f) {
+  println(String(f, 3));
+}
+
+void LogPrint::println() {
+  println("");
+}
+
+void LogPrint::println(Complex c) {
+  tft->print(c);
+  if (serial_logging) Serial.print(c);
+  y += line_advance; 
+  tft->setCursor(x, y);
+}
+
+void LogPrint::println(String s) {
+  tft->print(s);
+  if (serial_logging) Serial.print(s);
+  y += line_advance; 
+  tft->setCursor(x, y);
+}
+
 void initDraw() {
   lcr_primary.init(20, 100, true);
   lcr_secondary.init(20, 140, true);
+  logger.init(board.tft, true, &Font5x7FixedMono);
 }
 
 
 void drawLCRReadings() {
   lcr_primary.configSettings(primary_lcr_param);
-  lcr_primary.updateValue(primary_lcr_value);  
+  lcr_primary.updateValue(primary_lcr_value);
   lcr_secondary.configSettings(secondary_lcr_param);
   lcr_secondary.updateValue(secondary_lcr_value);
 
@@ -145,8 +203,8 @@ void drawCurrentRanges() {
   String v_pga_text = "V PGA: ";
   String i_pga_text = "I PGA: ";
   String range_text = "Range: ";
-  
-  switch(v_pga) {
+
+  switch (v_pga) {
     case PGA_GAIN_1:    v_pga_text += "1x";   break;
     case PGA_GAIN_5:    v_pga_text += "5x";   break;
     case PGA_GAIN_25:   v_pga_text += "25x";  break;
@@ -154,7 +212,7 @@ void drawCurrentRanges() {
     default:            v_pga_text += "err";  break;
   }
 
-  switch(i_pga) {
+  switch (i_pga) {
     case PGA_GAIN_1:    i_pga_text += "1x";   break;
     case PGA_GAIN_5:    i_pga_text += "5x";   break;
     case PGA_GAIN_25:   i_pga_text += "25x";  break;
@@ -162,7 +220,7 @@ void drawCurrentRanges() {
     default:            i_pga_text += "err";  break;
   }
 
-  switch(range) {
+  switch (range) {
     case LCR_RANGE_100:   range_text += "100O";  break;
     case LCR_RANGE_1K:    range_text += "1kO";   break;
     case LCR_RANGE_10K:   range_text += "10kO";  break;
@@ -173,7 +231,7 @@ void drawCurrentRanges() {
   board.tft.setTextColor(ILI9341_WHITE);
   board.tft.setFont(&FreeMono9pt7b);
   board.tft.setTextSize(1);
-  
+
   board.tft.setCursor(10, 10);
   board.tft.print(v_pga_text);
   board.tft.setCursor(10, 30);
@@ -189,7 +247,7 @@ String floatToExp(float val) {
 
   if (val < 1e-3) return "0e0";
   if (val > R_OVERFLOW) return "ovf";
-  
+
   int val_exp = floor(log10(val));
   int coeff = round(val / pow(10, val_exp));
   if (coeff == 10) {
@@ -198,13 +256,13 @@ String floatToExp(float val) {
   }
 
   return String(coeff) + "e" + String(val_exp);
-  
+
   /*
-  if (neg) {
+    if (neg) {
     return "-" + String(coeff) + "e" + String(val_exp);
-  } else {
+    } else {
     return "+" + String(coeff) + "e" + String(val_exp);
-  }
+    }
   */
 }
 
@@ -213,35 +271,35 @@ void drawImpedance() {
   float Xs = reactance_lcr_value;
 
   String text = "Z=";
-  
+
   if (Rs < 0) text += "-";
 
   text += floatToExp(Rs);
   if (Xs < 0) text += "-j";
   else text += "+j";
-  
+
   text += floatToExp(Xs);
   text += " Ohm";
-  
+
   board.tft.setTextColor(ILI9341_WHITE);
   board.tft.setFont(&FreeMono9pt7b);
   board.tft.setTextSize(1);
-  
+
   board.tft.setCursor(10, 70);
   board.tft.print(text);
 }
 
 void drawAll(bool force_update) {
-  
+
   if (millis() - prev_refresh_time < DISP_REFRESH_TIME && !force_update) return;
 
   //This display function should only ever be called after checking this first, but just in case;
   if (board.tft.asyncUpdateActive()) return;
-  
-  board.tft.fillScreen(ILI9341_BLACK);
 
-  switch(current_state) {
-    
+  board.tft.fillScreen(0x0005);
+
+  switch (current_state) {
+
     case RUNNING:
       drawLCRReadings();
       drawCurrentRanges();
@@ -250,15 +308,16 @@ void drawAll(bool force_update) {
       break;
 
     case CALIBRATION:
+      printCalibrationPoint(calibration_data);
       current_menu->drawMenu(board.tft);
       //print cal data
       break;
-      
+
     default:
       break;
-    
+
   }
-  
+
   board.tft.updateScreenAsync();
 
   prev_refresh_time = millis();

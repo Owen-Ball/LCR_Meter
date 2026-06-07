@@ -31,7 +31,7 @@ void Board::init() {
   temp_sensor.begin();
   temp_sensor.writeConfig(MCP9800::ADC_RES_12BITS);
 
-  tft.begin(16000000);
+  tft.begin(14000000);
   tft.setRotation(3);
   tft.setFrameBuffer(framebuffer);
   tft.useFrameBuffer(true);

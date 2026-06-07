@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include "lcr_func.h"
 #include "ILI9341_t3n.h"
+#include <CComplex.h>
 
 class FloatDisplay {
   public:
@@ -35,6 +36,30 @@ class FloatDisplay {
             
 };
 
+class LogPrint {
+  public:
+    void init(ILI9341_t3n &tft, bool serial_logging = false, const GFXfont *font = NULL);
+    void setCursor(uint16_t x, uint16_t y, uint16_t line_advance);
+    void print(float f);
+    void print(Complex c);
+    void print(String s);
+    void println(float f);
+    void println(Complex c);
+    void println(String s);
+    void println();
+
+  private:
+    uint16_t x;
+    uint16_t y;
+    uint16_t line_advance;
+    ILI9341_t3n *tft;
+    const GFXfont *font;
+    bool serial_logging;
+    
+    
+};
+
+extern LogPrint logger;
 void initDraw();
 void drawCurrentRanges();
 void drawLCRReadings();

@@ -120,7 +120,7 @@ void initSystem() {
     current_state = RUNNING;
     current_menu = &main_menu_1;
   }
-
+  
   initCalMenu();
   initMainMenu1();
   initMainMenu2();

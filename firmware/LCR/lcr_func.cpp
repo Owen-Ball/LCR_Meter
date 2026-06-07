@@ -33,7 +33,7 @@ lcr_param_t *lcr_param_lookup[LCR_FUNC_NUM] = {
 void setLCRFrequency(float freq) {
   loadCalibrationPoint(freq);
   codecSetOutputFrequency(freq);
-  printCalibrationPoint(calibration_data);
+  //printCalibrationPoint(calibration_data);
   _curr_frequency = freq;
 }
 
@@ -228,7 +228,7 @@ lcr_param_t lcrParamLp {
 
 lcr_param_t lcrParamRs {
   .label = "Rs",
-  .unit = "O",
+  .unit = "@",
   .resolution = -3,
   .value = &getRs,
 };
@@ -255,14 +255,14 @@ lcr_param_t lcrParamZPhase {
 };
 
 lcr_param_t lcrParamD {
-  .label = "D",
+  .label = " D",
   .unit = "",
   .resolution = 0,
   .value = &getD,
 };
 
 lcr_param_t lcrParamQ {
-  .label = "Q",
+  .label = " Q",
   .unit = "",
   .resolution = 0,
   .value = &getQ,

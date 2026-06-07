@@ -2,6 +2,7 @@
 #include "constants.h"
 #include "codec.h"
 #include "autorange.h"
+#include "display.h"
 
 CalibrationPoint calibration_data;
 uint8_t num_cal_points = 0;
@@ -14,32 +15,36 @@ Complex v_pga_dc[PGA_GAIN_NUM];
 
 
 void printCalibrationPoint(CalibrationPoint& cal_data) {
-  Serial.print("Printing calibration data for: ");
-  Serial.print(cal_data.frequency);
-  Serial.println("Hz");
 
-  Serial.print("Voltage PGA Gains: ");
+  logger.setCursor(10, 10, 9);
+  
+  logger.print("Printing calibration data for: ");
+  logger.print(cal_data.frequency);
+  logger.println("Hz");
+
+  logger.println("Voltage PGA Gains: ");
   for (uint8_t i=0; i<PGA_GAIN_NUM; i++) {
-    Serial.print(cal_data.v_pga_gain[i]);
-    Serial.print(", ");
+    logger.print("  ");
+    logger.println(cal_data.v_pga_gain[i]);
+    //logger.print(", ");
   }
-  Serial.println();
-  Serial.print("Current PGA Gains: ");
+  logger.println();
+  logger.println("Current PGA Gains: ");
   for (uint8_t i=0; i<PGA_GAIN_NUM; i++) {
-    Serial.print(cal_data.i_pga_gain[i]);
-    Serial.print(", ");
+    logger.print("  ");
+    logger.println(cal_data.i_pga_gain[i]);
   }
-  Serial.println();
-  Serial.print("TIA Gains: ");
+  logger.println();
+  logger.println("TIA Gains: ");
   for (uint8_t i=0; i<LCR_RANGE_NUM; i++) {
-    Serial.print(cal_data.tia_gain[i]);
-    Serial.print(", ");
+    logger.print("  ");
+    logger.println(cal_data.tia_gain[i]);
   }
-  Serial.println();
-  Serial.print("Probe Zs: ");
-  Serial.println(cal_data.probe_Zs);
-  Serial.print("Probe Zp: ");
-  Serial.println(cal_data.probe_Zp);
+  logger.println();
+  logger.print("Probe Zs: ");
+  logger.println(cal_data.probe_Zs);
+  logger.print("Probe Zp: ");
+  logger.println(cal_data.probe_Zp);
 }
 
 
@@ -499,8 +504,7 @@ void calibrateProbes_Point(float f) {
   float amp = codecGetAmplitude();
   
   Serial.println("Short probes");
-  while (!Serial.available()) {}
-  while (Serial.available()) {Serial.read();}
+  board.waitForInput();
   calibrateShort_Point(calibration_data);
 
   Serial.print(calibration_data.frequency);
@@ -511,11 +515,10 @@ void calibrateProbes_Point(float f) {
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
   Serial.println("Open probes");
-  while (!Serial.available()) {}
-  while (Serial.available()) {Serial.read();}
+  board.waitForInput();
   calibrateOpen_Point(calibration_data);
 
-  board.buzzer.runBuzzerBlocking(4, 10, 50);
+  //board.buzzer.runBuzzerBlocking(4, 10, 50);
 
   board.setPGAGainV(PGA_GAIN_1);
   board.setPGAGainI(PGA_GAIN_1);

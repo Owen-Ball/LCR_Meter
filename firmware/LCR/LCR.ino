@@ -27,7 +27,6 @@ void setup() {
   
   board.init();
 
-  
   codecInit();
 
   board.buzzer.runBuzzerBlocking(4, 10, 50);
@@ -36,11 +35,10 @@ void setup() {
   //saveCalibration();
 
   digitalWrite(FAN_PIN, HIGH);
+
+  initDraw();
   
   initSystem();
-  //calibrateProbes();
-  //calibrateProbes_Point();
-  initDraw();
 
   
   delay(100); 
