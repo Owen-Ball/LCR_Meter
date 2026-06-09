@@ -162,22 +162,54 @@ void LogPrint::println() {
 
 void LogPrint::println(Complex c) {
   tft->print(c);
-  if (serial_logging) Serial.print(c);
+  if (serial_logging) Serial.println(c);
   y += line_advance; 
   tft->setCursor(x, y);
 }
 
 void LogPrint::println(String s) {
   tft->print(s);
-  if (serial_logging) Serial.print(s);
+  if (serial_logging) Serial.println(s);
   y += line_advance; 
   tft->setCursor(x, y);
 }
 
+void LogPrint::println_large(String s) {
+  tft->setTextSize(2);
+  tft->print(s);
+  if (serial_logging) Serial.println(s);
+  y += 2*line_advance; 
+  tft->setCursor(x, y);
+  tft->setTextSize(1);
+}
+
+void calUserPromptText(String s) {
+  board.tft.setTextColor(ILI9341_RED);
+  board.tft.setFont(&FreeMono9pt7b);
+  int16_t x1, y1;
+  uint16_t w, h;
+  
+  board.tft.getTextBounds(s, 0, 0, &x1, &y1, &w, &h);
+  int16_t text_x = (SCREEN_WIDTH - w) / 2;
+  int16_t text_y = SCREEN_HEIGHT - 60 - y1;
+  
+  board.tft.setCursor(text_x, text_y);
+  board.tft.print(s);
+
+  board.tft.getTextBounds("Press Enter or Touch", 0, 0, &x1, &y1, &w, &h);
+  text_x = (SCREEN_WIDTH - w) / 2;
+  board.tft.setCursor(text_x, text_y + 20);
+  
+  board.tft.print("Press Enter or Touch");
+  board.tft.waitUpdateAsyncComplete();
+  board.tft.updateScreenAsync();
+}
+
+
 void initDraw() {
   lcr_primary.init(20, 100, true);
   lcr_secondary.init(20, 140, true);
-  logger.init(board.tft, true, &Font5x7FixedMono);
+  logger.init(board.tft, false, &Font5x7FixedMono);
 }
 
 
@@ -296,7 +328,7 @@ void drawAll(bool force_update) {
   //This display function should only ever be called after checking this first, but just in case;
   if (board.tft.asyncUpdateActive()) return;
 
-  board.tft.fillScreen(0x0005);
+  board.tft.fillScreen(ILI9341_BLACK);
 
   switch (current_state) {
 

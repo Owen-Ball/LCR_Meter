@@ -47,6 +47,7 @@ class LogPrint {
     void println(Complex c);
     void println(String s);
     void println();
+    void println_large(String s);
 
   private:
     uint16_t x;
@@ -60,6 +61,8 @@ class LogPrint {
 };
 
 extern LogPrint logger;
+
+void calUserPromptText(String s);
 void initDraw();
 void drawCurrentRanges();
 void drawLCRReadings();

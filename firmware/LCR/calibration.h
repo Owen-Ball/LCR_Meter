@@ -52,6 +52,7 @@ void calibrateVPGA();
 
 void calibrateProbes_Point(float f = 0);
 void calibrateProbes(float f = 0);
+void calibrateAll_Point(float f = 0);
 void calibrateAll(float f = 0);
 
 #endif

@@ -45,8 +45,8 @@ void initCalMenu() {
   calibration_menu.addItem("Full", &calibrateProbes, 0.0f);
 
   calibration_menu.addCategory("All", nullptr, false, false);
-  calibration_menu.addItem("Quick", nullptr, 0.0f);
-  calibration_menu.addItem("Full", nullptr, 0.0f);
+  calibration_menu.addItem("Quick", &calibrateAll_Point, 0.0f);
+  calibration_menu.addItem("Full", &calibrateAll, 0.0f);
   
   calibration_menu.addCategory("Save", nullptr, false);
   calibration_menu.addItem("Confirm", nullptr, 0.0f);
@@ -114,12 +114,10 @@ void initSystem() {
 
   uint8_t points_loaded = loadCalibration();
   if (points_loaded == 0) {
-    current_state = CALIBRATION;
-    current_menu = &calibration_menu;
-  } else {
-    current_state = RUNNING;
-    current_menu = &main_menu_1;
+    calibrateAll();
   }
+  current_state = RUNNING;
+  current_menu = &main_menu_1;
   
   initCalMenu();
   initMainMenu1();

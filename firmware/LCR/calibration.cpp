@@ -2,6 +2,7 @@
 #include "constants.h"
 #include "codec.h"
 #include "autorange.h"
+#include "ILI9341_t3n.h"
 #include "display.h"
 
 CalibrationPoint calibration_data;
@@ -16,6 +17,8 @@ Complex v_pga_dc[PGA_GAIN_NUM];
 
 void printCalibrationPoint(CalibrationPoint& cal_data) {
 
+  if (num_cal_points == 0) return;
+  
   logger.setCursor(10, 10, 9);
   
   logger.print("Printing calibration data for: ");
@@ -340,9 +343,14 @@ void getVPGA_DC() {
 }
 */
 
+
 void calibrateIPGA() {
 
-  Serial.println("Beginning current PGA calibration");
+  board.tft.fillScreen(ILI9341_BLACK);
+  logger.setCursor(10, 15, 9);
+  logger.println_large("IPGA calibration");
+  board.tft.waitUpdateAsyncComplete();
+  board.tft.updateScreenAsync();
   
   //getIPGA_DC();
 
@@ -351,20 +359,26 @@ void calibrateIPGA() {
 
     calibrateIPGA_Point(cal_array[i]);
       
-    Serial.print(freq);
-    Serial.print("Hz: ");
+    logger.print(freq);
+    logger.print("Hz: ");
     for (uint8_t j=0; j<PGA_GAIN_NUM; j++) {
       //cal_array[i].i_pga_gain[j] = calculatePGAGain(i_pga_dc[j], freq, I_PGA_GBWP);
-      Serial.print(cal_array[i].i_pga_gain[j]);
-      Serial.print(", ");
+      logger.print(cal_array[i].i_pga_gain[j].modulus());
+      if (j != PGA_GAIN_NUM - 1) logger.print(", ");
+      board.tft.waitUpdateAsyncComplete();
+      board.tft.updateScreenAsync();
     }
-    Serial.println();
+    logger.println();
   }
 }
 
 void calibrateVPGA() {
 
-  Serial.println("Beginning voltage PGA calibration");
+  board.tft.fillScreen(ILI9341_BLACK);
+  logger.setCursor(10, 15, 9);
+  logger.println_large("VPGA calibration");
+  board.tft.waitUpdateAsyncComplete();
+  board.tft.updateScreenAsync();
   
   //getIPGA_DC();
 
@@ -373,14 +387,17 @@ void calibrateVPGA() {
 
     calibrateVPGA_Point(cal_array[i]);
       
-    Serial.print(freq);
-    Serial.print("Hz: ");
+    logger.print(freq);
+    logger.print("Hz: ");
     for (uint8_t j=0; j<PGA_GAIN_NUM; j++) {
       //cal_array[i].i_pga_gain[j] = calculatePGAGain(i_pga_dc[j], freq, I_PGA_GBWP);
-      Serial.print(cal_array[i].v_pga_gain[j]);
-      Serial.print(", ");
+      //logger.print(cal_array[i].v_pga_gain[j]);
+      logger.print(cal_array[i].v_pga_gain[j].modulus());
+      if (j != PGA_GAIN_NUM - 1) logger.print(", ");
+      board.tft.waitUpdateAsyncComplete();
+      board.tft.updateScreenAsync();
     }
-    Serial.println();
+    logger.println();
   }
 }
 
@@ -396,14 +413,29 @@ void calibrateLCRRange_Point(CalibrationPoint& cal_data, uint8_t range, float te
 
 
 void calibrateLCRRange(uint8_t range, float test_R) {
-  Serial.println("Beginning TIA calibration");
+  String R_text;
+  
+  board.tft.fillScreen(ILI9341_BLACK);
+  logger.setCursor(10, 15, 9);
+  float R = RANGE_RESISTOR[range];
+  if (R >= 1000) {
+    R_text = String(R/1000.0, 0) + "kOhm";
+  } else {
+    R_text = String(R, 0) + "Ohm";
+  }
+  
+  logger.println_large("TIA calibration: " + R_text);
+  board.tft.waitUpdateAsyncComplete();
+  board.tft.updateScreenAsync();
   
   for (uint8_t i=0; i<num_cal_points; i++) {
     calibration_data = cal_array[i];
     calibrateLCRRange_Point(cal_array[i], range, test_R);
-    Serial.print(cal_array[i].frequency);
-    Serial.print("Hz: ");
-    Serial.println(cal_array[i].tia_gain[range]);
+    logger.print(cal_array[i].frequency);
+    logger.print("Hz: ");
+    logger.println(cal_array[i].tia_gain[range]);
+    board.tft.waitUpdateAsyncComplete();
+    board.tft.updateScreenAsync();
   }
 }
 
@@ -417,15 +449,21 @@ void calibrateShort_Point(CalibrationPoint& cal_data) {
 }
 
 void calibrateShort() {
-  Serial.println("Beginning short calibration");
+  board.tft.fillScreen(ILI9341_BLACK);
+  logger.setCursor(10, 15, 9);
+  logger.println_large("Short calibration");
+  board.tft.waitUpdateAsyncComplete();
+  board.tft.updateScreenAsync();
   
   for (uint8_t i=0; i<num_cal_points; i++) {
     float freq = cal_array[i].frequency;
     calibration_data = cal_array[i];
     calibrateShort_Point(cal_array[i]);
-    Serial.print(freq);
-    Serial.print("Hz: ");
-    Serial.println(cal_array[i].probe_Zs);
+    logger.print(freq);
+    logger.print("Hz: ");
+    logger.println(cal_array[i].probe_Zs);
+    board.tft.waitUpdateAsyncComplete();
+    board.tft.updateScreenAsync();
   }
 }
 
@@ -438,15 +476,21 @@ void calibrateOpen_Point(CalibrationPoint& cal_data) {
 }
 
 void calibrateOpen() {
-  Serial.println("Beginning open calibration");
+  board.tft.fillScreen(ILI9341_BLACK);
+  logger.setCursor(10, 15, 9);
+  logger.println_large("Open calibration");
+  board.tft.waitUpdateAsyncComplete();
+  board.tft.updateScreenAsync();
   
   for (uint8_t i=0; i<num_cal_points; i++) {
     float freq = cal_array[i].frequency;
     calibration_data = cal_array[i];
     calibrateOpen_Point(cal_array[i]);
-    Serial.print(freq);
-    Serial.print("Hz: ");
-    Serial.println(cal_array[i].probe_Zp);
+    logger.print(freq);
+    logger.print("Hz: ");
+    logger.println(cal_array[i].probe_Zp);
+    board.tft.waitUpdateAsyncComplete();
+    board.tft.updateScreenAsync();
   }
 }
 
@@ -474,21 +518,52 @@ void correctTIAGain() {
   }
 }
 
+
+void correctTIAGain_Point(CalibrationPoint& cal_data) {
+  Complex R;
+  Complex R_corrected;
+  
+  Serial.println("Correcting TIA gain");
+  
+  float freq = cal_data.frequency;
+  Serial.print(freq);
+  Serial.print("Hz: ");
+  
+  for (uint8_t j=0; j<LCR_RANGE_NUM; j++) {
+    R.set(RANGE_CAL_RESISTOR[j], 0);
+    R_corrected = ((R + cal_data.probe_Zs).reciprocal() + cal_data.probe_Zp.reciprocal()).reciprocal();
+    cal_data.tia_gain[j] *= R_corrected / R;
+    Serial.print(cal_data.tia_gain[j]);
+    Serial.print(", ");
+  }
+}
+
+
+void dispCalHeader(String s) {
+  board.tft.fillScreen(ILI9341_BLACK);
+  logger.setCursor(10, 15, 9);
+  logger.println_large(s);
+  board.tft.waitUpdateAsyncComplete();
+  board.tft.updateScreen();
+}
+
 void calibrateProbes(float f) {
 
   float amp = codecGetAmplitude();
   float freq = codecGetFrequency();
+
+  board.tft.fillScreen(ILI9341_BLACK);
+  calUserPromptText("Short Probes");
   
-  Serial.println("Short probes");
-  while (!Serial.available()) {}
-  while (Serial.available()) {Serial.read();}
+  board.waitForInput();
+  delay(200);
   calibrateShort();
-  
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
-  Serial.println("Open probes");
-  while (!Serial.available()) {}
-  while (Serial.available()) {Serial.read();}
+  calUserPromptText("Open Probes");
+
+  board.waitForInput();
+  delay(200);
   calibrateOpen();
 
   board.setPGAGainV(PGA_GAIN_1);
@@ -499,23 +574,38 @@ void calibrateProbes(float f) {
 }
 
 
+//Note that the parameter "f" is unused. The calibration is done directly on "calibration_data"
 void calibrateProbes_Point(float f) {
   
   float amp = codecGetAmplitude();
   
-  Serial.println("Short probes");
+  board.tft.fillScreen(ILI9341_BLACK);
+  calUserPromptText("Short Probes");
+  
   board.waitForInput();
+  delay(200);
+
+  dispCalHeader("Short calibration");
+
   calibrateShort_Point(calibration_data);
 
-  Serial.print(calibration_data.frequency);
-  Serial.print("Hz: ");
-  Serial.println(calibration_data.probe_Zs);
+  
+  logger.print(calibration_data.frequency);
+  logger.print("Hz: ");
+  logger.println(calibration_data.probe_Zs);
+  board.tft.waitUpdateAsyncComplete();
+  board.tft.updateScreen();
 
     
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
-  Serial.println("Open probes");
+  calUserPromptText("Open Probes");
+  
   board.waitForInput();
+  delay(200);
+
+  dispCalHeader("Open calibration");
+
   calibrateOpen_Point(calibration_data);
 
   //board.buzzer.runBuzzerBlocking(4, 10, 50);
@@ -526,7 +616,7 @@ void calibrateProbes_Point(float f) {
 }
 
 
-//Calibrate all systems using the defined freqeuncy list
+//Calibrate all systems using the defined frequency list
 void calibrateAll(float f) {
 
   float amp = codecGetAmplitude();
@@ -538,24 +628,29 @@ void calibrateAll(float f) {
     cal_array[i].frequency = cal_frequencies[i];
   }
 
-  Serial.println("Connect 10k resistor");
-  while (!Serial.available()) {}
-  while (Serial.available()) {Serial.read();}
+  board.tft.fillScreen(ILI9341_BLACK);
+  calUserPromptText("Connect 10kOhm Resistor");
+  
+  board.waitForInput();
+  delay(200);
+  
   calibrateIPGA();
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
-  Serial.println("Connect 1k resistor");
-  while (!Serial.available()) {}
-  while (Serial.available()) {Serial.read();}
+  calUserPromptText("Connect 1kOhm Resistor");
+  board.waitForInput();
+  delay(200);
+  
   calibrateVPGA();
 
   calibrateLCRRange(LCR_RANGE_100, RANGE_CAL_RESISTOR[LCR_RANGE_100]);
   calibrateLCRRange(LCR_RANGE_1K, RANGE_CAL_RESISTOR[LCR_RANGE_1K]);
+  
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
-  Serial.println("Connect 10k resistor");
-  while (!Serial.available()) {}
-  while (Serial.available()) {Serial.read();}
+  calUserPromptText("Connect 10kOhm Resistor");
+  board.waitForInput();
+  delay(200);
 
   calibrateLCRRange(LCR_RANGE_10K, RANGE_CAL_RESISTOR[LCR_RANGE_10K]);
   calibrateLCRRange(LCR_RANGE_100K, RANGE_CAL_RESISTOR[LCR_RANGE_100K]);
@@ -573,4 +668,95 @@ void calibrateAll(float f) {
 
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
+}
+
+
+//Calibrate all systems for a given frequency
+//Note that the parameter "f" is unused. The calibration is done directly on "calibration_data"
+void calibrateAll_Point(float f) {
+  float amp = codecGetAmplitude();
+
+  board.tft.fillScreen(ILI9341_BLACK);
+  calUserPromptText("Connect 10kOhm Resistor");
+  board.waitForInput();
+  delay(200);
+
+  dispCalHeader("IPGA calibration");
+  
+  calibrateIPGA_Point(calibration_data);
+
+  logger.print(calibration_data.frequency);
+  logger.print("Hz: ");
+  for (uint8_t j=0; j<PGA_GAIN_NUM; j++) {
+    logger.print(calibration_data.i_pga_gain[j].modulus());
+    if (j != PGA_GAIN_NUM - 1) logger.print(", ");
+    board.tft.waitUpdateAsyncComplete();
+    board.tft.updateScreenAsync();
+  }
+    
+  board.buzzer.runBuzzerBlocking(4, 10, 50);
+
+  calUserPromptText("Connect 1kOhm Resistor");
+  board.waitForInput();
+  delay(200);
+
+  dispCalHeader("VPGA calibration");
+  
+  calibrateVPGA_Point(calibration_data);
+
+  for (uint8_t j=0; j<PGA_GAIN_NUM; j++) {
+    logger.print(calibration_data.v_pga_gain[j].modulus());
+    if (j != PGA_GAIN_NUM - 1) logger.print(", ");
+    board.tft.waitUpdateAsyncComplete();
+    board.tft.updateScreenAsync();
+  }
+
+  dispCalHeader("TIA calibration: 100Ohm");
+  calibrateLCRRange_Point(calibration_data, LCR_RANGE_100, RANGE_CAL_RESISTOR[LCR_RANGE_100]);
+  logger.print(calibration_data.frequency);
+  logger.print("Hz: ");
+  logger.println(calibration_data.tia_gain[LCR_RANGE_100]);
+  board.tft.waitUpdateAsyncComplete();
+  board.tft.updateScreenAsync();
+  
+  dispCalHeader("TIA calibration: 1kOhm");
+  calibrateLCRRange_Point(calibration_data, LCR_RANGE_1K, RANGE_CAL_RESISTOR[LCR_RANGE_1K]);
+  logger.print(calibration_data.frequency);
+  logger.print("Hz: ");
+  logger.println(calibration_data.tia_gain[LCR_RANGE_1K]);
+  board.tft.waitUpdateAsyncComplete();
+  board.tft.updateScreenAsync();
+  
+  board.buzzer.runBuzzerBlocking(4, 10, 50);
+
+  calUserPromptText("Connect 10kOhm Resistor");
+  board.waitForInput();
+  delay(200);
+
+  dispCalHeader("TIA calibration: 10kOhm");
+  calibrateLCRRange_Point(calibration_data, LCR_RANGE_10K, RANGE_CAL_RESISTOR[LCR_RANGE_10K]);
+  logger.print(calibration_data.frequency);
+  logger.print("Hz: ");
+  logger.println(calibration_data.tia_gain[LCR_RANGE_10K]);
+  board.tft.waitUpdateAsyncComplete();
+  board.tft.updateScreenAsync();
+  
+
+  dispCalHeader("TIA calibration: 100kOhm");
+  calibrateLCRRange_Point(calibration_data, LCR_RANGE_100K, RANGE_CAL_RESISTOR[LCR_RANGE_100K]);
+  logger.print(calibration_data.frequency);
+  logger.print("Hz: ");
+  logger.println(calibration_data.tia_gain[LCR_RANGE_100K]);
+  board.tft.waitUpdateAsyncComplete();
+  board.tft.updateScreenAsync();
+  
+  board.buzzer.runBuzzerBlocking(4, 10, 50);
+
+  calibrateProbes_Point();
+
+  correctTIAGain_Point(calibration_data);
+  
+  board.setPGAGainV(PGA_GAIN_1);
+  board.setPGAGainI(PGA_GAIN_1);
+  codecSetOutputAmplitude(amp);
 }
