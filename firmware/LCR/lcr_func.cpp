@@ -201,69 +201,79 @@ float getRs_signed(Complex Z, float freq) {
 lcr_param_t lcrParamCs {
   .label = "Cs",
   .unit = "F",
-  .resolution = -12,
+  .min_exp = -12,
+  .min_res = -13,
   .value = &getCs,
 };
 
 lcr_param_t lcrParamCp {
   .label = "Cp",
   .unit = "F",
-  .resolution = -12,
+  .min_exp = -12,
+  .min_res = -13,
   .value = &getCp,
 };
 
 lcr_param_t lcrParamLs {
   .label = "Ls",
   .unit = "H",
-  .resolution = -9,
+  .min_exp = -6,
+  .min_res = -8,
   .value = &getLs,
 };
 
 lcr_param_t lcrParamLp {
   .label = "Lp",
   .unit = "H",
-  .resolution = -9,
+  .min_exp = -6,
+  .min_res = -8,
   .value = &getLp,
 };
 
 lcr_param_t lcrParamRs {
   .label = "Rs",
   .unit = "@",
-  .resolution = -3,
+  .min_exp = -3,
+  .min_res = -4,
   .value = &getRs,
 };
 
 lcr_param_t lcrParamRp {
   .label = "Rp",
   .unit = "O",
-  .resolution = -3,
+  .min_exp = -3,
+  .min_res = -4,
   .value = &getRp,
 };
 
 lcr_param_t lcrParamZMag {
   .label = "|Z|",
   .unit = "O",
-  .resolution = -3,
+  .min_exp = -3,
+  .min_res = -4,
   .value = &getPhasorMag,
 };
 
 lcr_param_t lcrParamZPhase {
   .label = "Phi",
   .unit = "o",
-  .resolution = 0,
+  .min_exp = 0,
+  .min_res = -2,
   .value = &getPhasorAngle,
 };
 
 lcr_param_t lcrParamD {
   .label = " D",
   .unit = "",
-  .resolution = 0,
+  .min_exp = 0,
+  .min_res = -2,
   .value = &getD,
 };
 
 lcr_param_t lcrParamQ {
   .label = " Q",
   .unit = "",
-  .resolution = 0,
+  .min_exp = 0,
+  .min_res = -2,
   .value = &getQ,
 };

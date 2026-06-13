@@ -35,20 +35,22 @@ void FloatDisplay::init(uint xpos, uint ypos, int exponent) {
   prev_leading_digits = -1;
 }
 
-void FloatDisplay::configSettings(uint digits, int min_exp, float max_value, const char *unit, const char *label) {
+void FloatDisplay::configSettings(uint digits, int min_exp, int min_res, float max_value, const char *unit, const char *label) {
   this->digits = digits;
   this->min_exp = min_exp;
   this->max_value = max_value;
   this->unit = unit;
   this->label = label;
+  this->min_resolution = min_res;
 }
 
 void FloatDisplay::configSettings(lcr_param_t &params) {
   this->digits = DISP_DIGITS;
-  this->min_exp = params.resolution;
+  this->min_exp = params.min_exp;
   this->max_value = 10e6;
   this->unit = params.unit;
   this->label = params.label;
+  this->min_resolution = params.min_res;
 }
 
 void FloatDisplay::updateValue(float value) {
@@ -96,14 +98,25 @@ void FloatDisplay::updateValue(float value) {
     leading_digits += 1;
     int decimal_digits = digits - leading_digits - 1;
     text = String(coeff, decimal_digits);
-    if (text.length() != digits) {
-      text = "0" + text;
-    }
+    
   } else {
-    int decimal_digits = digits - leading_digits - 1;
+
+    //Determine required number of trailing decimal digits
+    int decimal_digits = min(digits - leading_digits - 1, exponent - min_resolution);
+    decimal_digits = max(decimal_digits, 1);
+    
     text = String(coeff, decimal_digits);
-    text = text.substring(0, digits);
+    if (text.length() > digits) {
+      //value rounded up, chop off last digit
+      text = text.substring(0, digits);
+    }
   }
+
+  //Append 0's to front of number to reach desired number of digits
+  while (text.length() < digits) {
+    text = "0" + text;
+  }
+    
   prev_leading_digits = leading_digits;
 
   text = String(label) + ": " + text + " " + prefix + unit;

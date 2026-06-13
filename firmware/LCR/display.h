@@ -11,7 +11,7 @@ class FloatDisplay {
     void init(uint xpos, uint ypos, bool hysteresis);
     //Set up float with a constant exponent
     void init(uint xpos, uint ypos, int exponent);
-    void configSettings(uint digits, int min_exp, float max_value, const char *unit, const char *label);
+    void configSettings(uint digits, int min_exp, int min_res, float max_value, const char *unit, const char *label);
     void configSettings(lcr_param_t &params);
     void updateValue(float value);
 
@@ -26,6 +26,7 @@ class FloatDisplay {
     int prev_leading_digits;
     bool forced_exponent;
     int min_exp;
+    int min_resolution;
     float max_value;
     const char *unit;
     const char *label;

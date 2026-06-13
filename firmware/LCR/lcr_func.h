@@ -6,7 +6,8 @@
 typedef struct lcr_param_struct {
   const char *label;
   const char *unit;
-  int8_t resolution;
+  int8_t min_exp;
+  int8_t min_res;
   float (*value)(Complex z, float f);
 } lcr_param_t;
 
