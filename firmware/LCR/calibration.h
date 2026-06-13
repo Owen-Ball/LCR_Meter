@@ -44,15 +44,16 @@ extern uint8_t num_cal_points;
 void printCalibrationPoint(CalibrationPoint& cal_data);
 void loadCalibrationPoint(float freq);
 bool saveCalibration();
+void saveCalibrationWrapper(float _ = 0);
 uint8_t loadCalibration();
 
 
 void calibrateIPGA();
 void calibrateVPGA();
 
-void calibrateProbes_Point(float f = 0);
-void calibrateProbes(float f = 0);
-void calibrateAll_Point(float f = 0);
-void calibrateAll(float f = 0);
+void calibrateProbes_Point(float _ = 0);
+void calibrateProbes(float _ = 0);
+void calibrateAll_Point(float _ = 0);
+void calibrateAll(float _ = 0);
 
 #endif

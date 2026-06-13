@@ -183,7 +183,7 @@ void LogPrint::println_large(String s) {
   tft->setTextSize(1);
 }
 
-void calUserPromptText(String s) {
+void userPromptText(String s) {
   board.tft.setTextColor(ILI9341_RED);
   board.tft.setFont(&FreeMono9pt7b);
   int16_t x1, y1;

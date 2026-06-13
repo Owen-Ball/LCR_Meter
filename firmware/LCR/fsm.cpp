@@ -33,10 +33,6 @@ void switchToMainMenu() {
   current_state = RUNNING;
 }
 
-void calibrateProbesQuick() {
-  
-}
-
 void initCalMenu() {
   calibration_menu.init(SCREEN_WIDTH, SCREEN_HEIGHT, MENU_CATEGORY_HEIGHT, MENU_ITEM_HEIGHT);
   
@@ -49,7 +45,7 @@ void initCalMenu() {
   calibration_menu.addItem("Full", &calibrateAll, 0.0f);
   
   calibration_menu.addCategory("Save", nullptr, false);
-  calibration_menu.addItem("Confirm", nullptr, 0.0f);
+  calibration_menu.addItem("Confirm", &saveCalibrationWrapper, 0.0f);
 
   calibration_menu.addCategory("Home", &switchToMainMenu, false);
 

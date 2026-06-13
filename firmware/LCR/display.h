@@ -62,7 +62,7 @@ class LogPrint {
 
 extern LogPrint logger;
 
-void calUserPromptText(String s);
+void userPromptText(String s);
 void initDraw();
 void drawCurrentRanges();
 void drawLCRReadings();

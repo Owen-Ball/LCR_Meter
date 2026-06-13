@@ -139,6 +139,27 @@ bool saveCalibration() {
   return res;
 }
 
+void saveCalibrationWrapper(float _) {
+  board.tft.fillScreen(ILI9341_BLACK);
+  board.tft.waitUpdateAsyncComplete();
+  board.tft.updateScreen();
+    
+  bool saved = saveCalibration();
+  
+  if (saved) {
+    String s = "Save of " + String(num_cal_points) + " points successful";
+    userPromptText(s);
+    board.tft.waitUpdateAsyncComplete();
+    board.tft.updateScreen();
+  } else {
+    userPromptText("Save failed! Check SD card");
+    board.tft.waitUpdateAsyncComplete();
+    board.tft.updateScreen();
+  }
+
+  board.waitForInput();
+}
+
 
 //Load cal_array array with caibration points from the calibration file
 //Will return the number of points read into the array
@@ -547,20 +568,20 @@ void dispCalHeader(String s) {
   board.tft.updateScreen();
 }
 
-void calibrateProbes(float f) {
+void calibrateProbes(float _) {
 
   float amp = codecGetAmplitude();
   float freq = codecGetFrequency();
 
   board.tft.fillScreen(ILI9341_BLACK);
-  calUserPromptText("Short Probes");
+  userPromptText("Short Probes");
   
   board.waitForInput();
   delay(200);
   calibrateShort();
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
-  calUserPromptText("Open Probes");
+  userPromptText("Open Probes");
 
   board.waitForInput();
   delay(200);
@@ -574,13 +595,13 @@ void calibrateProbes(float f) {
 }
 
 
-//Note that the parameter "f" is unused. The calibration is done directly on "calibration_data"
-void calibrateProbes_Point(float f) {
+//Note that the parameter "_" is unused. The calibration is done directly on "calibration_data"
+void calibrateProbes_Point(float _) {
   
   float amp = codecGetAmplitude();
   
   board.tft.fillScreen(ILI9341_BLACK);
-  calUserPromptText("Short Probes");
+  userPromptText("Short Probes");
   
   board.waitForInput();
   delay(200);
@@ -599,7 +620,7 @@ void calibrateProbes_Point(float f) {
     
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
-  calUserPromptText("Open Probes");
+  userPromptText("Open Probes");
   
   board.waitForInput();
   delay(200);
@@ -617,7 +638,7 @@ void calibrateProbes_Point(float f) {
 
 
 //Calibrate all systems using the defined frequency list
-void calibrateAll(float f) {
+void calibrateAll(float _) {
 
   float amp = codecGetAmplitude();
   float freq = codecGetFrequency();
@@ -629,7 +650,7 @@ void calibrateAll(float f) {
   }
 
   board.tft.fillScreen(ILI9341_BLACK);
-  calUserPromptText("Connect 10kOhm Resistor");
+  userPromptText("Connect 10kOhm Resistor");
   
   board.waitForInput();
   delay(200);
@@ -637,7 +658,7 @@ void calibrateAll(float f) {
   calibrateIPGA();
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
-  calUserPromptText("Connect 1kOhm Resistor");
+  userPromptText("Connect 1kOhm Resistor");
   board.waitForInput();
   delay(200);
   
@@ -648,7 +669,7 @@ void calibrateAll(float f) {
   
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
-  calUserPromptText("Connect 10kOhm Resistor");
+  userPromptText("Connect 10kOhm Resistor");
   board.waitForInput();
   delay(200);
 
@@ -672,12 +693,12 @@ void calibrateAll(float f) {
 
 
 //Calibrate all systems for a given frequency
-//Note that the parameter "f" is unused. The calibration is done directly on "calibration_data"
-void calibrateAll_Point(float f) {
+//Note that the parameter "_" is unused. The calibration is done directly on "calibration_data"
+void calibrateAll_Point(float _) {
   float amp = codecGetAmplitude();
 
   board.tft.fillScreen(ILI9341_BLACK);
-  calUserPromptText("Connect 10kOhm Resistor");
+  userPromptText("Connect 10kOhm Resistor");
   board.waitForInput();
   delay(200);
 
@@ -696,7 +717,7 @@ void calibrateAll_Point(float f) {
     
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
-  calUserPromptText("Connect 1kOhm Resistor");
+  userPromptText("Connect 1kOhm Resistor");
   board.waitForInput();
   delay(200);
 
@@ -711,6 +732,8 @@ void calibrateAll_Point(float f) {
     board.tft.updateScreenAsync();
   }
 
+  delay(2000);
+
   dispCalHeader("TIA calibration: 100Ohm");
   calibrateLCRRange_Point(calibration_data, LCR_RANGE_100, RANGE_CAL_RESISTOR[LCR_RANGE_100]);
   logger.print(calibration_data.frequency);
@@ -718,6 +741,8 @@ void calibrateAll_Point(float f) {
   logger.println(calibration_data.tia_gain[LCR_RANGE_100]);
   board.tft.waitUpdateAsyncComplete();
   board.tft.updateScreenAsync();
+
+  delay(2000);
   
   dispCalHeader("TIA calibration: 1kOhm");
   calibrateLCRRange_Point(calibration_data, LCR_RANGE_1K, RANGE_CAL_RESISTOR[LCR_RANGE_1K]);
@@ -729,7 +754,7 @@ void calibrateAll_Point(float f) {
   
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
-  calUserPromptText("Connect 10kOhm Resistor");
+  userPromptText("Connect 10kOhm Resistor");
   board.waitForInput();
   delay(200);
 
@@ -740,7 +765,8 @@ void calibrateAll_Point(float f) {
   logger.println(calibration_data.tia_gain[LCR_RANGE_10K]);
   board.tft.waitUpdateAsyncComplete();
   board.tft.updateScreenAsync();
-  
+
+  delay(2000);
 
   dispCalHeader("TIA calibration: 100kOhm");
   calibrateLCRRange_Point(calibration_data, LCR_RANGE_100K, RANGE_CAL_RESISTOR[LCR_RANGE_100K]);
@@ -749,6 +775,8 @@ void calibrateAll_Point(float f) {
   logger.println(calibration_data.tia_gain[LCR_RANGE_100K]);
   board.tft.waitUpdateAsyncComplete();
   board.tft.updateScreenAsync();
+
+  delay(2000);
   
   board.buzzer.runBuzzerBlocking(4, 10, 50);
 
