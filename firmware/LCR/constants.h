@@ -94,12 +94,7 @@ const float RANGE_RESISTOR[LCR_RANGE_NUM] = {100, 1000, 10000, 100000};
 #define V_CAL_RESISTOR    1000.0
 #define I_CAL_RESISTOR    10000.0
 
-#define R_OVERFLOW        20e6
-#define C_OVERFLOW        20e-3
-
-#define L_OVERFLOW        10
-
-
+#define Z_OVERFLOW        20e6
 
 
 

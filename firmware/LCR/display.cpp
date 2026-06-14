@@ -54,6 +54,15 @@ void FloatDisplay::configSettings(lcr_param_t &params) {
 }
 
 void FloatDisplay::updateValue(float value) {
+
+  if (value == INFINITY) {
+    this->exponent = -21;
+    text = String(label) + ": Ovrflw " + unit;
+    return;
+  }
+
+
+  
   int exponent;
 
   if (forced_exponent) {
@@ -291,7 +300,7 @@ String floatToExp(float val) {
   val = abs(val);
 
   if (val < 1e-3) return "0e0";
-  if (val > R_OVERFLOW) return "ovf";
+  if (val > Z_OVERFLOW) return "ovf";
 
   int val_exp = floor(log10(val));
   int coeff = round(val / pow(10, val_exp));
@@ -356,6 +365,10 @@ void drawAll(bool force_update) {
       printCalibrationPoint(calibration_data);
       current_menu->drawMenu(board.tft);
       //print cal data
+      break;
+
+    case FREQ_INPUT:
+      current_menu->drawMenu(board.tft);
       break;
 
     default:

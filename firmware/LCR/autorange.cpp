@@ -67,14 +67,12 @@ bool rangeAutorange(bool force_range) {
       //board.increaseIGain();
       board.decreaseVGain();
       board.decreaseVGain();
-      Serial.println("Range down");
       range_changed = true;
     }
   } else if (z_mag > AUTORANGE_Z_HIGH * RANGE_RESISTOR[board.getLCRRange()]) {
     if (board.increaseLCRRange()) {
       board.decreaseIGain();
       board.decreaseIGain();
-      Serial.println("Range up");
       //board.increaseVGain();
       range_changed = true;
     }

@@ -9,6 +9,7 @@
 MenuBar calibration_menu;
 MenuBar main_menu_1;
 MenuBar main_menu_2;
+MenuBar freqsel_menu;
 
 MenuBar *current_menu;
 
@@ -31,6 +32,11 @@ void switchToMainMenu() {
   
   current_menu = &main_menu_1;
   current_state = RUNNING;
+}
+
+void switchToFreqSelector(float _) {
+  current_state = FREQ_INPUT;
+  current_menu = &freqsel_menu;
 }
 
 void initCalMenu() {
@@ -59,7 +65,7 @@ void initMainMenu1() {
   main_menu_1.addItem("1kHz", &setLCRFrequency, 1000.0f);
   main_menu_1.addItem("10kHz", &setLCRFrequency, 10000.0f);
   main_menu_1.addItem("75kHz", &setLCRFrequency, 75000.0f);
-  main_menu_1.addItem("Custom", nullptr);
+  main_menu_1.addItem("Custom", &switchToFreqSelector);
   main_menu_1.executeItem(main_menu_1.getCategoriesCount()-1, 1);
 
   main_menu_1.addCategory("Mode");
@@ -67,7 +73,7 @@ void initMainMenu1() {
   main_menu_1.addItem("Cs+Rs", &setLCRParams, 1.0f);
   main_menu_1.addItem("Ls+Rs", &setLCRParams, 2.0f);
   main_menu_1.addItem("Cp+Rp", &setLCRParams, 3.0f);
-  main_menu_1.addItem("Lp+Rp", &setLCRParams, 4.0f);
+  main_menu_1.addItem("Custom", nullptr, 0.0f);
   main_menu_1.executeItem(main_menu_1.getCategoriesCount()-1, 0);
 
   main_menu_1.addCategory("Cal", &switchToCalMenu, false);
@@ -102,6 +108,15 @@ void initMainMenu2() {
   main_menu_2.addCategory("Page 1", &switchMainMenuPage, false);
 }
 
+void initFreqSelMenu() {
+  freqsel_menu.init(SCREEN_WIDTH, SCREEN_HEIGHT, MENU_CATEGORY_HEIGHT, MENU_ITEM_HEIGHT);
+
+  freqsel_menu.addCategory("10kHz", nullptr, false);
+  freqsel_menu.addCategory("1kHz", nullptr, false);
+  freqsel_menu.addCategory("100Hz", nullptr, false);
+  freqsel_menu.addCategory("10Hz", nullptr, false);
+}
+
 
 void initSystem() {
 
@@ -118,6 +133,7 @@ void initSystem() {
   initCalMenu();
   initMainMenu1();
   initMainMenu2();
+  initFreqSelMenu();
 
 }
 
@@ -166,6 +182,10 @@ void runSystem() {
       break;
 
     case CALIBRATION:
+      runMenuInterface();
+      break;
+
+    case FREQ_INPUT:
       runMenuInterface();
       break;
       

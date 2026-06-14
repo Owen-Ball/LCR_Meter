@@ -83,14 +83,19 @@ void runAutoParam() {
 void runLCR() {
   codecAverageReadings();
   if (codecDataAvailable) {
-    resistance_lcr_value = getRs_signed(calculateZ(), _curr_frequency);
-    reactance_lcr_value = getXs(calculateZ(), _curr_frequency);
 
-    if (auto_param) runAutoParam();
-    
-    primary_lcr_value = primary_lcr_param.value(calculateZ(), _curr_frequency);
-    secondary_lcr_value = secondary_lcr_param.value(calculateZ(), _curr_frequency);
+    Complex Z = calculateZ();
+    resistance_lcr_value = getRs_signed(Z, _curr_frequency);
+    reactance_lcr_value = getXs(Z, _curr_frequency);
 
+    if (getPhasorMag(Z, _curr_frequency) > Z_OVERFLOW) {
+      primary_lcr_value = INFINITY;
+      secondary_lcr_value = INFINITY;
+    } else {
+      if (auto_param) runAutoParam();
+      primary_lcr_value = primary_lcr_param.value(Z, _curr_frequency);
+      secondary_lcr_value = secondary_lcr_param.value(Z, _curr_frequency);
+    }
     
     bool gain_ranged = gainAutorange(false);
     if (!gain_ranged) rangeAutorange(false);
@@ -120,11 +125,6 @@ void setLCRParams(int index) {
       break;
     case 3:
       primary_lcr_param = lcrParamCp;
-      secondary_lcr_param = lcrParamRp;
-      auto_param = false;
-      break;
-    case 4:
-      primary_lcr_param = lcrParamLp;
       secondary_lcr_param = lcrParamRp;
       auto_param = false;
       break;
@@ -198,6 +198,11 @@ float getRs_signed(Complex Z, float freq) {
   return Z.real();
 }
 
+
+//Font Notes
+//@= Ω
+//u = μ
+
 lcr_param_t lcrParamCs {
   .label = "Cs",
   .unit = "F",
@@ -240,7 +245,7 @@ lcr_param_t lcrParamRs {
 
 lcr_param_t lcrParamRp {
   .label = "Rp",
-  .unit = "O",
+  .unit = "@",
   .min_exp = -3,
   .min_res = -4,
   .value = &getRp,
@@ -248,7 +253,7 @@ lcr_param_t lcrParamRp {
 
 lcr_param_t lcrParamZMag {
   .label = "|Z|",
-  .unit = "O",
+  .unit = "@",
   .min_exp = -3,
   .min_res = -4,
   .value = &getPhasorMag,
