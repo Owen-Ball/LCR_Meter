@@ -13,6 +13,7 @@ void MenuBar::init(uint16_t screen_width, uint16_t screen_height, uint16_t categ
     memset(item_selected, 0, sizeof(item_selected));
     memset(show_selections, 0, sizeof(show_selections));
     memset(initial_hovers, 0, sizeof(initial_hovers));
+    memset(category_vals, 0, sizeof(category_vals));
 
     text_color = ILI9341_WHITE;
     category_color = ILI9341_DARKGREY;
@@ -29,13 +30,14 @@ void MenuBar::configColors(uint16_t text_color, uint16_t category_color, uint16_
     this->border_color = border_color;
 }
 
-void MenuBar::addCategory(const char *text, void (*func)(), bool show_selection, bool initial_hover) {
+void MenuBar::addCategory(const char *text, void (*func)(float f), float val, bool show_selection, bool initial_hover) {
     if (num_categories >= MAX_CATEGORIES) return;
     //Store the display text
     strncpy(categories[num_categories], text, 15);
     category_funcs[num_categories] = func;
     show_selections[num_categories] = show_selection;
     initial_hovers[num_categories] = initial_hover;
+    category_vals[num_categories] = val;
     num_categories++;
 }
 
@@ -138,7 +140,7 @@ void MenuBar::executeItem(uint8_t item_index) {
 
   
   if (category_funcs[category_selected] != nullptr) {
-    category_funcs[category_selected]();
+    category_funcs[category_selected](category_vals[category_selected]);
   }
   
   category_selected = -1;

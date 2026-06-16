@@ -16,6 +16,8 @@ long unsigned int prev_refresh_time = 0;
 FloatDisplay lcr_primary;
 FloatDisplay lcr_secondary;
 
+FloatDisplay freq_sel_display;
+
 void FloatDisplay::init(uint xpos, uint ypos, bool hysteresis) {
   this->xpos = xpos;
   this->ypos = ypos;
@@ -112,7 +114,7 @@ void FloatDisplay::updateValue(float value) {
 
     //Determine required number of trailing decimal digits
     int decimal_digits = min(digits - leading_digits - 1, exponent - min_resolution);
-    decimal_digits = max(decimal_digits, 1);
+    decimal_digits = max(decimal_digits, 0);
     
     text = String(coeff, decimal_digits);
     if (text.length() > digits) {
@@ -130,7 +132,6 @@ void FloatDisplay::updateValue(float value) {
 
   text = String(label) + ": " + text + " " + prefix + unit;
 
-  Serial.println(text);
 }
 
 void FloatDisplay::draw(ILI9341_t3n &tft) {
@@ -231,6 +232,7 @@ void userPromptText(String s) {
 void initDraw() {
   lcr_primary.init(20, 100, true);
   lcr_secondary.init(20, 140, true);
+  freq_sel_display.init(20, 120, 0);
   logger.init(board.tft, false, &Font5x7FixedMono);
 }
 
@@ -343,6 +345,12 @@ void drawImpedance() {
   board.tft.print(text);
 }
 
+void drawFreqSelector() {
+  freq_sel_display.configSettings(5, 0, 0, 100000, "Hz", "F");
+  freq_sel_display.updateValue(freq_selector.getValue());
+  freq_sel_display.draw(board.tft);
+}
+
 void drawAll(bool force_update) {
 
   if (millis() - prev_refresh_time < DISP_REFRESH_TIME && !force_update) return;
@@ -369,6 +377,7 @@ void drawAll(bool force_update) {
 
     case FREQ_INPUT:
       current_menu->drawMenu(board.tft);
+      drawFreqSelector();
       break;
 
     default:

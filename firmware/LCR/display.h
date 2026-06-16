@@ -65,8 +65,6 @@ extern LogPrint logger;
 
 void userPromptText(String s);
 void initDraw();
-void drawCurrentRanges();
-void drawLCRReadings();
 void drawAll(bool force_update = false);
 
 #endif

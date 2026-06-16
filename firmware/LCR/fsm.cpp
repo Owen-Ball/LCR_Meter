@@ -6,6 +6,7 @@
 #include "lcr_func.h"
 
 
+
 MenuBar calibration_menu;
 MenuBar main_menu_1;
 MenuBar main_menu_2;
@@ -13,20 +14,23 @@ MenuBar freqsel_menu;
 
 MenuBar *current_menu;
 
+Selector freq_selector;
+Selector *current_selector;
+
 SYSTEM_STATE current_state;
 
 
-void switchMainMenuPage() {
+void switchMainMenuPage(float _ = 0) {
   if (current_menu == &main_menu_1) current_menu = &main_menu_2;
   else current_menu = &main_menu_1;
 }
 
-void switchToCalMenu() {
+void switchToCalMenu(float _ = 0) {
   current_menu = &calibration_menu;
   current_state = CALIBRATION;
 }
 
-void switchToMainMenu() {
+void switchToMainMenu(float _ = 0) {
   //Do not go to main LCR page if cal data is not loaded
   if (num_cal_points == 0) return;
   
@@ -37,23 +41,28 @@ void switchToMainMenu() {
 void switchToFreqSelector(float _) {
   current_state = FREQ_INPUT;
   current_menu = &freqsel_menu;
+  current_selector = &freq_selector;
+}
+
+void setSelectorIncrement(float f) {
+  current_selector->setIncrement(f);
 }
 
 void initCalMenu() {
   calibration_menu.init(SCREEN_WIDTH, SCREEN_HEIGHT, MENU_CATEGORY_HEIGHT, MENU_ITEM_HEIGHT);
   
-  calibration_menu.addCategory("Probe", nullptr, false, false);
+  calibration_menu.addCategory("Probe", nullptr, 0, false, false);
   calibration_menu.addItem("Quick", &calibrateProbes_Point, 0.0f);
   calibration_menu.addItem("Full", &calibrateProbes, 0.0f);
 
-  calibration_menu.addCategory("All", nullptr, false, false);
+  calibration_menu.addCategory("All", nullptr, 0, false, false);
   calibration_menu.addItem("Quick", &calibrateAll_Point, 0.0f);
   calibration_menu.addItem("Full", &calibrateAll, 0.0f);
   
-  calibration_menu.addCategory("Save", nullptr, false);
+  calibration_menu.addCategory("Save", nullptr, 0, false);
   calibration_menu.addItem("Confirm", &saveCalibrationWrapper, 0.0f);
 
-  calibration_menu.addCategory("Home", &switchToMainMenu, false);
+  calibration_menu.addCategory("Home", &switchToMainMenu, 0, false);
 
 }
 
@@ -76,9 +85,9 @@ void initMainMenu1() {
   main_menu_1.addItem("Custom", nullptr, 0.0f);
   main_menu_1.executeItem(main_menu_1.getCategoriesCount()-1, 0);
 
-  main_menu_1.addCategory("Cal", &switchToCalMenu, false);
+  main_menu_1.addCategory("Cal", &switchToCalMenu, 0, false);
 
-  main_menu_1.addCategory("Page 2", &switchMainMenuPage, false);
+  main_menu_1.addCategory("Page 2", &switchMainMenuPage, 0, false);
 }
 
 void initMainMenu2() {
@@ -105,16 +114,16 @@ void initMainMenu2() {
   main_menu_2.addItem("2.0V", nullptr, 2.0f);
   main_menu_2.executeItem(main_menu_2.getCategoriesCount()-1, 3);
 
-  main_menu_2.addCategory("Page 1", &switchMainMenuPage, false);
+  main_menu_2.addCategory("Page 1", &switchMainMenuPage, 0, false);
 }
 
 void initFreqSelMenu() {
   freqsel_menu.init(SCREEN_WIDTH, SCREEN_HEIGHT, MENU_CATEGORY_HEIGHT, MENU_ITEM_HEIGHT);
 
-  freqsel_menu.addCategory("10kHz", nullptr, false);
-  freqsel_menu.addCategory("1kHz", nullptr, false);
-  freqsel_menu.addCategory("100Hz", nullptr, false);
-  freqsel_menu.addCategory("10Hz", nullptr, false);
+  freqsel_menu.addCategory("10kHz", &setSelectorIncrement, 10000, false);
+  freqsel_menu.addCategory("1kHz", &setSelectorIncrement, 1000, false);
+  freqsel_menu.addCategory("100Hz", &setSelectorIncrement, 100, false);
+  freqsel_menu.addCategory("10Hz", &setSelectorIncrement, 10, false);
 }
 
 
@@ -129,11 +138,14 @@ void initSystem() {
   }
   current_state = RUNNING;
   current_menu = &main_menu_1;
+  current_selector = &freq_selector;
   
   initCalMenu();
   initMainMenu1();
   initMainMenu2();
   initFreqSelMenu();
+  freq_selector.init(board.tft, 100, 90000, 100);
+  freq_selector.setIncrement(100);
 
 }
 
@@ -171,6 +183,42 @@ void runMenuInterface() {
   }
 }
 
+void runSelectorInterface() {
+  uint8_t res1 = 0;
+  uint8_t res2 = 0;
+  uint8_t res;
+  
+  if (board.tsPressed()) {
+    res1 = current_menu->processTouch(board.ts_x, board.ts_y);
+  } 
+  
+  if (board.up_button.pressed()) {
+    current_selector->incrementUp();
+    res2 = 1;
+  } else if (board.down_button.pressed()) {
+    current_selector->incrementDown();
+    res2 = 1;
+  } else if (board.enter_button.pressed()) {
+    Serial.println(current_selector->getValue());
+  } else if (board.select_button_0.pressed()) {
+    res2 = current_menu->toggleCategory(0);
+  } else if (board.select_button_1.pressed()) {
+    res2 = current_menu->toggleCategory(1);
+  } else if (board.select_button_2.pressed()) {
+    res2 = current_menu->toggleCategory(2);
+  } else if (board.select_button_3.pressed()) {
+    res2 = current_menu->toggleCategory(3);
+  }
+
+  res = max(res1, res2);
+  
+  if (res == 1) {
+    board.buzzer.setBuzzer(1, 10, 1);
+  } else if (res == 2) {
+    board.buzzer.setBuzzer(3, 15, 55);
+  }
+}
+
 
 void runSystem() {
 
@@ -186,7 +234,7 @@ void runSystem() {
       break;
 
     case FREQ_INPUT:
-      runMenuInterface();
+      runSelectorInterface();
       break;
       
     default:

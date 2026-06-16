@@ -28,7 +28,7 @@ class MenuBar {
     void configColors(uint16_t text_color, uint16_t category_color, uint16_t item_color, uint16_t item_selected_color, uint16_t border_color);
     
     //Add caterogy. Up to 8
-    void addCategory(const char *text, void (*func)() = nullptr, bool show_selection = true, bool initial_hover = true);
+    void addCategory(const char *text, void (*func)(float f) = nullptr, float val = 0.0f, bool show_selection = true, bool initial_hover = true);
 
     uint8_t getCategoriesCount();
     
@@ -80,7 +80,8 @@ class MenuBar {
     char categories[MAX_CATEGORIES][16];
     menu_item_t items[MAX_CATEGORIES][MAX_ITEMS];
 
-    void (*category_funcs[MAX_CATEGORIES])();
+    void (*category_funcs[MAX_CATEGORIES])(float f);
+    float category_vals[MAX_CATEGORIES];
     bool show_selections[MAX_CATEGORIES];
     bool initial_hovers[MAX_CATEGORIES];
 
