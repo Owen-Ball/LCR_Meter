@@ -7,13 +7,15 @@
 #include "button.h"
 #include <Arduino.h>
 
-Button::Button(uint8_t pin, uint16_t debounce_ms, uint16_t avg_count)
+Button::Button(uint8_t pin, uint16_t debounce_ms, uint16_t avg_count, long unsigned int hold_blank, long unsigned int hold_delay)
 :  _pin(pin)
 ,  _delay(debounce_ms)
 ,  _state(HIGH)
 ,  _ignore_until(0)
 ,  _has_changed(false)
 ,  _avg_count(avg_count)
+,  _hold_blank(hold_blank)
+,  _hold_delay(hold_delay)
 {
 }
 
@@ -56,6 +58,10 @@ bool Button::read()
 		_ignore_until = millis() + _delay;
 		_state = !_state;
 		_has_changed = true;
+
+    if (_state == PRESSED) {
+      _next_increment = millis() + _hold_blank;
+    }
 	}
 	
 	return _state;
@@ -89,4 +95,22 @@ bool Button::pressed()
 bool Button::released()
 {
 	return (read() == RELEASED && has_changed());
+}
+
+bool Button::process_hold() 
+{
+  if (_hold_blank == 0) return false;
+  read();
+  if (_state == RELEASED) {
+    _next_increment = 0;
+    return false;
+  }
+
+  if (millis() > _next_increment) {
+    _next_increment += _hold_delay;
+    return true;
+  }
+
+  return false;
+  
 }

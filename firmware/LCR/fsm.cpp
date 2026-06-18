@@ -44,6 +44,25 @@ void switchToFreqSelector(float _) {
   current_selector = &freq_selector;
 }
 
+void exitFreqSelector() {
+  char buf[16];
+  float val = freq_selector.getValue();
+  setLCRFrequency(val);
+
+  if (val > 1000.0) {
+    val /= 1000.0;
+    if (val > 99.9) snprintf(buf, sizeof(buf), "%.0fkHz", val);
+    if (val > 9.99) snprintf(buf, sizeof(buf), "%.1fkHz", val);
+    else            snprintf(buf, sizeof(buf), "%.2fkHz", val);
+  } else {
+    snprintf(buf, sizeof(buf), "%.0fHz", val);
+  }
+
+  
+  main_menu_1.setSelectedText(buf, 0);
+  switchToMainMenu();
+}
+
 void setSelectorIncrement(float f) {
   current_selector->setIncrement(f);
 }
@@ -187,19 +206,22 @@ void runSelectorInterface() {
   uint8_t res1 = 0;
   uint8_t res2 = 0;
   uint8_t res;
+
+  bool exit_selector = false;
   
   if (board.tsPressed()) {
     res1 = current_menu->processTouch(board.ts_x, board.ts_y);
   } 
   
-  if (board.up_button.pressed()) {
+  if (board.up_button.pressed() || board.up_button.process_hold()) {
     current_selector->incrementUp();
     res2 = 1;
-  } else if (board.down_button.pressed()) {
+  } else if (board.down_button.pressed() || board.down_button.process_hold()) {
     current_selector->incrementDown();
     res2 = 1;
   } else if (board.enter_button.pressed()) {
-    Serial.println(current_selector->getValue());
+    res2 = 2;
+    exit_selector = true;
   } else if (board.select_button_0.pressed()) {
     res2 = current_menu->toggleCategory(0);
   } else if (board.select_button_1.pressed()) {
@@ -217,6 +239,7 @@ void runSelectorInterface() {
   } else if (res == 2) {
     board.buzzer.setBuzzer(3, 15, 55);
   }
+  if (exit_selector) exitFreqSelector();
 }
 
 

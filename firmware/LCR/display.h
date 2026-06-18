@@ -15,6 +15,10 @@ class FloatDisplay {
     void configSettings(lcr_param_t &params);
     void updateValue(float value);
 
+    //if this is called, every time the digit prints one of the digits will be underlined. Used for selectors
+    //Ex: To underline the 5 in 4567.89, this should be 2. For the 8, -1 
+    void underlineDigit(int digit);
+
     void draw(ILI9341_t3n &tft);
               
   private:
@@ -32,6 +36,9 @@ class FloatDisplay {
     const char *label;
     String prefix;
     String text;
+    int underlined_digit;
+    bool underline;
+    String underline_text;
     bool hysteresis;
     bool overflow;
             

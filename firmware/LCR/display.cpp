@@ -4,9 +4,11 @@
 #include "board.h"
 #include "lcr_func.h"
 #include "calibration.h"
+#include "selector.h"
 #include "LCR_Fonts/Consolas_Bold20pt7b.h"
 #include "LCR_Fonts/FreeMono9pt7b.h"
 #include "LCR_Fonts/Font5x7FixedMono.h"
+
 
 
 LogPrint logger;
@@ -25,6 +27,8 @@ void FloatDisplay::init(uint xpos, uint ypos, bool hysteresis) {
   exponent = 0;
   forced_exponent = false;
   prev_leading_digits = -1;
+  underline = false;
+  underlined_digit = 0;
 }
 
 void FloatDisplay::init(uint xpos, uint ypos, int exponent) {
@@ -35,6 +39,8 @@ void FloatDisplay::init(uint xpos, uint ypos, int exponent) {
   forced_exponent = true;
   exponent = 0;
   prev_leading_digits = -1;
+  underline = false;
+  underlined_digit = 0;
 }
 
 void FloatDisplay::configSettings(uint digits, int min_exp, int min_res, float max_value, const char *unit, const char *label) {
@@ -60,10 +66,9 @@ void FloatDisplay::updateValue(float value) {
   if (value == INFINITY) {
     this->exponent = -21;
     text = String(label) + ": Ovrflw " + unit;
+    underline_text = "";
     return;
   }
-
-
   
   int exponent;
 
@@ -102,7 +107,7 @@ void FloatDisplay::updateValue(float value) {
     case 9:   prefix = 'G'; break;
     default:  overflow = true; break;
   }
-
+  
   int leading_digits = max(floor(log10(coeff)) + 1, 1);
 
   if (DISP_FLOAT_DECIMAL_HYST && prev_leading_digits == leading_digits + 1 && value / pow(10, floor(log10(value)) + 1) > DISP_FLOAT_RANGE_DOWN) {
@@ -113,7 +118,7 @@ void FloatDisplay::updateValue(float value) {
   } else {
 
     //Determine required number of trailing decimal digits
-    int decimal_digits = min(digits - leading_digits - 1, exponent - min_resolution);
+    int decimal_digits = min(int(digits) - leading_digits - 1, exponent - min_resolution);
     decimal_digits = max(decimal_digits, 0);
     
     text = String(coeff, decimal_digits);
@@ -123,15 +128,41 @@ void FloatDisplay::updateValue(float value) {
     }
   }
 
+  int leading_spaces = exponent + leading_digits - underlined_digit - 1;
+  Serial.println(underlined_digit);
+  if (underlined_digit < exponent) {
+    leading_spaces += 1;
+  }
+  Serial.println(leading_spaces);
+  
   //Append 0's to front of number to reach desired number of digits
   while (text.length() < digits) {
     text = "0" + text;
+    leading_spaces += 1;
   }
-    
+  
   prev_leading_digits = leading_digits;
 
-  text = String(label) + ": " + text + " " + prefix + unit;
+  underline_text = "";
+  if (leading_spaces >= 0) {
+    for (int i = 0; i < leading_spaces; i++) {
+      underline_text = " " + underline_text;
+    }
+    underline_text += "_";
+    underline_text = underline_text.substring(0, text.length());
+    
+    for (int i = 0; i < 2 + int(String(label).length()); i++) {
+      underline_text = " " + underline_text;
+    }
+  }
 
+  text = String(label) + ": " + text + " " + prefix + unit;
+  
+}
+
+void FloatDisplay::underlineDigit(int digit) {
+  underline = true;
+  underlined_digit = digit;
 }
 
 void FloatDisplay::draw(ILI9341_t3n &tft) {
@@ -140,7 +171,11 @@ void FloatDisplay::draw(ILI9341_t3n &tft) {
   tft.setTextSize(1);
 
   tft.setCursor(xpos, ypos);
-  tft.print(text);
+  tft.println(text);
+  if (underline) {
+    tft.setCursor(xpos, ypos);
+    tft.print(underline_text);
+  }
 
 }
 
@@ -232,7 +267,8 @@ void userPromptText(String s) {
 void initDraw() {
   lcr_primary.init(20, 100, true);
   lcr_secondary.init(20, 140, true);
-  freq_sel_display.init(20, 120, 0);
+  freq_sel_display.init(40, 100, 0);
+  freq_sel_display.configSettings(5, 0, 0, 100000, "Hz", "F");
   logger.init(board.tft, false, &Font5x7FixedMono);
 }
 
@@ -346,7 +382,8 @@ void drawImpedance() {
 }
 
 void drawFreqSelector() {
-  freq_sel_display.configSettings(5, 0, 0, 100000, "Hz", "F");
+  int digit = round(log10(freq_selector.getIncrement()));
+  freq_sel_display.underlineDigit(digit);
   freq_sel_display.updateValue(freq_selector.getValue());
   freq_sel_display.draw(board.tft);
 }

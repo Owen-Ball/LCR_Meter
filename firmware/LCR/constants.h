@@ -35,6 +35,10 @@
 //Just some protection against noisy readings. Copied from my E-load code, don't know if it is needed here
 #define BUTTON_AVG_COUNT      10
 
+
+#define BUTTON_HOLD_BLANK     500
+#define BUTTON_HOLD_DELAY     100
+
 //RANGES
 #define LCR_RANGE_100     0
 #define LCR_RANGE_1K      1

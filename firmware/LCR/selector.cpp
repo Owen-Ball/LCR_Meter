@@ -12,6 +12,10 @@ void Selector::setIncrement(float increment) {
     this->increment = increment;
 }
 
+float Selector::getIncrement() {
+  return increment;
+}
+
 void Selector::incrementUp() {
     val += increment;
     if (val > max_val) val = max_val;
