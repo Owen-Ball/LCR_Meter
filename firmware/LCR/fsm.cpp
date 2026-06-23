@@ -11,10 +11,12 @@ MenuBar calibration_menu;
 MenuBar main_menu_1;
 MenuBar main_menu_2;
 MenuBar freqsel_menu;
+MenuBar ampsel_menu;
 
 MenuBar *current_menu;
 
 Selector freq_selector;
+Selector amp_selector;
 Selector *current_selector;
 
 SYSTEM_STATE current_state;
@@ -58,9 +60,27 @@ void exitFreqSelector() {
     snprintf(buf, sizeof(buf), "%.0fHz", val);
   }
 
-  
   main_menu_1.setSelectedText(buf, 0);
   switchToMainMenu();
+}
+
+void exitAmpSelector() {
+  char buf[16];
+  float val = amp_selector.getValue();
+  setLCRAmplitude(val);
+
+ 
+  snprintf(buf, sizeof(buf), "%.1fV", val);
+ 
+
+  main_menu_2.setSelectedText(buf, 1);
+  switchToMainMenu();
+}
+
+void switchToAmpSelector(float _) {
+  current_state = AMP_INPUT;
+  current_menu = &ampsel_menu;
+  current_selector = &amp_selector;
 }
 
 void setSelectorIncrement(float f) {
@@ -124,6 +144,7 @@ void initMainMenu2() {
   main_menu_2.addItem("1.0V", &setLCRAmplitude, 1.0f);
   main_menu_2.addItem("2.0V", &setLCRAmplitude, 2.0f);
   main_menu_2.addItem("3.5V", &setLCRAmplitude, 3.5f);
+  main_menu_2.addItem("Custom", &switchToAmpSelector);
   main_menu_2.executeItem(main_menu_2.getCategoriesCount()-1, 3);
 
   main_menu_2.addCategory("Other");
@@ -145,6 +166,15 @@ void initFreqSelMenu() {
   freqsel_menu.addCategory("10Hz", &setSelectorIncrement, 10, false);
 }
 
+void initAmpSelMenu() {
+  ampsel_menu.init(SCREEN_WIDTH, SCREEN_HEIGHT, MENU_CATEGORY_HEIGHT, MENU_ITEM_HEIGHT);
+
+  ampsel_menu.addCategory("", nullptr);
+  ampsel_menu.addCategory("1V", &setSelectorIncrement, 1.0, false);
+  ampsel_menu.addCategory("100mV", &setSelectorIncrement, 0.1, false);
+  ampsel_menu.addCategory("10mV", &setSelectorIncrement, 0.01, false);
+}
+
 
 void initSystem() {
 
@@ -163,8 +193,12 @@ void initSystem() {
   initMainMenu1();
   initMainMenu2();
   initFreqSelMenu();
+  initAmpSelMenu();
   freq_selector.init(board.tft, 100, 90000, 100);
   freq_selector.setIncrement(100);
+
+  amp_selector.init(board.tft, .05, 3.5, 1);
+  amp_selector.setIncrement(.1);
 
 }
 
@@ -239,7 +273,15 @@ void runSelectorInterface() {
   } else if (res == 2) {
     board.buzzer.setBuzzer(3, 15, 55);
   }
-  if (exit_selector) exitFreqSelector();
+  
+  if (exit_selector) {
+    if (current_selector == &freq_selector) {
+      exitFreqSelector();
+    } else if (current_selector == &amp_selector) {
+      exitAmpSelector();
+    }
+  }
+
 }
 
 
@@ -257,6 +299,10 @@ void runSystem() {
       break;
 
     case FREQ_INPUT:
+      runSelectorInterface();
+      break;
+
+    case AMP_INPUT:
       runSelectorInterface();
       break;
       

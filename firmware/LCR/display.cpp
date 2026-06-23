@@ -19,6 +19,7 @@ FloatDisplay lcr_primary;
 FloatDisplay lcr_secondary;
 
 FloatDisplay freq_sel_display;
+FloatDisplay amp_sel_display;
 
 void FloatDisplay::init(uint xpos, uint ypos, bool hysteresis) {
   this->xpos = xpos;
@@ -269,6 +270,8 @@ void initDraw() {
   lcr_secondary.init(20, 140, true);
   freq_sel_display.init(40, 100, 0);
   freq_sel_display.configSettings(5, 0, 0, 100000, "Hz", "F");
+  amp_sel_display.init(40, 100, -3);
+  amp_sel_display.configSettings(4, -3, -3, 100000, "V", "A");
   logger.init(board.tft, false, &Font5x7FixedMono);
 }
 
@@ -388,6 +391,14 @@ void drawFreqSelector() {
   freq_sel_display.draw(board.tft);
 }
 
+void drawAmpSelector() {
+  int digit = round(log10(amp_selector.getIncrement()));
+  amp_sel_display.underlineDigit(digit);
+  amp_sel_display.updateValue(amp_selector.getValue());
+  amp_sel_display.draw(board.tft);
+}
+
+
 void drawAll(bool force_update) {
 
   if (millis() - prev_refresh_time < DISP_REFRESH_TIME && !force_update) return;
@@ -415,6 +426,11 @@ void drawAll(bool force_update) {
     case FREQ_INPUT:
       current_menu->drawMenu(board.tft);
       drawFreqSelector();
+      break;
+
+    case AMP_INPUT:
+      current_menu->drawMenu(board.tft);
+      drawAmpSelector();
       break;
 
     default:
