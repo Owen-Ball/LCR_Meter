@@ -432,7 +432,12 @@ void drawAll(bool force_update) {
       current_menu->drawMenu(board.tft);
       drawAmpSelector();
       break;
-
+      
+    case MODE_INPUT:
+      current_menu->drawMenu(board.tft);
+      //drawAmpSelector();
+      break;
+      
     default:
       break;
 

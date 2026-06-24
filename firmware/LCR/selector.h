@@ -6,7 +6,7 @@
 
 class Selector {
   public:
-    void init(ILI9341_t3n &tft, float min_val, float max_val, float init_val);
+    void init(float min_val, float max_val, float init_val);
     void setIncrement(float f);
     float getIncrement();
     void incrementUp();
@@ -19,8 +19,6 @@ class Selector {
     float max_val;
     float min_val;
     float increment;
-    ILI9341_t3n *tft;
-    
 };
 
 #endif

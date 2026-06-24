@@ -12,12 +12,15 @@ MenuBar main_menu_1;
 MenuBar main_menu_2;
 MenuBar freqsel_menu;
 MenuBar ampsel_menu;
+MenuBar modesel_menu;
 
 MenuBar *current_menu;
 
 Selector freq_selector;
 Selector amp_selector;
 Selector *current_selector;
+
+ModeSelector mode_selector;
 
 SYSTEM_STATE current_state;
 
@@ -77,14 +80,27 @@ void exitAmpSelector() {
   switchToMainMenu();
 }
 
+void exitModeSelector() {
+  switchToMainMenu();
+}
+
 void switchToAmpSelector(float _) {
   current_state = AMP_INPUT;
   current_menu = &ampsel_menu;
   current_selector = &amp_selector;
 }
 
+void switchToModeSelector(float _) {
+  current_state = MODE_INPUT;
+  current_menu = &modesel_menu;
+}
+
 void setSelectorIncrement(float f) {
   current_selector->setIncrement(f);
+}
+
+void setModeSelector(float f) {
+  mode_selector.setSelector(round(f));
 }
 
 void initCalMenu() {
@@ -121,7 +137,7 @@ void initMainMenu1() {
   main_menu_1.addItem("Cs+Rs", &setLCRParams, 1.0f);
   main_menu_1.addItem("Ls+Rs", &setLCRParams, 2.0f);
   main_menu_1.addItem("Cp+Rp", &setLCRParams, 3.0f);
-  main_menu_1.addItem("Custom", nullptr, 0.0f);
+  main_menu_1.addItem("Custom", &switchToModeSelector, 0.0f);
   main_menu_1.executeItem(main_menu_1.getCategoriesCount()-1, 0);
 
   main_menu_1.addCategory("Cal", &switchToCalMenu, 0, false);
@@ -175,6 +191,12 @@ void initAmpSelMenu() {
   ampsel_menu.addCategory("10mV", &setSelectorIncrement, 0.01, false);
 }
 
+void initModeSelMenu() {
+  modesel_menu.init(SCREEN_WIDTH, SCREEN_HEIGHT, MENU_CATEGORY_HEIGHT, MENU_ITEM_HEIGHT);
+
+  modesel_menu.addCategory("Primary", &setModeSelector, 0.0, false);
+  modesel_menu.addCategory("Secondary", &setModeSelector, 1.0, false);
+}
 
 void initSystem() {
 
@@ -194,11 +216,14 @@ void initSystem() {
   initMainMenu2();
   initFreqSelMenu();
   initAmpSelMenu();
-  freq_selector.init(board.tft, 100, 90000, 100);
+  initModeSelMenu();
+  freq_selector.init(100, 90000, 100);
   freq_selector.setIncrement(100);
 
-  amp_selector.init(board.tft, .05, 3.5, 1);
+  amp_selector.init(.05, 3.5, 1);
   amp_selector.setIncrement(.1);
+
+  mode_selector.init(lcr_param_lookup, LCR_FUNC_NUM);
 
 }
 
@@ -285,6 +310,52 @@ void runSelectorInterface() {
 }
 
 
+void runModeSelInterface() {
+  uint8_t res1 = 0;
+  uint8_t res2 = 0;
+  uint8_t res;
+
+  bool exit_selector = false;
+  
+  if (board.tsPressed()) {
+    res1 = current_menu->processTouch(board.ts_x, board.ts_y);
+  } 
+
+  if (board.up_button.pressed() || board.up_button.process_hold()) {
+    mode_selector.incrementModeUp();
+    res2 = 1;
+    Serial.println(mode_selector.getPrimary().label);
+  } else if (board.down_button.pressed() || board.down_button.process_hold()) {
+    mode_selector.incrementModeDown();
+    res2 = 1;
+    Serial.println(mode_selector.getPrimary().label);
+  } else if (board.enter_button.pressed()) {
+    //res2 = current_menu->enter();
+    res2 = 2;
+    exit_selector = true;
+  } else if (board.select_button_0.pressed()) {
+    res2 = current_menu->toggleCategory(0);
+  } else if (board.select_button_1.pressed()) {
+    res2 = current_menu->toggleCategory(0);
+  } else if (board.select_button_2.pressed()) {
+    res2 = current_menu->toggleCategory(1);
+  } else if (board.select_button_3.pressed()) {
+    res2 = current_menu->toggleCategory(1);
+  }
+
+  res = max(res1, res2);
+
+  if (res == 1) {
+    board.buzzer.setBuzzer(1, 10, 1);
+  } else if (res == 2) {
+    board.buzzer.setBuzzer(3, 15, 55);
+  }
+
+  if (exit_selector) exitModeSelector();
+ 
+}
+
+
 void runSystem() {
 
   switch(current_state) {
@@ -304,6 +375,10 @@ void runSystem() {
 
     case AMP_INPUT:
       runSelectorInterface();
+      break;
+
+    case MODE_INPUT:
+      runModeSelInterface();
       break;
       
     default:

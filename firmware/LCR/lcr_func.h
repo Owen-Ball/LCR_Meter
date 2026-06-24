@@ -2,6 +2,7 @@
 #define _LCR_
 #include <Arduino.h>
 #include <CComplex.h>
+#include "constants.h"
 
 typedef struct lcr_param_struct {
   const char *label;
@@ -13,6 +14,8 @@ typedef struct lcr_param_struct {
 
 extern lcr_param_t primary_lcr_param;
 extern lcr_param_t secondary_lcr_param;
+
+extern lcr_param_t *lcr_param_lookup[LCR_FUNC_NUM];
 
 extern float primary_lcr_value;
 extern float secondary_lcr_value;

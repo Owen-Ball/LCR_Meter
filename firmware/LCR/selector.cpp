@@ -1,7 +1,6 @@
 #include "selector.h"
 
-void Selector::init(ILI9341_t3n &tft, float min_val, float max_val, float init_val) {
-    this->tft = &tft;
+void Selector::init(float min_val, float max_val, float init_val) {
     this->min_val = min_val;
     this->max_val = max_val;
     this->val = init_val;
