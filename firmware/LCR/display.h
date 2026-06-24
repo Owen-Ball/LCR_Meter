@@ -41,6 +41,7 @@ class FloatDisplay {
     String underline_text;
     bool hysteresis;
     bool overflow;
+    bool neg;
             
 };
 

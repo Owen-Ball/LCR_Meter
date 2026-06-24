@@ -64,6 +64,11 @@ void FloatDisplay::configSettings(lcr_param_t &params) {
 
 void FloatDisplay::updateValue(float value) {
 
+  if (value < 0) neg = true;
+  else neg = false;
+  
+  value = abs(value);
+
   if (value == INFINITY) {
     this->exponent = -21;
     text = String(label) + ": Ovrflw " + unit;
@@ -130,11 +135,10 @@ void FloatDisplay::updateValue(float value) {
   }
 
   int leading_spaces = exponent + leading_digits - underlined_digit - 1;
-  Serial.println(underlined_digit);
+
   if (underlined_digit < exponent) {
     leading_spaces += 1;
   }
-  Serial.println(leading_spaces);
   
   //Append 0's to front of number to reach desired number of digits
   while (text.length() < digits) {
@@ -157,7 +161,8 @@ void FloatDisplay::updateValue(float value) {
     }
   }
 
-  text = String(label) + ": " + text + " " + prefix + unit;
+  if (neg) text = String(label) + ":-" + text + " " + prefix + unit;
+  else     text = String(label) + ": " + text + " " + prefix + unit;
   
 }
 

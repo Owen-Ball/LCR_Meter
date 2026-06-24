@@ -13,7 +13,7 @@ void Board::init() {
   pinMode(PGA_I_0_PIN, OUTPUT);
   pinMode(PGA_I_1_PIN, OUTPUT);
 
-  pinMode(FAN_PIN, OUTPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
   pinMode(FAN_PIN, OUTPUT);
 
   enter_button.begin();

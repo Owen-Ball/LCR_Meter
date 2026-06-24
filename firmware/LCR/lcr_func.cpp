@@ -202,6 +202,9 @@ float getRs_signed(Complex Z, float freq) {
 //Font Notes
 //@= Ω
 //u = μ
+//[] = |Z|
+//^ = °
+//< = ∠
 
 lcr_param_t lcrParamCs {
   .label = "Cs",
@@ -252,7 +255,7 @@ lcr_param_t lcrParamRp {
 };
 
 lcr_param_t lcrParamZMag {
-  .label = "|Z|",
+  .label = "[]",
   .unit = "@",
   .min_exp = -3,
   .min_res = -4,
@@ -260,8 +263,8 @@ lcr_param_t lcrParamZMag {
 };
 
 lcr_param_t lcrParamZPhase {
-  .label = "Phi",
-  .unit = "o",
+  .label = "<Z",
+  .unit = "^",
   .min_exp = 0,
   .min_res = -2,
   .value = &getPhasorAngle,

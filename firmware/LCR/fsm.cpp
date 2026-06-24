@@ -81,6 +81,9 @@ void exitAmpSelector() {
 }
 
 void exitModeSelector() {
+  primary_lcr_param = mode_selector.getPrimary();
+  secondary_lcr_param = mode_selector.getSecondary();
+  auto_param = false;
   switchToMainMenu();
 }
 
