@@ -247,21 +247,25 @@ void LogPrint::println_large(String s) {
   tft->setTextSize(1);
 }
 
-void userPromptText(String s) {
-  board.tft.setTextColor(ILI9341_RED);
-  board.tft.setFont(&FreeMono9pt7b);
+uint16_t getCenteredXPos(String s) {
   int16_t x1, y1;
   uint16_t w, h;
   
   board.tft.getTextBounds(s, 0, 0, &x1, &y1, &w, &h);
-  int16_t text_x = (SCREEN_WIDTH - w) / 2;
-  int16_t text_y = SCREEN_HEIGHT - 60 - y1;
+  return (SCREEN_WIDTH - w) / 2;
+}
+
+void userPromptText(String s) {
+  board.tft.setTextColor(ILI9341_RED);
+  board.tft.setFont(&FreeMono9pt7b);
+ 
+  int16_t text_x = getCenteredXPos(s);
+  int16_t text_y = SCREEN_HEIGHT - 80;
   
   board.tft.setCursor(text_x, text_y);
   board.tft.print(s);
 
-  board.tft.getTextBounds("Press Enter or Touch", 0, 0, &x1, &y1, &w, &h);
-  text_x = (SCREEN_WIDTH - w) / 2;
+  text_x = getCenteredXPos("Press Enter or Touch");
   board.tft.setCursor(text_x, text_y + 20);
   
   board.tft.print("Press Enter or Touch");
@@ -269,6 +273,17 @@ void userPromptText(String s) {
   board.tft.updateScreenAsync();
 }
 
+void drawScreenTitle(String title) {
+  board.tft.setTextColor(ILI9341_WHITE);
+  board.tft.setFont(&Consolas_Bold20pt7b);
+  board.tft.setTextSize(1);
+
+  int16_t text_x = getCenteredXPos(title);
+  int16_t text_y = 20;
+  
+  board.tft.setCursor(text_x, text_y);
+  board.tft.print(title);
+}
 
 void initDraw() {
   lcr_primary.init(20, 100, true);
@@ -440,7 +455,8 @@ void drawAll(bool force_update) {
       
     case MODE_INPUT:
       current_menu->drawMenu(board.tft);
-      //drawAmpSelector();
+      drawScreenTitle("Set Params");
+      mode_selector.draw(board.tft);
       break;
       
     default:

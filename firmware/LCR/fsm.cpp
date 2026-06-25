@@ -81,6 +81,12 @@ void exitAmpSelector() {
 }
 
 void exitModeSelector() {
+  char buf[16];
+  String disp_text = mode_selector.getMenuText();
+  disp_text.toCharArray(buf, sizeof(buf));
+ 
+  main_menu_1.setSelectedText(buf, 1);
+  
   primary_lcr_param = mode_selector.getPrimary();
   secondary_lcr_param = mode_selector.getSecondary();
   auto_param = false;

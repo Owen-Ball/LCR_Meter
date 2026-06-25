@@ -12,6 +12,7 @@ class ModeSelector {
     void incrementModeDown();
     lcr_param_t getPrimary();
     lcr_param_t getSecondary();
+    String getMenuText();
     void draw(ILI9341_t3n &tft);
     
     
@@ -23,6 +24,7 @@ class ModeSelector {
     
     lcr_param_t **mode_array;
     uint8_t mode_count;
+
 };
 
 #endif

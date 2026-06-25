@@ -1,4 +1,6 @@
 #include "modeselector.h"
+#include "display.h"
+#include "LCR_Fonts/Consolas_Bold20pt7b.h"
 
 
 
@@ -72,4 +74,63 @@ lcr_param_t ModeSelector::getPrimary() {
 
 lcr_param_t ModeSelector::getSecondary() {
     return *mode_array[secondary_index];
+}
+
+String ModeSelector::getMenuText() {
+  String text = "";
+
+  if (getPrimary().label[0] == ' ') {
+    text += getPrimary().label[1];
+  } else {
+    text += getPrimary().label;
+  }
+  
+  text += "+";
+  
+  if (getSecondary().label[0] == ' ') {
+    text += getSecondary().label[1];
+  } else {
+    text += getSecondary().label;
+  }
+
+  return text;
+}
+void ModeSelector::draw(ILI9341_t3n &tft) {
+  tft.setTextColor(ILI9341_RED);
+  tft.setFont(&Consolas_Bold20pt7b);
+  tft.setTextSize(1);
+
+  String text = "";
+
+  
+  if (getPrimary().label[0] == ' ') {
+    text += " ";
+    text += getPrimary().label[1];
+  } else {
+    text += getPrimary().label;
+  }
+  
+  text += " + ";
+  
+  if (getSecondary().label[0] == ' ') {
+    text += getSecondary().label[1];
+  } else {
+    text += getSecondary().label;
+  }
+
+  String underline_text;
+
+  if (current_selector == 0) {
+    underline_text = "__      ";
+  } else {
+    underline_text = "     __ ";
+  }
+
+  uint16_t text_x = getCenteredXPos(underline_text);
+  
+  tft.setCursor(text_x, 105);
+  tft.println(text);
+  tft.setCursor(text_x, 105 + 6);
+  tft.println(underline_text);
+
 }
