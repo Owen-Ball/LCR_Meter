@@ -48,5 +48,5 @@ void loop() {
 
   loop_time = micros() - prev_time;
   prev_time = micros();
-  //Serial.println(loop_time);
+  Serial.println(loop_time);
 }

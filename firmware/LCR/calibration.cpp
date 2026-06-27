@@ -5,8 +5,10 @@
 #include "ILI9341_t3n.h"
 #include "display.h"
 
+probe_type_t current_probes = CLIP_PROBES;
 CalibrationPoint calibration_data;
 uint8_t num_cal_points = 0;
+
 
 CalibrationPoint cal_array_raw[MAX_CAL_POINTS];
 CalibrationPoint cal_array[MAX_CAL_POINTS];
@@ -17,9 +19,13 @@ Complex v_pga_dc[PGA_GAIN_NUM];
 
 void printCalibrationPoint(CalibrationPoint& cal_data) {
 
-  if (num_cal_points == 0) return;
   
   logger.setCursor(10, 10, 9);
+
+  if (num_cal_points == 0) {
+    logger.print("No calibration data");
+    return;
+  }
   
   logger.print("Printing calibration data for: ");
   logger.print(cal_data.frequency);
@@ -108,14 +114,21 @@ void loadCalibrationPoint(float freq) {
 //Save an array of calibration points to the SD card. Will return true if successful
 bool saveCalibration() {
 
+  const char* filename;
+  if (current_probes == CLIP_PROBES) {
+    filename = CAL_FILE;
+  } else {
+    filename = CAL_FILE_TWEEZERS;
+  }
+  
   Serial.println("Starting calibration data save");
   
   if (!SD.begin(CHIP_SELECT)) {Serial.println("SD.begin failed"); return false; }
   Serial.println("SD.begin ok");
   
-  SD.remove(CAL_FILE);
+  SD.remove(filename);
   
-  File file = SD.open(CAL_FILE, FILE_WRITE);
+  File file = SD.open(filename, FILE_WRITE);
   if (!file) {Serial.println("File open failed"); return false; }
 
   file.write((const uint8_t*)&CAL_MAGIC,   sizeof(CAL_MAGIC));
@@ -164,13 +177,22 @@ void saveCalibrationWrapper(float _) {
 //Load cal_array array with caibration points from the calibration file
 //Will return the number of points read into the array
 uint8_t loadCalibration() {
+
+  const char* filename;
+  if (current_probes == CLIP_PROBES) {
+    filename = CAL_FILE;
+  } else {
+    filename = CAL_FILE_TWEEZERS;
+  }
+
+  num_cal_points = 0;
   
   Serial.println("Starting calibration data load");
   
   if (!SD.begin(CHIP_SELECT)) {Serial.println("SD.begin failed"); return 0; }
   Serial.println("SD.begin ok");
   
-  File file = SD.open(CAL_FILE, FILE_READ);
+  File file = SD.open(filename, FILE_READ);
   if (!file) { Serial.println("Calibration file not found"); return 0; }
   Serial.println("Calibration file found");
 

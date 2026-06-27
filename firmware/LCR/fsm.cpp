@@ -112,12 +112,30 @@ void setModeSelector(float f) {
   mode_selector.setSelector(round(f));
 }
 
+void selectTweezers(float _) {
+  current_probes = TWEEZER_PROBES;
+  loadCalibration();
+
+  float freq = codecGetFrequency();
+  loadCalibrationPoint(freq);
+}
+
+void selectClips(float _) {
+  current_probes = CLIP_PROBES;
+  loadCalibration();
+
+  float freq = codecGetFrequency();
+  loadCalibrationPoint(freq);
+}
+
 void initCalMenu() {
   calibration_menu.init(SCREEN_WIDTH, SCREEN_HEIGHT, MENU_CATEGORY_HEIGHT, MENU_ITEM_HEIGHT);
   
   calibration_menu.addCategory("Probe", nullptr, 0, false, false);
   calibration_menu.addItem("Quick", &calibrateProbes_Point, 0.0f);
   calibration_menu.addItem("Full", &calibrateProbes, 0.0f);
+  calibration_menu.addItem("Twzrs", &selectTweezers, 0.0f);
+  calibration_menu.addItem("Clips", &selectClips, 0.0f);
 
   calibration_menu.addCategory("All", nullptr, 0, false, false);
   calibration_menu.addItem("Quick", &calibrateAll_Point, 0.0f);
@@ -245,9 +263,9 @@ void runMenuInterface() {
     res1 = current_menu->processTouch(board.ts_x, board.ts_y);
   } 
 
-  if (board.up_button.pressed()) {
+  if (board.up_button.pressed() || board.up_button.process_hold()) {
     res2 = current_menu->moveUp();
-  } else if (board.down_button.pressed()) {
+  } else if (board.down_button.pressed() || board.down_button.process_hold()) {
     res2 = current_menu->moveDown();
   } else if (board.enter_button.pressed()) {
     res2 = current_menu->enter();

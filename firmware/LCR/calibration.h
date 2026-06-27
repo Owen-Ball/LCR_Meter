@@ -9,6 +9,8 @@
 
 #define CAL_FILE "cal.bin"
 
+#define CAL_FILE_TWEEZERS "cal_tweezer.bin"
+
 //Max number of calibration points that can be read in from a file
 #define MAX_CAL_POINTS    20
 
@@ -36,6 +38,10 @@ struct CalibrationPoint {
     Complex probe_Zs;
     Complex probe_Zp;
 };
+
+enum probe_type_t {CLIP_PROBES, TWEEZER_PROBES};
+
+extern probe_type_t current_probes;
 
 //Upon setting a frequency, this will be loaded with the calibration data corresponding to that frequency
 extern CalibrationPoint calibration_data;

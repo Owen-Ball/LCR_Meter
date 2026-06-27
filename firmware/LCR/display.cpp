@@ -336,10 +336,10 @@ void drawCurrentRanges() {
   }
 
   switch (range) {
-    case LCR_RANGE_100:   range_text += "100O";  break;
-    case LCR_RANGE_1K:    range_text += "1kO";   break;
-    case LCR_RANGE_10K:   range_text += "10kO";  break;
-    case LCR_RANGE_100K:  range_text += "100kO"; break;
+    case LCR_RANGE_100:   range_text += "100@";  break;
+    case LCR_RANGE_1K:    range_text += "1k@";   break;
+    case LCR_RANGE_10K:   range_text += "10k@";  break;
+    case LCR_RANGE_100K:  range_text += "100k@"; break;
     default:              range_text += "err";   break;
   }
 
@@ -394,7 +394,7 @@ void drawImpedance() {
   else text += "+j";
 
   text += floatToExp(Xs);
-  text += " Ohm";
+  text += " @";
 
   board.tft.setTextColor(ILI9341_WHITE);
   board.tft.setFont(&FreeMono9pt7b);
