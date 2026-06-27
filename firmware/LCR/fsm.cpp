@@ -4,6 +4,7 @@
 #include "board.h"
 #include "codec.h"
 #include "lcr_func.h"
+#include "images.h"
 
 
 
@@ -23,6 +24,8 @@ Selector *current_selector;
 ModeSelector mode_selector;
 
 SYSTEM_STATE current_state;
+
+bool touch_to_process;
 
 
 void switchMainMenuPage(float _ = 0) {
@@ -259,8 +262,9 @@ void runMenuInterface() {
   uint8_t res2 = 0;
   uint8_t res;
   
-  if (board.tsPressed()) {
+  if (touch_to_process) {
     res1 = current_menu->processTouch(board.ts_x, board.ts_y);
+    if (res1 != 0) touch_to_process = false;
   } 
 
   if (board.up_button.pressed() || board.up_button.process_hold()) {
@@ -295,9 +299,10 @@ void runSelectorInterface() {
 
   bool exit_selector = false;
   
-  if (board.tsPressed()) {
+  if (touch_to_process) {
     res1 = current_menu->processTouch(board.ts_x, board.ts_y);
-  } 
+    if (res1 != 0) touch_to_process = false;
+  }  
   
   if (board.up_button.pressed() || board.up_button.process_hold()) {
     current_selector->incrementUp();
@@ -333,9 +338,7 @@ void runSelectorInterface() {
       exitAmpSelector();
     }
   }
-
 }
-
 
 void runModeSelInterface() {
   uint8_t res1 = 0;
@@ -344,8 +347,9 @@ void runModeSelInterface() {
 
   bool exit_selector = false;
   
-  if (board.tsPressed()) {
+  if (touch_to_process) {
     res1 = current_menu->processTouch(board.ts_x, board.ts_y);
+    if (res1 != 0) touch_to_process = false;
   } 
 
   if (board.up_button.pressed() || board.up_button.process_hold()) {
@@ -383,17 +387,45 @@ void runModeSelInterface() {
 }
 
 
+void runProbeToggle() {
+  if (!touch_to_process) return;
+
+  if (board.ts_x < max(0, PROBE_BMP_X_POS - 15)  || board.ts_x > PROBE_BMP_X_POS + PROBE_BMP_WIDTH + 15) return;
+  if (board.ts_y < max(0, PROBE_BMP_Y_POS - 15)  || board.ts_y > PROBE_BMP_Y_POS + PROBE_BMP_HEIGHT + 15) return;
+
+  touch_to_process = false;
+  
+  if (current_probes == CLIP_PROBES) current_probes = TWEEZER_PROBES;
+  else current_probes = CLIP_PROBES;
+
+  loadCalibration();
+
+  if (num_cal_points == 0) {
+    switchToCalMenu();
+  } else {
+    float freq = codecGetFrequency();
+    loadCalibrationPoint(freq);
+  }
+  
+  board.buzzer.setBuzzer(1, 10, 1);
+}
+
 void runSystem() {
 
+  if (board.tsPressed()) touch_to_process = true;
+  else touch_to_process = false;
+  
   switch(current_state) {
     
     case RUNNING:
       runLCR();
       runMenuInterface();
+      runProbeToggle();
       break;
 
     case CALIBRATION:
       runMenuInterface();
+      runProbeToggle();
       break;
 
     case FREQ_INPUT:

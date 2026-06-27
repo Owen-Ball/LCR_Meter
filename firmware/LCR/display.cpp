@@ -8,6 +8,7 @@
 #include "LCR_Fonts/Consolas_Bold20pt7b.h"
 #include "LCR_Fonts/FreeMono9pt7b.h"
 #include "LCR_Fonts/Font5x7FixedMono.h"
+#include "images.h"
 
 
 
@@ -418,6 +419,13 @@ void drawAmpSelector() {
   amp_sel_display.draw(board.tft);
 }
 
+void drawProbes() {
+  if (current_probes == CLIP_PROBES) {
+    board.tft.drawBitmap(PROBE_BMP_X_POS, PROBE_BMP_Y_POS, clip_bmp, PROBE_BMP_WIDTH, PROBE_BMP_HEIGHT, 0xef5d);
+  } else if (current_probes == TWEEZER_PROBES) {
+    board.tft.drawBitmap(PROBE_BMP_X_POS, PROBE_BMP_Y_POS, tweezers_bmp, PROBE_BMP_WIDTH, PROBE_BMP_HEIGHT, 0xef5d);
+  }
+}
 
 void drawAll(bool force_update) {
 
@@ -435,12 +443,13 @@ void drawAll(bool force_update) {
       drawCurrentRanges();
       drawImpedance();
       current_menu->drawMenu(board.tft);
+      drawProbes();
       break;
 
     case CALIBRATION:
       printCalibrationPoint(calibration_data);
       current_menu->drawMenu(board.tft);
-      //print cal data
+      drawProbes();
       break;
 
     case FREQ_INPUT:

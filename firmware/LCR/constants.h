@@ -116,12 +116,14 @@ const float RANGE_RESISTOR[LCR_RANGE_NUM] = {100, 1000, 10000, 100000};
 
 #define DISP_FLOAT_DECIMAL_HYST false
 
-#define DISP_FLOAT
-
 #define DISP_DIGITS             6
 
 #define MENU_CATEGORY_HEIGHT    40
 #define MENU_ITEM_HEIGHT        35
+
+
+#define PROBE_BMP_X_POS         285
+#define PROBE_BMP_Y_POS         10
 
 //TOUCHSCREEN
 
