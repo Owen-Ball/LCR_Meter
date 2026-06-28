@@ -126,6 +126,14 @@ const float RANGE_RESISTOR[LCR_RANGE_NUM] = {100, 1000, 10000, 100000};
 #define PROBE_BMP_X_POS         285
 #define PROBE_BMP_Y_POS         10
 
+
+#define POLARPLOT_X_POS         170
+#define POLARPLOT_Y_POS         5
+#define POLARPLOT_SIZE          80
+#define POLARPLOT_MIN_EXP       -3
+#define POLARPLOT_MAX_EXP       7
+#define POLARPLOT_LABEL_INTERVAL 3
+
 //TOUCHSCREEN
 
 #define TS_X_MIN                400

@@ -9,7 +9,7 @@
 #include "LCR_Fonts/FreeMono9pt7b.h"
 #include "LCR_Fonts/Font5x7FixedMono.h"
 #include "images.h"
-
+#include "polarplot.h"
 
 
 LogPrint logger;
@@ -287,8 +287,8 @@ void drawScreenTitle(String title) {
 }
 
 void initDraw() {
-  lcr_primary.init(20, 100, true);
-  lcr_secondary.init(20, 140, true);
+  lcr_primary.init(23, 105, true);
+  lcr_secondary.init(23, 145, true);
   freq_sel_display.init(40, 100, 0);
   freq_sel_display.configSettings(5, 0, 0, 100000, "Hz", "F");
   amp_sel_display.init(40, 100, -3);
@@ -444,6 +444,7 @@ void drawAll(bool force_update) {
       drawImpedance();
       current_menu->drawMenu(board.tft);
       drawProbes();
+      polarPlotZ(Complex(resistance_lcr_value, reactance_lcr_value));
       break;
 
     case CALIBRATION:

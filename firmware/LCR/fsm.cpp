@@ -81,6 +81,7 @@ void exitAmpSelector() {
 
   main_menu_2.setSelectedText(buf, 1);
   switchToMainMenu();
+  switchMainMenuPage();
 }
 
 void exitModeSelector() {
