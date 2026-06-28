@@ -2,6 +2,10 @@
 #include "calibration.h"
 #include "codec.h"
 #include "autorange.h"
+#include "filter.h"
+
+MovingAverage real_avg(16);
+MovingAverage imag_avg(16);
 
 float _curr_frequency;
 float _curr_amplitude;
@@ -33,7 +37,7 @@ lcr_param_t *lcr_param_lookup[LCR_FUNC_NUM] = {
 void setLCRFrequency(float freq) {
   loadCalibrationPoint(freq);
   codecSetOutputFrequency(freq);
-  //printCalibrationPoint(calibration_data);
+  resetAverageZ();
   _curr_frequency = freq;
 }
 
@@ -52,9 +56,40 @@ float getLCRAmplitude() {
   return _curr_amplitude;
 }
 
+void setAverageZ(float count) {
+  uint8_t width = round(count);
+  real_avg.setWidth(width);
+  imag_avg.setWidth(width);
+}
+
+void resetAverageZ() {
+  real_avg.reset();
+  imag_avg.reset();
+}
+
+Complex getAverageZ() {
+  return Complex(real_avg.getAverage(), imag_avg.getAverage());  
+}
+
+void runAverageZ() {
+  Complex Z = calculateZ();
+  float mag = Z.modulus();
+  float filt_mag = getAverageZ().modulus();
+
+  if (mag / filt_mag < 1 / FILT_MAG_LIMIT || mag / filt_mag > FILT_MAG_LIMIT) {
+    real_avg.reset();
+    imag_avg.reset();
+  }
+  
+  float R = Z.real();
+  float X = Z.imag();
+
+  real_avg.add(R);
+  imag_avg.add(X);
+}
 
 void runAutoParam() {
-  Complex Z = calculateZ();
+  Complex Z = getAverageZ();
   float Q = getQ(Z, _curr_frequency);
   float X = getXs(Z, _curr_frequency);
 
@@ -84,7 +119,9 @@ void runLCR() {
   codecAverageReadings();
   if (codecDataAvailable) {
 
-    Complex Z = calculateZ();
+    runAverageZ();
+
+    Complex Z = getAverageZ();
     resistance_lcr_value = getRs_signed(Z, _curr_frequency);
     reactance_lcr_value = getXs(Z, _curr_frequency);
 

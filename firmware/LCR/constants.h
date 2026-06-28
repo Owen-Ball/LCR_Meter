@@ -100,6 +100,7 @@ const float RANGE_RESISTOR[LCR_RANGE_NUM] = {100, 1000, 10000, 100000};
 
 #define Z_OVERFLOW        10e6
 
+#define FILT_MAG_LIMIT    1.25
 
 
 

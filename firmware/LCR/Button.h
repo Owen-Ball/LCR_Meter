@@ -34,8 +34,8 @@ class Button
 		bool     _has_changed;
 		uint16_t _avg_count;
     long unsigned int _next_increment;
-    long unsigned int _hold_delay;
     long unsigned int _hold_blank;
+    long unsigned int _hold_delay;
 };
 
 

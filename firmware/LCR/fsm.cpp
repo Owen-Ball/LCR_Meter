@@ -118,6 +118,7 @@ void setModeSelector(float f) {
 void selectTweezers(float _) {
   current_probes = TWEEZER_PROBES;
   loadCalibration();
+  resetAverageZ();
 
   float freq = codecGetFrequency();
   loadCalibrationPoint(freq);
@@ -126,6 +127,7 @@ void selectTweezers(float _) {
 void selectClips(float _) {
   current_probes = CLIP_PROBES;
   loadCalibration();
+  resetAverageZ();
 
   float freq = codecGetFrequency();
   loadCalibrationPoint(freq);
@@ -179,11 +181,11 @@ void initMainMenu2() {
   main_menu_2.init(SCREEN_WIDTH, SCREEN_HEIGHT, MENU_CATEGORY_HEIGHT, MENU_ITEM_HEIGHT);
 
   main_menu_2.addCategory("Filt");
-  main_menu_2.addItem("1", nullptr, 100.0f);
-  main_menu_2.addItem("4", nullptr, 1000.0f);
-  main_menu_2.addItem("16", nullptr, 10000.0f);
-  main_menu_2.addItem("64", nullptr, 75000.0f);
-  main_menu_2.executeItem(main_menu_2.getCategoriesCount()-1, 0);
+  main_menu_2.addItem("1", &setAverageZ, 1.0f);
+  main_menu_2.addItem("4", &setAverageZ, 4.0f);
+  main_menu_2.addItem("16", &setAverageZ, 16.0f);
+  main_menu_2.addItem("64", &setAverageZ, 64.0f);
+  main_menu_2.executeItem(main_menu_2.getCategoriesCount()-1, 1);
 
   main_menu_2.addCategory("Ampl");
   main_menu_2.addItem("0.5V", &setLCRAmplitude, 0.5f);
@@ -399,6 +401,7 @@ void runProbeToggle() {
   else current_probes = CLIP_PROBES;
 
   loadCalibration();
+  resetAverageZ();
 
   if (num_cal_points == 0) {
     switchToCalMenu();

@@ -30,6 +30,9 @@ void setLCRAmplitude(float amp);
 float getLCRFrequency();
 float getLCRAmplitude();
 
+void setAverageZ(float count);
+void resetAverageZ();
+
 void runLCR();
 void setLCRParams(int index);
 void setLCRParams(float f);
