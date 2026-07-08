@@ -23,10 +23,10 @@ static const uint32_t CAL_MAGIC = 0xFCA1FCA1;
 //if this does not match
 static const uint8_t CAL_VERSION =  1;
 
-static const uint8_t CAL_FREQ_COUNT = 4;
+static const uint8_t CAL_FREQ_COUNT = 10;
 
 static const float cal_frequencies[CAL_FREQ_COUNT] = {
-  100, 1000, 10000, 75000
+  100, 215, 464, 1000, 2154, 4642, 10000, 21544, 46416, 75000
 };
 
 struct CalibrationPoint {

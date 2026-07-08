@@ -69,6 +69,7 @@ extern lcr_param_t lcrParamLs;
 extern lcr_param_t lcrParamLp;
 extern lcr_param_t lcrParamRs;
 extern lcr_param_t lcrParamRp;
+extern lcr_param_t lcrParamXs;
 extern lcr_param_t lcrParamZMag;
 extern lcr_param_t lcrParamZPhase;
 extern lcr_param_t lcrParamD;

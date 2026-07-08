@@ -5,6 +5,7 @@
 #include "codec.h"
 #include "lcr_func.h"
 #include "images.h"
+#include "sweep.h"
 
 
 
@@ -14,6 +15,7 @@ MenuBar main_menu_2;
 MenuBar freqsel_menu;
 MenuBar ampsel_menu;
 MenuBar modesel_menu;
+MenuBar freqsweep_menu;
 
 MenuBar *current_menu;
 
@@ -108,6 +110,11 @@ void switchToModeSelector(float _) {
   current_menu = &modesel_menu;
 }
 
+void switchToFreqSweep(float _) {
+  current_state = FREQ_SWEEP;
+  current_menu = &freqsweep_menu;
+}
+
 void setSelectorIncrement(float f) {
   current_selector->setIncrement(f);
 }
@@ -169,7 +176,7 @@ void initMainMenu1() {
   main_menu_1.addItem("Auto", &setLCRParams, 0.0f);
   main_menu_1.addItem("Cs+Rs", &setLCRParams, 1.0f);
   main_menu_1.addItem("Ls+Rs", &setLCRParams, 2.0f);
-  main_menu_1.addItem("Cp+Rp", &setLCRParams, 3.0f);
+  main_menu_1.addItem("[]+<Z", &setLCRParams, 3.0f);
   main_menu_1.addItem("Custom", &switchToModeSelector, 0.0f);
   main_menu_1.executeItem(main_menu_1.getCategoriesCount()-1, 0);
 
@@ -196,12 +203,7 @@ void initMainMenu2() {
   main_menu_2.addItem("Custom", &switchToAmpSelector);
   main_menu_2.executeItem(main_menu_2.getCategoriesCount()-1, 3);
 
-  main_menu_2.addCategory("Other");
-  main_menu_2.addItem("0.1V", nullptr, 0.1f);
-  main_menu_2.addItem("0.5V", nullptr, 0.5f);
-  main_menu_2.addItem("1.0V", nullptr, 1.0f);
-  main_menu_2.addItem("2.0V", nullptr, 2.0f);
-  main_menu_2.executeItem(main_menu_2.getCategoriesCount()-1, 3);
+  main_menu_2.addCategory("Sweep", &switchToFreqSweep, 0, false);
 
   main_menu_2.addCategory("Page 1", &switchMainMenuPage, 0, false);
 }
@@ -231,6 +233,27 @@ void initModeSelMenu() {
   modesel_menu.addCategory("Secondary", &setModeSelector, 1.0, false);
 }
 
+
+void initFreqSweepMenu() {
+  freqsweep_menu.init(SCREEN_WIDTH, SCREEN_HEIGHT, MENU_CATEGORY_HEIGHT, MENU_ITEM_HEIGHT);
+
+  freqsweep_menu.addCategory("Points");
+  freqsweep_menu.addItem("20", &setFreqSweepPoints, 20.0f);
+  freqsweep_menu.addItem("50", &setFreqSweepPoints, 50.0f);
+  freqsweep_menu.addItem("100", &setFreqSweepPoints, 100.0f);
+  freqsweep_menu.addItem("200", &setFreqSweepPoints, 200.0f);
+  freqsweep_menu.executeItem(freqsweep_menu.getCategoriesCount()-1, 1);
+
+  freqsweep_menu.addCategory("Mode");
+  freqsweep_menu.addItem("[]+<Z", &setFreqSweepDisplayMode, 0.0f);
+  freqsweep_menu.addItem("R+jX", &setFreqSweepDisplayMode, 1.0f);
+  freqsweep_menu.executeItem(freqsweep_menu.getCategoriesCount()-1, 0);
+
+  freqsweep_menu.addCategory("Start", &runSweepWrapper, 0, false);
+
+  freqsweep_menu.addCategory("Home", &switchToMainMenu, 0, false);
+}
+
 void initSystem() {
 
   board.tft.fillScreen(ILI9341_BLACK);
@@ -250,6 +273,8 @@ void initSystem() {
   initFreqSelMenu();
   initAmpSelMenu();
   initModeSelMenu();
+  initFreqSweepMenu();
+  
   freq_selector.init(100, 90000, 100);
   freq_selector.setIncrement(100);
 
@@ -358,11 +383,9 @@ void runModeSelInterface() {
   if (board.up_button.pressed() || board.up_button.process_hold()) {
     mode_selector.incrementModeUp();
     res2 = 1;
-    Serial.println(mode_selector.getPrimary().label);
   } else if (board.down_button.pressed() || board.down_button.process_hold()) {
     mode_selector.incrementModeDown();
     res2 = 1;
-    Serial.println(mode_selector.getPrimary().label);
   } else if (board.enter_button.pressed()) {
     //res2 = current_menu->enter();
     res2 = 2;
@@ -442,6 +465,10 @@ void runSystem() {
 
     case MODE_INPUT:
       runModeSelInterface();
+      break;
+
+    case FREQ_SWEEP:
+      runMenuInterface();
       break;
       
     default:

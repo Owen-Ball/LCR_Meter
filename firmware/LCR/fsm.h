@@ -5,7 +5,7 @@
 #include "selector.h"
 #include "modeselector.h"
 
-enum SYSTEM_STATE {RUNNING, CALIBRATION, FREQ_INPUT, AMP_INPUT, MODE_INPUT};
+enum SYSTEM_STATE {RUNNING, CALIBRATION, FREQ_INPUT, AMP_INPUT, MODE_INPUT, FREQ_SWEEP};
 
 extern SYSTEM_STATE current_state;
 extern MenuBar *current_menu;

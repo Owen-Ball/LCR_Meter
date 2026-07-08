@@ -28,6 +28,7 @@ lcr_param_t *lcr_param_lookup[LCR_FUNC_NUM] = {
   &lcrParamCp,
   &lcrParamLs,
   &lcrParamLp,
+  &lcrParamXs,
   &lcrParamZMag,
   &lcrParamZPhase,
   &lcrParamQ,
@@ -161,8 +162,8 @@ void setLCRParams(int index) {
       auto_param = false;
       break;
     case 3:
-      primary_lcr_param = lcrParamCp;
-      secondary_lcr_param = lcrParamRp;
+      primary_lcr_param = lcrParamZMag;
+      secondary_lcr_param = lcrParamZPhase;
       auto_param = false;
       break;
     default:
@@ -289,6 +290,14 @@ lcr_param_t lcrParamRp {
   .min_exp = -3,
   .min_res = -4,
   .value = &getRp,
+};
+
+lcr_param_t lcrParamXs {
+  .label = "Xs",
+  .unit = "@",
+  .min_exp = -3,
+  .min_res = -4,
+  .value = &getXs,
 };
 
 lcr_param_t lcrParamZMag {

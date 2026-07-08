@@ -3,8 +3,6 @@
 
 #include <CComplex.h>
 
-void drawAxes();
-
 void polarPlotZ(Complex Z);
 
 

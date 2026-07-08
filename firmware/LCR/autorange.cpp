@@ -25,21 +25,21 @@ bool gainAutorange(bool force_range) {
 
   if (vpeak > AUTORANGE_LEVEL_HIGH && board.getPGAGainV() != PGA_GAIN_1) {
     board.decreaseVGain();
-    Serial.println("V Gain down");
+    //Serial.println("V Gain down");
     range_changed = true;
   } else if (vpeak < AUTORANGE_LEVEL_LOW && board.getPGAGainV() != PGA_GAIN_100) {
     board.increaseVGain();
-    Serial.println("V Gain up");
+    //Serial.println("V Gain up");
     range_changed = true;
   }
 
   if (ipeak > AUTORANGE_LEVEL_HIGH && board.getPGAGainI() != PGA_GAIN_1) {
     board.decreaseIGain(); 
-    Serial.println("I Gain down");
+    //Serial.println("I Gain down");
     range_changed = true;
   } else if (ipeak < AUTORANGE_LEVEL_LOW && board.getPGAGainI() != PGA_GAIN_100) {
     board.increaseIGain();
-    Serial.println("I Gain up");
+    //Serial.println("I Gain up");
     range_changed = true;
   }
 
@@ -99,6 +99,30 @@ void blockingAutorangeMeasure() {
   delay(CODEC_SETTING_CHANGE_DELAY);
 
   while (count < 3) {
+    codecResetReadings();
+    
+    while (!codecDataAvailable) {
+      codecAverageReadings();
+    }
+
+    bool range_changed = gainAutorange(true);
+
+    if (range_changed) {
+      delay(CODEC_SETTING_CHANGE_DELAY);
+    } else {
+      count += 1;
+    }
+    
+  }
+  
+}
+
+
+void blockingAutorangeMeasureFast() {
+
+  uint8_t count = 0;
+
+  while (count < 2) {
     codecResetReadings();
     
     while (!codecDataAvailable) {

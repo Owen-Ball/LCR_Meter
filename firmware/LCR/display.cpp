@@ -10,6 +10,7 @@
 #include "LCR_Fonts/Font5x7FixedMono.h"
 #include "images.h"
 #include "polarplot.h"
+#include "sweep.h"
 
 
 LogPrint logger;
@@ -467,6 +468,11 @@ void drawAll(bool force_update) {
       current_menu->drawMenu(board.tft);
       drawScreenTitle("Set Params");
       mode_selector.draw(board.tft);
+      break;
+
+    case FREQ_SWEEP:
+      drawSweepWrapper(board.tft);
+      current_menu->drawMenu(board.tft);
       break;
       
     default:

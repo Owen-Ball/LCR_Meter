@@ -85,7 +85,7 @@
 
 
 
-#define LCR_FUNC_NUM  10
+#define LCR_FUNC_NUM  11
 
 
 //set the resistor used to calibrate each range
@@ -133,6 +133,17 @@ const float RANGE_RESISTOR[LCR_RANGE_NUM] = {100, 1000, 10000, 100000};
 #define POLARPLOT_MIN_EXP       -3
 #define POLARPLOT_MAX_EXP       7
 #define POLARPLOT_LABEL_INTERVAL 3
+
+#define FREQSWEEP_MAX_POINTS    250
+#define FREQSWEEP_WIDTH         180
+#define FREQSWEEP_HEIGHT        120
+#define FREQSWEEP_Y_OFFSET      -30
+#define FREQSWEEP_PADDING       10
+//Number of subdivisions per decade. 10 max
+#define FREQSWEEP_DIVS_PER_DECADE 5
+
+#define FREQSWEEP_START         100
+#define FREQSWEEP_END           75000
 
 //TOUCHSCREEN
 

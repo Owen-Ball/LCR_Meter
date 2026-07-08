@@ -43,6 +43,7 @@ void loop() {
   
   runSystem();
   if (update_finished) {
+    prev_time = micros();
     drawAll();
   }
 
