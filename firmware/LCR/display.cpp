@@ -249,12 +249,12 @@ void LogPrint::println_large(String s) {
   tft->setTextSize(1);
 }
 
-uint16_t getCenteredXPos(String s) {
+int16_t getCenteredXPos(String s, int16_t x_center) {
   int16_t x1, y1;
   uint16_t w, h;
   
   board.tft.getTextBounds(s, 0, 0, &x1, &y1, &w, &h);
-  return (SCREEN_WIDTH - w) / 2;
+  return x_center - w / 2;
 }
 
 void userPromptText(String s) {
@@ -268,7 +268,7 @@ void userPromptText(String s) {
   board.tft.print(s);
 
   text_x = getCenteredXPos("Press Enter or Touch");
-  board.tft.setCursor(text_x, text_y + 20);
+  board.tft.setCursor(text_x, text_y + 25);
   
   board.tft.print("Press Enter or Touch");
   board.tft.waitUpdateAsyncComplete();

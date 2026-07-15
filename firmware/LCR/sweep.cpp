@@ -4,7 +4,9 @@
 #include "autorange.h"
 #include "constants.h"
 #include "LCR_Fonts/Font5x7FixedMono.h"
+#include "LCR_Fonts/FreeMono9pt7b.h"
 #include "calibration.h"
+#include "display.h"
 
 
 
@@ -12,6 +14,7 @@ enum display_mode_t {ZMAG_ZPHASE, R_X};
 
 uint16_t num_points = 0;
 uint16_t current_points = 0;
+uint16_t num_valid_points = 0;
 display_mode_t display_mode;
 
 
@@ -107,6 +110,7 @@ int16_t mapFreqToX(float freq, float freq_start, float freq_end, int16_t x0, int
 }
 
 int16_t mapValToY(float val, float val_min, float val_max, int16_t y0, int16_t height) {
+  if (val < val_min || val > val_max) return INT16_MAX;
   return int16_t(-1*float(height)*(val - val_min)/(val_max - val_min)) + y0;
 }
 
@@ -144,6 +148,11 @@ void printSciNotation(ILI9341_t3n &tft, int16_t x, int16_t y, float val) {
   }
 
   tft.setCursor(x, y);
+  if (coeff > 9.994) {
+    coeff = 1.0;
+    exponent += 1;
+  }
+  
   tft.print(String(coeff, 2));
 
   if (neg) {
@@ -167,7 +176,7 @@ void printPhase(ILI9341_t3n &tft, int16_t x, int16_t y, float phase) {
   tft.setFont(&Font5x7FixedMono);
 
   tft.setCursor(x, y);
-  tft.print(String(phase, 0));
+  tft.print(String(phase, 1));
   
 }
 
@@ -266,13 +275,13 @@ void scaleVerticalAxes() {
 
   if (left_log_scale) {
     left_divs = ceil(log10(left_val_max)) - floor(log10(left_val_min));
-    if (left_divs <= 1) left_log_scale = false;
+    if (left_divs <= 2) left_log_scale = false;
     left_min = floor(log10(left_val_min));
   }
 
   if (right_log_scale) {
     right_divs = ceil(log10(right_val_max)) - floor(log10(right_val_min));
-    if (right_divs <= 1) right_log_scale = false;
+    if (right_divs <= 2) right_log_scale = false;
     right_min = floor(log10(right_val_min));
   }
 
@@ -358,11 +367,15 @@ void scaleVerticalAxes() {
 }
 
 
-void drawPlot(ILI9341_t3n &tft, float sweep_start, float sweep_end) {
+void drawThickLine(ILI9341_t3n &tft, int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) {
+  tft.drawLine(x0, y0+2, x1, y1+2, color);
+  tft.drawLine(x0, y0+1, x1, y1+1, color);
+  tft.drawLine(x0, y0, x1, y1, color);
+  tft.drawLine(x0, y0-1, x1, y1-1, color);
+  tft.drawLine(x0, y0-2, x1, y1-2, color);
+}
 
-  tft.setTextSize(1);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setFont(&Font5x7FixedMono);
+void drawPlot(ILI9341_t3n &tft, float sweep_start, float sweep_end) {
 
   int16_t x;
   int16_t y;
@@ -376,6 +389,33 @@ void drawPlot(ILI9341_t3n &tft, float sweep_start, float sweep_end) {
   
   int16_t x1 = x0 + FREQSWEEP_WIDTH;
   int16_t y1 = y0 + FREQSWEEP_HEIGHT;
+  
+
+  tft.setTextSize(1);
+  tft.setTextColor(ILI9341_WHITE);
+  board.tft.setFont(&FreeMono9pt7b);
+  
+  x = getCenteredXPos("Frequency (Hz)");
+  tft.setCursor(x, y1 + 20);
+  tft.print("Frequency (Hz)");
+
+  tft.setTextColor(ILI9341_RED);
+  String left_text = String(left_param.label) + "(" + left_param.unit + ")";
+  x = getCenteredXPos(left_text, SCREEN_WIDTH / 3 - 5);
+  tft.setCursor(x, y0 - 20);
+  tft.print(left_text);
+
+  tft.setTextColor(ILI9341_BLUE);
+  String right_text = String(right_param.label) + "(" + right_param.unit + ")";
+  x = getCenteredXPos(right_text, 2 * SCREEN_WIDTH / 3 - 5);
+  tft.setCursor(x, y0 - 20);
+  tft.print(right_text);
+  
+
+  tft.setTextSize(1);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setFont(&Font5x7FixedMono);
+
 
   tft.drawLine(x0, y0, x0, y1, ILI9341_WHITE);
   tft.drawLine(x0, y1, x1, y1, ILI9341_WHITE);
@@ -399,6 +439,9 @@ void drawPlot(ILI9341_t3n &tft, float sweep_start, float sweep_end) {
   }
 
 
+  if (num_valid_points <= 1) {
+    return;
+  }
   
   scaleVerticalAxes();
   
@@ -422,6 +465,10 @@ void drawPlot(ILI9341_t3n &tft, float sweep_start, float sweep_end) {
   }
 
 
+  int16_t prev_x_left = INT16_MAX;
+  int16_t prev_y_left = INT16_MAX;
+  int16_t prev_x_right = INT16_MAX;
+  int16_t prev_y_right = INT16_MAX;
   
   for (uint16_t i=0; i<current_points; i++) {
     float right_val = right_param.value(value_array[i], freq_array[i]);
@@ -431,7 +478,25 @@ void drawPlot(ILI9341_t3n &tft, float sweep_start, float sweep_end) {
     } else {
       y = mapValToY(right_val, right_min, right_max, y1, FREQSWEEP_HEIGHT - FREQSWEEP_PADDING);
     }
-    tft.fillCircle(x, y, 2, ILI9341_BLUE);
+
+
+    if (y != INT16_MAX) {
+      tft.fillCircle(x, y, 2, ILI9341_BLUE);
+      if (prev_y_right != INT16_MAX) {
+        //drawThickLine(tft, x, y, prev_x_right, prev_y_right, ILI9341_BLUE);
+      }
+      prev_x_right = x;
+      prev_y_right = y; 
+      
+    } else {
+      prev_x_right = INT16_MAX;
+      prev_y_right = INT16_MAX;
+    }
+    
+
+
+
+
 
     float left_val = left_param.value(value_array[i], freq_array[i]);
     if (left_log_scale) {
@@ -439,7 +504,21 @@ void drawPlot(ILI9341_t3n &tft, float sweep_start, float sweep_end) {
     } else {
       y = mapValToY(left_val, left_min, left_max, y1, FREQSWEEP_HEIGHT - FREQSWEEP_PADDING);
     }
-    tft.fillCircle(x, y, 2, ILI9341_RED);
+
+    
+    if (y != INT16_MAX) {
+      tft.fillCircle(x, y, 2, ILI9341_RED);
+      if (prev_y_left != INT16_MAX) {
+        //drawThickLine(tft, x, y, prev_x_left, prev_y_left, ILI9341_RED);
+      }
+      prev_x_left = x;
+      prev_y_left = y; 
+      
+    } else {
+      prev_x_left = INT16_MAX;
+      prev_y_left = INT16_MAX;
+    }
+    
   }
 
   
@@ -455,6 +534,7 @@ void runSweep(float freq_start, float freq_end, uint16_t points) {
   
   float freq_step = pow(freq_end / freq_start, 1.0 / (float(points) - 1.0));
   current_points = 0;
+  num_valid_points = 0;
 
   float freq = freq_start;
   for (uint16_t i=0; i<points; i++) {
@@ -465,6 +545,8 @@ void runSweep(float freq_start, float freq_end, uint16_t points) {
 
     current_points = i + 1;
 
+    if (val.modulus() < Z_OVERFLOW) num_valid_points += 1;
+
     Serial.print(freq);
     Serial.print(" ");
     Serial.println(val.real());
@@ -472,7 +554,7 @@ void runSweep(float freq_start, float freq_end, uint16_t points) {
     freq *= freq_step;
 
     if (i > 0 && i % 5 == 0) {
-      board.tft.fillScreen(ILI9341_BLACK);
+      board.tft.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - MENU_CATEGORY_HEIGHT, ILI9341_BLACK);
       drawPlot(board.tft, FREQSWEEP_START, FREQSWEEP_END);
       board.tft.waitUpdateAsyncComplete();
       board.tft.updateScreen();

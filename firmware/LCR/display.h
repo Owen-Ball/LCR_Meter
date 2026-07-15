@@ -71,7 +71,7 @@ class LogPrint {
 
 extern LogPrint logger;
 
-uint16_t getCenteredXPos(String s);
+int16_t getCenteredXPos(String s, int16_t x_center = SCREEN_WIDTH/2);
 void userPromptText(String s);
 void initDraw();
 void drawAll(bool force_update = false);
