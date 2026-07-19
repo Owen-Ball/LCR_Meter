@@ -40,6 +40,12 @@ uint8_t vert_divs;
 float freq_array[FREQSWEEP_MAX_POINTS];
 Complex value_array[FREQSWEEP_MAX_POINTS];
 
+//should span 1 to 10
+float linear_step_options[6] = {1.0, 2.0, 2.5, 4.0, 5.0, 10.0};
+uint8_t linear_step_option_count = 6;
+
+float phase_step_options[10] = {1.0, 2.0, 5.0, 10.0, 15.0, 30.0, 45.0, 60.0, 90.0, 180.0};
+uint8_t phase_step_option_count = 10;
 
 void setFreqSweepPoints(float points) {
   num_points = round(points);
@@ -114,14 +120,15 @@ int16_t mapValToY(float val, float val_min, float val_max, int16_t y0, int16_t h
   return int16_t(-1*float(height)*(val - val_min)/(val_max - val_min)) + y0;
 }
 
-void printPowerOfTen(ILI9341_t3n &tft, int16_t x, int16_t y, int8_t exponent) {
+void printPowerOfTen(ILI9341_t3n &tft, int16_t x, int16_t y, int8_t exponent, bool neg = false) {
   tft.setTextSize(1);
   tft.setTextColor(ILI9341_WHITE);
   tft.setFont(&Font5x7FixedMono);
 
   tft.setCursor(x, y);
-  tft.print(10);
-  tft.setCursor(x + 13, max(0, y - 5));
+  if (neg) tft.print(-10);
+  else tft.print(10);
+  tft.setCursor(x + 13 + neg*6, max(0, y - 5));
   tft.print(exponent);
   
 }
@@ -184,16 +191,16 @@ float calculateIncrement(float target_increment) {
   int exponent = floor(log10(target_increment));
   float coeff = target_increment / pow(10.0, exponent);
 
-  if      (coeff < 1.0) coeff = 1.0;
-  else if (coeff < 2.0) coeff = 2.0;
-  else if (coeff < 5.0) coeff = 5.0;
-  else coeff = 10.0;
-
-  return coeff * pow(10.0, exponent);
+  for (uint8_t i = 0; i < linear_step_option_count; i++) {
+    if (coeff < linear_step_options[i]) return linear_step_options[i] * pow(10.0, exponent);
+  }
+ 
+  return 10.0 * pow(10.0, exponent);
 }
 
+
 float approximatelyEqual(float f1, float f2) {
-  return abs(f1 - f2) < 0.001;
+  return abs(f1 - f2) < 0.0001;
 }
 
 
@@ -201,33 +208,51 @@ float increaseIncrement(float increment) {
   int exponent = floor(log10(increment));
   float coeff = increment / pow(10.0, exponent);
 
-  if      (approximatelyEqual(coeff, 1.0)) coeff = 2.0;
-  else if (approximatelyEqual(coeff, 2.0)) coeff = 5.0;
-  else if (approximatelyEqual(coeff, 5.0)) coeff = 10.0;
-  else if (approximatelyEqual(coeff, 10.0)) coeff = 20.0;
-  else coeff = 20.0;
 
-  return coeff * pow(10.0, exponent);
+  for (uint8_t i=0; i < linear_step_option_count; i++ ){
+    if (approximatelyEqual(coeff, linear_step_options[i])) {
+      if (i == linear_step_option_count - 1) coeff = 10.0 * linear_step_options[1];
+      else coeff = linear_step_options[i+1];
+
+      return coeff * pow(10.0, exponent);
+    }
+  }
 }
+
 
 float getLinearIncrement(float min_val, float max_val, uint8_t divs) {
 
   if (approximatelyEqual(min_val, max_val)) return 0.001;
-  
+
   float increment = calculateIncrement((max_val - min_val) / divs);
 
   bool complete = false;
 
-  while (!complete) {
+  //Does this need to be a loop? No. Does it work? Yes
+  //Loop while the selected increment is not large enough to span the data range
+  while (true) {
     float div_min = floor(min_val / increment) * increment;
     float div_max = increment*divs + div_min;
 
-    if (div_max > max_val) complete = true;
+    if (div_max > max_val) return increment;
     else increment = increaseIncrement(increment);
   }
 
   return increment;
   
+}
+
+float getPhaseIncrement(float min_val, float max_val, uint8_t divs) {
+  for (uint8_t i = 0; i < phase_step_option_count; i++ ) {
+
+    float increment = phase_step_options[i];
+    float div_min = floor(min_val / increment) * increment;
+    float div_max = increment*divs + div_min;
+
+    if (div_max > max_val) return increment;
+  }
+
+  return phase_step_options[phase_step_option_count - 1];
 }
 
 void scaleVerticalAxes() {
@@ -275,13 +300,13 @@ void scaleVerticalAxes() {
 
   if (left_log_scale) {
     left_divs = ceil(log10(left_val_max)) - floor(log10(left_val_min));
-    if (left_divs <= 2) left_log_scale = false;
+    if (left_divs <= 1) left_log_scale = false;
     left_min = floor(log10(left_val_min));
   }
 
   if (right_log_scale) {
     right_divs = ceil(log10(right_val_max)) - floor(log10(right_val_min));
-    if (right_divs <= 2) right_log_scale = false;
+    if (right_divs <= 1) right_log_scale = false;
     right_min = floor(log10(right_val_min));
   }
 
@@ -310,23 +335,18 @@ void scaleVerticalAxes() {
   } else if (left_log_scale && !right_log_scale) {
     divs = left_divs;
     left_max = left_min + divs;
-    right_increment = getLinearIncrement(right_val_min, right_val_max, divs);
+    if (right_phase) right_increment = getPhaseIncrement(right_val_min, right_val_max, divs);
+    else right_increment = getLinearIncrement(right_val_min, right_val_max, divs);
     right_min = floor(right_val_min / right_increment) * right_increment;
     right_max = right_min + right_increment*divs;
 
-    Serial.print("Right increment: ");
-    Serial.println(right_increment);
-    Serial.print("Right min: ");
-    Serial.println(right_min);
   } else if (!left_log_scale && right_log_scale) {
     divs = right_divs;
     right_max = right_min + divs;
     left_increment = getLinearIncrement(left_val_min, left_val_max, divs);
     left_min = floor(left_val_min / left_increment) * left_increment;
     left_max = left_min + left_increment*divs;
-
-    Serial.print("Left increment: ");
-    Serial.println(left_increment);
+    
   } else {
     
     divs = 4;
@@ -335,7 +355,8 @@ void scaleVerticalAxes() {
     left_min = floor(left_val_min / left_increment) * left_increment;
     left_max = left_min + left_increment*divs;
 
-    right_increment = getLinearIncrement(right_val_min, right_val_max, divs);
+    if (right_phase) right_increment = getPhaseIncrement(right_val_min, right_val_max, divs);
+    else right_increment = getLinearIncrement(right_val_min, right_val_max, divs);
     right_min = floor(right_val_min / right_increment) * right_increment;
     right_max = right_min + right_increment*divs;
     
@@ -450,13 +471,15 @@ void drawPlot(ILI9341_t3n &tft, float sweep_start, float sweep_end) {
     tft.drawLine(x0, y, x1, y, ILI9341_WHITE);
 
     if (left_log_scale) {
-      printPowerOfTen(tft, x0 - 30, y, left_min + div);
+      if (left_neg) printPowerOfTen(tft, x0 - 36, y, left_min + div, true);
+      else printPowerOfTen(tft, x0 - 30, y, left_min + div);
     } else {
       printSciNotation(tft, x0 - 58, y, left_min + left_increment*div);
     }
 
     if (right_log_scale) {
-      printPowerOfTen(tft, x1 + 5, y, right_min + div);
+      if (right_neg) printPowerOfTen(tft, x1 + 5, y, right_min + div, true);
+      else printPowerOfTen(tft, x1 + 5, y, right_min + div);
     } else if (!right_phase){
       printSciNotation(tft, x1 + 5, y, right_min + right_increment*div);
     } else {
