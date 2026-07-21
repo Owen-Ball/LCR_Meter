@@ -107,7 +107,7 @@ void FloatDisplay::updateValue(float value) {
     case -15: prefix = 'a'; break;
     case -12: prefix = 'p'; break;
     case -9:  prefix = 'n'; break;
-    case -6:  prefix = 'u'; break;
+    case -6:  prefix = '&'; break;
     case -3:  prefix = 'm'; break;
     case 0:   prefix = ""; break;
     case 3:   prefix = 'k'; break;
@@ -406,6 +406,16 @@ void drawImpedance() {
   board.tft.print(text);
 }
 
+void drawSelectorInterface() {
+  int16_t x_center = SCREEN_WIDTH / 2;
+  int16_t y_center = SELECTOR_UP_Y_POS;
+  int16_t w = SELECTOR_BUTTON_WIDTH;
+  int16_t h = SELECTOR_BUTTON_HEIGHT;
+  board.tft.fillTriangle(x_center, y_center - h/2, x_center - w/2, y_center + h/2, x_center + w/2, y_center + h/2, SELECTOR_COLOR);
+
+  y_center = SELECTOR_DOWN_Y_POS;
+  board.tft.fillTriangle(x_center, y_center + h/2, x_center - w/2, y_center - h/2, x_center + w/2, y_center - h/2, SELECTOR_COLOR);
+}
 void drawFreqSelector() {
   int digit = round(log10(freq_selector.getIncrement()));
   freq_sel_display.underlineDigit(digit);
@@ -456,18 +466,23 @@ void drawAll(bool force_update) {
 
     case FREQ_INPUT:
       current_menu->drawMenu(board.tft);
+      drawScreenTitle("Set Frequency");
       drawFreqSelector();
+      drawSelectorInterface();
       break;
 
     case AMP_INPUT:
       current_menu->drawMenu(board.tft);
+      drawScreenTitle("Set Amplitude");
       drawAmpSelector();
+      drawSelectorInterface();
       break;
       
     case MODE_INPUT:
       current_menu->drawMenu(board.tft);
       drawScreenTitle("Set Params");
       mode_selector.draw(board.tft);
+      drawSelectorInterface();
       break;
 
     case FREQ_SWEEP:

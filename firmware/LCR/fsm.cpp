@@ -54,7 +54,7 @@ void switchToFreqSelector(float _) {
   current_selector = &freq_selector;
 }
 
-void exitFreqSelector() {
+void exitFreqSelector(float _ = 0) {
   char buf[16];
   float val = freq_selector.getValue();
   setLCRFrequency(val);
@@ -72,7 +72,7 @@ void exitFreqSelector() {
   switchToMainMenu();
 }
 
-void exitAmpSelector() {
+void exitAmpSelector(float _ = 0) {
   char buf[16];
   float val = amp_selector.getValue();
   setLCRAmplitude(val);
@@ -86,7 +86,7 @@ void exitAmpSelector() {
   switchMainMenuPage();
 }
 
-void exitModeSelector() {
+void exitModeSelector(float _ = 0) {
   char buf[16];
   String disp_text = mode_selector.getMenuText();
   disp_text.toCharArray(buf, sizeof(buf));
@@ -214,23 +214,25 @@ void initFreqSelMenu() {
   freqsel_menu.addCategory("10kHz", &setSelectorIncrement, 10000, false);
   freqsel_menu.addCategory("1kHz", &setSelectorIncrement, 1000, false);
   freqsel_menu.addCategory("100Hz", &setSelectorIncrement, 100, false);
-  freqsel_menu.addCategory("10Hz", &setSelectorIncrement, 10, false);
+  freqsel_menu.addCategory("Set", &exitFreqSelector, 0.0, false);
 }
 
 void initAmpSelMenu() {
   ampsel_menu.init(SCREEN_WIDTH, SCREEN_HEIGHT, MENU_CATEGORY_HEIGHT, MENU_ITEM_HEIGHT);
 
-  ampsel_menu.addCategory("", nullptr);
   ampsel_menu.addCategory("1V", &setSelectorIncrement, 1.0, false);
   ampsel_menu.addCategory("100mV", &setSelectorIncrement, 0.1, false);
   ampsel_menu.addCategory("10mV", &setSelectorIncrement, 0.01, false);
+  ampsel_menu.addCategory("Set", &exitAmpSelector, 0.0, false);
 }
 
 void initModeSelMenu() {
   modesel_menu.init(SCREEN_WIDTH, SCREEN_HEIGHT, MENU_CATEGORY_HEIGHT, MENU_ITEM_HEIGHT);
 
-  modesel_menu.addCategory("Primary", &setModeSelector, 0.0, false);
-  modesel_menu.addCategory("Secondary", &setModeSelector, 1.0, false);
+  modesel_menu.addCategory("", nullptr, 0.0, false);
+  modesel_menu.addCategory("Prim.", &setModeSelector, 0.0, false);
+  modesel_menu.addCategory("Sec.", &setModeSelector, 1.0, false);
+  modesel_menu.addCategory("Set", &exitModeSelector, 0.0, false);
 }
 
 
@@ -285,6 +287,29 @@ void initSystem() {
 
 }
 
+
+uint8_t runSelectorTouchscreen() {
+  
+  if (board.ts_x > SCREEN_WIDTH/2 - SELECTOR_BUTTON_WIDTH/2 - 20 && 
+      board.ts_x < SCREEN_WIDTH/2 + SELECTOR_BUTTON_WIDTH/2 + 20 &&
+      board.ts_y > SELECTOR_UP_Y_POS - SELECTOR_BUTTON_HEIGHT/2 - 20 && 
+      board.ts_y < SELECTOR_UP_Y_POS + SELECTOR_BUTTON_HEIGHT/2 + 20) {
+
+    touch_to_process = false;
+    return 1;
+    
+  } else if (board.ts_x > SCREEN_WIDTH/2 - SELECTOR_BUTTON_WIDTH/2 - 20 && 
+             board.ts_x < SCREEN_WIDTH/2 + SELECTOR_BUTTON_WIDTH/2 + 20 &&
+             board.ts_y > SELECTOR_DOWN_Y_POS - SELECTOR_BUTTON_HEIGHT/2 - 20 && 
+             board.ts_y < SELECTOR_DOWN_Y_POS + SELECTOR_BUTTON_HEIGHT/2 + 20) {
+              
+    touch_to_process = false;
+    return 2;            
+  } 
+  
+  return 0;
+}
+
 void runMenuInterface() {
   uint8_t res1 = 0;
   uint8_t res2 = 0;
@@ -331,6 +356,13 @@ void runSelectorInterface() {
     res1 = current_menu->processTouch(board.ts_x, board.ts_y);
     if (res1 != 0) touch_to_process = false;
   }  
+
+  if (touch_to_process) {
+    uint8_t temp = runSelectorTouchscreen();
+    res2 = min(temp, 1);
+    if (temp == 1) current_selector->incrementUp();
+    else if (temp == 2) current_selector->incrementDown();
+  }
   
   if (board.up_button.pressed() || board.up_button.process_hold()) {
     current_selector->incrementUp();
@@ -380,6 +412,13 @@ void runModeSelInterface() {
     if (res1 != 0) touch_to_process = false;
   } 
 
+  if (touch_to_process) {
+    uint8_t temp = runSelectorTouchscreen();
+    res2 = min(temp, 1);
+    if (temp == 1) mode_selector.incrementModeUp();
+    else if (temp == 2) mode_selector.incrementModeDown();
+  }
+
   if (board.up_button.pressed() || board.up_button.process_hold()) {
     mode_selector.incrementModeUp();
     res2 = 1;
@@ -393,11 +432,11 @@ void runModeSelInterface() {
   } else if (board.select_button_0.pressed()) {
     res2 = current_menu->toggleCategory(0);
   } else if (board.select_button_1.pressed()) {
-    res2 = current_menu->toggleCategory(0);
+    res2 = current_menu->toggleCategory(1);
   } else if (board.select_button_2.pressed()) {
-    res2 = current_menu->toggleCategory(1);
+    res2 = current_menu->toggleCategory(2);
   } else if (board.select_button_3.pressed()) {
-    res2 = current_menu->toggleCategory(1);
+    res2 = current_menu->toggleCategory(3);
   }
 
   res = max(res1, res2);

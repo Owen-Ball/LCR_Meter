@@ -128,9 +128,9 @@ void ModeSelector::draw(ILI9341_t3n &tft) {
 
   int16_t text_x = getCenteredXPos(underline_text);
   
-  tft.setCursor(text_x, 105);
+  tft.setCursor(text_x, 95);
   tft.println(text);
-  tft.setCursor(text_x, 105 + 6);
+  tft.setCursor(text_x, 95 + 6);
   tft.println(underline_text);
 
 }

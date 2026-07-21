@@ -239,7 +239,7 @@ float getRs_signed(Complex Z, float freq) {
 
 //Font Notes
 //@= Ω
-//u = μ
+//& = μ
 //[] = |Z|
 //^ = °
 //< = ∠

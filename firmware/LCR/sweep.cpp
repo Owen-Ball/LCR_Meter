@@ -286,13 +286,11 @@ void scaleVerticalAxes() {
     right_val_max *= -1.0;
   }
 
-  Serial.print("left val min: ");
-  Serial.println(left_val_min);
   if (left_log_scale && left_val_min < 0) left_log_scale = false;
-  else if (left_log_scale && left_val_min == 0) left_val_min = 1e-3;
+  else if (left_log_scale && left_val_min < 1e-3) left_val_min = 1e-3;
 
   if (right_log_scale && right_val_min < 0) right_log_scale = false;
-  else if (right_log_scale && right_val_min == 0) right_val_min = 1e-3;
+  else if (right_log_scale && right_val_min < 1e-3) right_val_min = 1e-3;
 
   uint8_t left_divs = 0;
   uint8_t right_divs = 0;
@@ -361,6 +359,20 @@ void scaleVerticalAxes() {
     right_max = right_min + right_increment*divs;
     
   }
+
+  
+  if (left_val_min == INFINITY || left_val_min == INFINITY) {
+    left_min = 0.0;
+    left_max = 0.0;
+    left_increment = 0.0;
+  }
+
+  if (right_val_min == INFINITY || right_val_min == INFINITY) {
+    right_min = 0.0;
+    right_max = 0.0;
+    right_increment = 0.0;
+  }
+  
 
   Serial.print("left min: ");
   Serial.print(left_val_min);
