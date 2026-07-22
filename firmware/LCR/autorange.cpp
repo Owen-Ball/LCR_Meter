@@ -130,6 +130,7 @@ void blockingAutorangeMeasureFast() {
     }
 
     bool range_changed = gainAutorange(true);
+    if (!range_changed) range_changed = rangeAutorange(true);
 
     if (range_changed) {
       delay(CODEC_SETTING_CHANGE_DELAY);

@@ -102,13 +102,6 @@ float getArrayMax(float (*func)(Complex z, float f)) {
 }
 
 
-Complex measurePoint(float freq) {
-  setLCRFrequency(freq);
-  blockingAutorangeMeasureFast();
-  return calculateZ();  
-}
-
-
 int16_t mapFreqToX(float freq, float freq_start, float freq_end, int16_t x0, int16_t width) {
   float freq_span = log10(freq_end / freq_start);
   float x_pos = float(x0) + log10(freq / freq_start) / freq_span * float(width);
@@ -564,6 +557,12 @@ void drawSweepWrapper(ILI9341_t3n &tft) {
   drawPlot(tft, FREQSWEEP_START, FREQSWEEP_END);
 }
 
+
+Complex measurePoint(float freq) {
+  setLCRFrequency(freq);
+  blockingAutorangeMeasureFast();
+  return calculateZ();  
+}
 
 void runSweep(float freq_start, float freq_end, uint16_t points) {
   
