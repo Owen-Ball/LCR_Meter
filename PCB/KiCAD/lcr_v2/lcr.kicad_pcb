@@ -14390,15 +14390,15 @@
 			(uuid "ef26d20f-f3d2-4345-a851-c65b6acea1cc")
 		)
 		(embedded_fonts no)
-		(model "C:/Users/owend/Desktop/Projects/KiCAD Library/Footprints/teensy.pretty/Teensy_4.1_Assembly.STEP"
+		(model "C:/Users/owend/OneDrive/Documents/KiCAD Custom Library/KiCAD-Library/Footprints/teensy.pretty/Teensy_4.1_Assembly.STEP"
 			(offset
-				(xyz 0 0 0)
+				(xyz 0 0 11.45)
 			)
 			(scale
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz 0 0 0)
+				(xyz -0 -0 -0)
 			)
 		)
 	)
