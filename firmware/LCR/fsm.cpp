@@ -249,6 +249,7 @@ void initFreqSweepMenu() {
   freqsweep_menu.addCategory("Mode");
   freqsweep_menu.addItem("[]+<Z", &setFreqSweepDisplayMode, 0.0f);
   freqsweep_menu.addItem("R+jX", &setFreqSweepDisplayMode, 1.0f);
+  freqsweep_menu.addItem("[]+Q", &setFreqSweepDisplayMode, 2.0f);
   freqsweep_menu.executeItem(freqsweep_menu.getCategoriesCount()-1, 0);
 
   freqsweep_menu.addCategory("Start", &runSweepWrapper, 0, false);

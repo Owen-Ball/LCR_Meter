@@ -1,5 +1,4 @@
 #include "sweep.h"
-
 #include "lcr_func.h"
 #include "autorange.h"
 #include "constants.h"
@@ -10,7 +9,7 @@
 
 
 
-enum display_mode_t {ZMAG_ZPHASE, R_X};
+enum display_mode_t {ZMAG_ZPHASE, R_X, ZMAG_Q};
 
 uint16_t num_points = 0;
 uint16_t current_points = 0;
@@ -66,6 +65,13 @@ void setFreqSweepDisplayMode(float mode) {
       display_mode = R_X;
       left_param = lcrParamRs;
       right_param = lcrParamXs;
+      left_discard_zero = true;
+      right_discard_zero = false;
+      break;
+    case 2:
+      display_mode = ZMAG_Q;
+      left_param = lcrParamZMag;
+      right_param = lcrParamQ;
       left_discard_zero = true;
       right_discard_zero = false;
       break;
@@ -255,7 +261,7 @@ void scaleVerticalAxes() {
   float right_val_min = getArrayMin(right_param.value, right_discard_zero);
   float right_val_max = getArrayMax(right_param.value);
 
-  if (right_param.label == lcrParamZPhase.label) {
+  if (display_mode == ZMAG_ZPHASE) {
     right_log_scale = false;
     right_phase = true;
   } else {
