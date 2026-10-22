@@ -342,7 +342,7 @@ void runMenuInterface() {
   if (res == 1) {
     board.buzzer.setBuzzer(1, 10, 1);
   } else if (res == 2) {
-    board.buzzer.setBuzzer(3, 15, 55);
+    board.buzzer.setBuzzer(2, 15, 70);
   }
 }
 
@@ -389,7 +389,7 @@ void runSelectorInterface() {
   if (res == 1) {
     board.buzzer.setBuzzer(1, 10, 1);
   } else if (res == 2) {
-    board.buzzer.setBuzzer(3, 15, 55);
+    board.buzzer.setBuzzer(2, 15, 70);
   }
   
   if (exit_selector) {
@@ -445,7 +445,7 @@ void runModeSelInterface() {
   if (res == 1) {
     board.buzzer.setBuzzer(1, 10, 1);
   } else if (res == 2) {
-    board.buzzer.setBuzzer(3, 15, 55);
+    board.buzzer.setBuzzer(2, 15, 70);
   }
 
   if (exit_selector) exitModeSelector();

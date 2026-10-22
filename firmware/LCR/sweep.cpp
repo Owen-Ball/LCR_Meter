@@ -255,6 +255,9 @@ float getPhaseIncrement(float min_val, float max_val, uint8_t divs) {
 }
 
 void scaleVerticalAxes() {
+  left_neg = false;
+  right_neg = false;
+  
   float left_val_min = getArrayMin(left_param.value, left_discard_zero);
   float left_val_max = getArrayMax(left_param.value);
 
