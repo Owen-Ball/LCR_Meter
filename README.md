@@ -1,4 +1,4 @@
-# Table of Contents
+# Contents
 
 - [Feature Overview](#feature-overview)
 - [Specifications](#specifications)
@@ -72,14 +72,28 @@ This LCR meter uses an auto-balancing bridge design. The general operation of th
 
 At the top of the circuit, an input signal Vin is generated using a buffered and filtered DAC output. This connects to a resistor $R_{range}$ and then the HCUR terminal. The purpose of the $R_{range}$ resistor will be discussed later.
 
-Moving to the bottom of the circuit, the amplifer works to keep the negating amplifer input at ground. This results in a current of $$I_{DUT}(s) = \frac{V_{in}}{Z_{DUT}(s) + R_{range}}$$ flowing through the DUT. This same current will flow through the bottom $R_{range}$ resistor, resulting in an amplifier output of 
-$$I_{meas}(s)=-I_{DUT}(s)\cdot R_{range} = \frac{-V_{in}\cdot R_{range}}{Z_{DUT}(s) + R_{range}}$$
+Moving to the bottom of the circuit, the amplifer works to keep the negating amplifer input at ground. This results in a current of 
+
+```math
+I_{DUT}(s) = \frac{V_{in}}{Z_{DUT}(s) + R_{range}}
+```
+flowing through the DUT. This same current will flow through the bottom $R_{range}$ resistor, resulting in an amplifier output of 
+
+```math
+I_{meas}(s)=-I_{DUT}(s)\cdot R_{range} = \frac{-V_{in}\cdot R_{range}}{Z_{DUT}(s) + R_{range}}
+```
 
 In the middle of the circuit, the voltage across the DUT is read out with kelvin connect lines to remove as much parasitic resistance and inductance from the probe leads. The voltage across the DUT will be 
-$$V_{meas}(s)=I_{DUT}(s)\cdot Z_{DUT}(s)= \frac{V_{in}\cdot Z_{DUT}(s)}{Z_{DUT}(s) + R_{range}}$$
+
+```math
+V_{meas}(s)=I_{DUT}(s)\cdot Z_{DUT}(s)= \frac{V_{in}\cdot Z_{DUT}(s)}{Z_{DUT}(s) + R_{range}}
+```
 
 From these two measurements, we can derive $Z_{DUT}(s)$ as
-$$ Z_{DUT}(s)=\frac{V_{meas}(s)\cdot R_{range}}{I_{meas}(s)}$$
+
+```math
+Z_{DUT}(s)=\frac{V_{meas}(s)\cdot R_{range}}{I_{meas}(s)}
+```
 
 
 
